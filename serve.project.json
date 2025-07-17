@@ -1,0 +1,13 @@
+{
+	"name": "runtime-ui-select-plugin-serve",
+	"globIgnorePaths": ["**/package.json", "**/tsconfig.json"],
+	"tree": {
+		"$className": "DataModel",
+		"ServerStorage": {
+			"$className": "ServerStorage",
+			"Plugin": {
+				"$path": "./default.project.json"
+			}
+		}
+	}
+}
