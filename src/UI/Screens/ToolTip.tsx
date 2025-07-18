@@ -1,8 +1,7 @@
-import Vivid, { createCleanup, createEffect, createState, onMount } from "@mekstuff-rbxts/vivid";
+import Vivid, { createCleanup, createEffect, createSpring, createState, onMount } from "@mekstuff-rbxts/vivid";
 import { Collector } from "@mekstuff-rbxts/collector";
 
 const RunService = game.GetService("RunService");
-const TweenService = game.GetService("TweenService");
 
 import { createRef } from "@mekstuff-rbxts/vivid/out/create/createRef";
 import { Theme, Units } from "@mekstuff-rbxts/vivid-ui";
@@ -12,7 +11,7 @@ import { SettingsContext } from "Contexts/SettingsContexts";
 export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 	const [CurrentTip, setCurrentTip, CurrentTipState] = createState<string | undefined>(undefined);
 	const [CurrentPosition, setCurrentPosition] = createState<UDim2 | undefined>(new UDim2());
-	const [ToolTipDelayValue, setToolTipDelayValue] = createState(0); // 0=off | 1=on (delay on hovering)
+	const [ToolTipDelayValue, setToolTipDelayValue, ToolTipDelayValueState] = createSpring(0); // 0=off | 1=on (delay on hovering)
 	const LabelReference = createRef<TextLabel>();
 
 	onMount(() => {
@@ -26,13 +25,11 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 				}
 				setCurrentTip(undefined);
 			});
-
 			return () => {
 				MouseEnterConnection.Disconnect();
 				MouseLeaveConnection.Disconnect();
 			};
 		});
-
 		createCleanup(() => {
 			Binder.Destroy();
 		});
@@ -49,13 +46,11 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 				return;
 			}
 			const Ref = LabelReference();
-
 			const PluginMouseMoveListener = RunService.Heartbeat.Connect(() => {
 				const MouseRelativePosition = props.MainWidget.GetRelativeMousePosition();
 				const Offset = new Vector2(5, 10);
 				const ComponentXPosition = MouseRelativePosition.X + Ref!.AbsoluteSize.X + Offset.X;
 				const ComponentYPosition = MouseRelativePosition.Y + Ref!.AbsoluteSize.Y + Offset.Y;
-
 				setCurrentPosition(
 					UDim2.fromOffset(
 						ComponentXPosition > props.MainWidget.AbsoluteSize.X
@@ -73,27 +68,11 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 		});
 	});
 
-	const ToolTipDelayValueTweenValueBase = new Instance("IntValue");
-	ToolTipDelayValueTweenValueBase.Name = "ToolTipDelayValueTweenValueBase";
-
-	const ValueBaseListener = ToolTipDelayValueTweenValueBase.GetPropertyChangedSignal("Value").Connect(() => {
-		setToolTipDelayValue(ToolTipDelayValueTweenValueBase.Value);
-	});
-
-	createCleanup(() => {
-		ValueBaseListener.Disconnect();
-		ToolTipDelayValueTweenValueBase.Destroy();
-	});
-
 	createEffect(() => {
-		if (CurrentTip() !== undefined && CurrentPosition() !== undefined) {
-			TweenService.Create(ToolTipDelayValueTweenValueBase, new TweenInfo(1), {
-				Value: 1,
-			}).Play();
+		if (CurrentTip() !== undefined) {
+			setToolTipDelayValue(1);
 		} else {
-			TweenService.Create(ToolTipDelayValueTweenValueBase, new TweenInfo(0), {
-				Value: 0,
-			}).Play();
+			ToolTipDelayValueState.State = 0;
 		}
 	});
 

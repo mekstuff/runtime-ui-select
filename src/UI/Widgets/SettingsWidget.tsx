@@ -19,7 +19,7 @@ export function SettingsWidget(props: { Toolbar: PluginToolbar }) {
 					new DockWidgetPluginGuiInfo(Enum.InitialDockState.Float),
 				) as DockWidgetPluginGui & { Title: string };
 				Widget.Title = `${Constants.PluginDisplayName}${GetIsRunningSession() ? " - Client" : ""}`;
-				// Widget.Enabled = true;
+				Widget.Enabled = true;
 
 				const SettingsWidgetButton = use(() => props.Toolbar).CreateButton(
 					Constants.PluginDisplayName,

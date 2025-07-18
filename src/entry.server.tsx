@@ -73,11 +73,6 @@ function EntrySource() {
 	<PluginRoot />;
 }
 
-const EntryScope = createScope();
+// const EntryScope = createScope();
 EntrySource();
-EntryScope.Close();
-
-// plugin.Unloading.Connect(() => {
-// 	EntryScope.Destroy();
-// 	clearScopes();
-// });
+// EntryScope.Close();
