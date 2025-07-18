@@ -93,7 +93,7 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 				return CurrentPosition() ?? new UDim2();
 			}}
 			Visible={() => {
-				return ToolTipDelayValue() >= 1;
+				return ToolTipDelayValue() >= 1 && SettingsContext.DisableToolTips.get() === false;
 			}}
 			Parent={props.MainWidget}
 		>
