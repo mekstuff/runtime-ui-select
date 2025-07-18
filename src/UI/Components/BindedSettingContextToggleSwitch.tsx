@@ -1,3 +1,8 @@
+/*
+	Typed with ❤️ @mekstuff
+	02/07/2025 22:12:38
+*/
+
 import Vivid, { createCleanup, createEffect, use } from "@mekstuff-rbxts/vivid";
 import { SettingContent, ToggleSwitch } from "@mekstuff-rbxts/vivid-ui";
 import { SettingsContext } from "Contexts/SettingsContexts";

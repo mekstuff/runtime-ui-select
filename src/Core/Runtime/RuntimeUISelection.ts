@@ -6,6 +6,7 @@
 import { createCleanup, createEffect, createScope, use } from "@mekstuff-rbxts/vivid";
 import { CurrentlyHoveringItems } from "Contexts/RuntimeContexts";
 import { SettingsContext } from "Contexts/SettingsContexts";
+import { RuntimeContextMenuOpened } from "./RuntimeContextMenu";
 
 const SelectionService = game.GetService("Selection");
 const UserInputService = game.GetService("UserInputService");
@@ -19,6 +20,9 @@ createEffect(() => {
 	}
 	const ClickListener = UserInputService.InputBegan.Connect((Input) => {
 		if (Input.UserInputType !== Enum.UserInputType.MouseButton1) {
+			return;
+		}
+		if (use(() => RuntimeContextMenuOpened())) {
 			return;
 		}
 

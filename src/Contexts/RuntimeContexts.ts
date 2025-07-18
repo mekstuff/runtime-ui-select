@@ -12,14 +12,17 @@ const RunService = game.GetService("RunService");
 const GuiService = game.GetService("GuiService");
 const UserInputService = game.GetService("UserInputService");
 
+/*
 type SelectionServiceType = Selection & { SelectionChanged: RBXScriptSignal };
 const SelectionService = game.GetService("Selection") as SelectionServiceType;
+*/
 
 const PlayerGui = Players.LocalPlayer.WaitForChild("PlayerGui") as PlayerGui;
 
 const RuntimeContextsScope = createScope();
 
 export const [CurrentlyHoveringItems, setCurrentlyHoveringItems] = createState<GuiObject[]>([]);
+export const [CurrentlyHoveringItemsUnfiltered, setCurrentlyHoveringItemsUnfiltered] = createState<GuiObject[]>([]);
 export const [CurrentlySelectedItems, setCurrentlySelectedItems] = createState<GuiObject[]>([]);
 
 // Hovering
@@ -28,12 +31,12 @@ createEffect(() => {
 		return;
 	}
 
+	/*
 	let Selections = SelectionService.Get();
 	const SelectionChanged = SelectionService.SelectionChanged.Connect(() => {
 		Selections = SelectionService.Get();
 	});
-
-	// TODO: Detect if UseHoverDetectionActivationKeybind is enabled and only allow hovering if it is on and the key is down.
+	*/
 
 	const MultiHoverDetectionEnabled = SettingsContext.MultiHoverDetectionEnabled.get();
 	const IgnoreTransparentGUIObjects = SettingsContext.IgnoreTransparentGUIObjects.get();
@@ -51,33 +54,39 @@ createEffect(() => {
 			}
 		}
 		const MouseLocation = UserInputService.GetMouseLocation().sub(new Vector2(0, GuiService.TopbarInset.Height));
-		let GuiObjectsAtPosition = PlayerGui.GetGuiObjectsAtPosition(MouseLocation.X, MouseLocation.Y)
+		const AllGuiObjectsAtPosition = PlayerGui.GetGuiObjectsAtPosition(MouseLocation.X, MouseLocation.Y)
 			.map((f) => {
 				if (f.HasTag(Tags.IgnoreHoverDetection) === true) {
 					return;
 				}
-				if (Selections.indexOf(f) > -1) {
-					// return;
-				}
-				if (IgnoreTransparentGUIObjects === true) {
-					if (f.IsA("TextLabel") || f.IsA("TextBox") || f.IsA("TextButton")) {
-						if (f.TextTransparency === 1 && f.BackgroundTransparency === 1) {
-							return;
-						}
-					} else if (f.IsA("ImageLabel")) {
-						if (f.ImageTransparency === 1) {
-							return;
-						}
-					} else {
-						if (f.BackgroundTransparency === 1) {
-							return;
-						}
-					}
-				}
-
 				return f;
 			})
 			.filterUndefined();
+		setCurrentlyHoveringItemsUnfiltered(AllGuiObjectsAtPosition);
+		let GuiObjectsAtPosition = AllGuiObjectsAtPosition.map((f) => {
+			/*
+			if (Selections.indexOf(f) > -1) {
+				return;
+			}
+			*/
+			if (IgnoreTransparentGUIObjects === true) {
+				if (f.IsA("TextLabel") || f.IsA("TextBox") || f.IsA("TextButton")) {
+					if (f.TextTransparency === 1 && f.BackgroundTransparency === 1) {
+						return;
+					}
+				} else if (f.IsA("ImageLabel")) {
+					if (f.ImageTransparency === 1) {
+						return;
+					}
+				} else {
+					if (f.BackgroundTransparency === 1) {
+						return;
+					}
+				}
+			}
+
+			return f;
+		}).filterUndefined();
 
 		if (MultiHoverDetectionEnabled === false) {
 			const Target = GuiObjectsAtPosition[0];
@@ -114,11 +123,14 @@ createEffect(() => {
 
 	createCleanup(() => {
 		setCurrentlyHoveringItems([]);
+		/*
 		SelectionChanged.Disconnect();
+		*/
 		Update.Disconnect();
 	});
 });
 
+/*
 // Selected
 createEffect(() => {
 	if (SettingsContext.SelectedDetectionEnabled.get() === false) {
@@ -143,5 +155,6 @@ createEffect(() => {
 		Update.Disconnect();
 	});
 });
+*/
 
 RuntimeContextsScope.Close();

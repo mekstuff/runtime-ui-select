@@ -8,7 +8,6 @@ Theme;
 
 import Vivid, { clearScopes, createScope } from "@mekstuff-rbxts/vivid";
 import { setPluginContexts } from "Contexts/PluginContexts";
-import { Constants } from "Core/Constants/Constants";
 import { GetIsRunningSession, GetIsRunningSessionServer } from "Core/Functions/GetUsageContext";
 
 // Setting plugin context
@@ -25,7 +24,7 @@ function SharedRoot() {
 		clearScopes();
 	});
 
-	const Toolbar = plugin.CreateToolbar("Runtime UI");
+	const Toolbar = plugin.CreateToolbar("Rutus");
 
 	const SettingsWidget = import("UI/Widgets/SettingsWidget").expect().SettingsWidget;
 
@@ -42,6 +41,7 @@ function PluginRoot() {
 
 function RuntimeRoot() {
 	import("Core/Runtime/RuntimeUISelection").expect();
+	import("Core/Runtime/RuntimeContextMenu").expect();
 	const HoverDimensionBoxes = import("UI/Screens/HoverDimensionBoxes").expect().HoverDimensionBoxes;
 	const SelectedDimensionBoxes = import("UI/Screens/SelectedDimensionBoxes").expect().SelectedDimensionBoxes;
 

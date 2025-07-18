@@ -4,8 +4,18 @@
 */
 
 import Vivid, { createEffect, Slot } from "@mekstuff-rbxts/vivid";
-import { Button, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+import {
+	Button,
+	Image,
+	Input,
+	SettingContent,
+	SettingContentSeperator,
+	Spinner,
+	Theme,
+	Units,
+} from "@mekstuff-rbxts/vivid-ui";
 import { SettingsContext } from "Contexts/SettingsContexts";
+import { Constants } from "Core/Constants/Constants";
 import { ResetPluginToDefault } from "Core/Functions/ResetPlugin";
 import { BindedSettingContextToggleSwitch } from "UI/Components/BindedSettingContextToggleSwitch";
 import { ThemeToggleButton } from "UI/Components/ThemeToggleButton";
@@ -25,13 +35,26 @@ export function SettingsScreen() {
 				VerticalScrollBarInset={Enum.ScrollBarInset.ScrollBar}
 				BorderSizePixel={0}
 			>
-				<uilistlayout FillDirection={Enum.FillDirection.Vertical} />
+				<uilistlayout
+					FillDirection={Enum.FillDirection.Vertical}
+					HorizontalAlignment={Enum.HorizontalAlignment.Center}
+				/>
 				<uipadding
 					PaddingLeft={new UDim(0, 4)}
 					PaddingTop={new UDim(0, 4)}
 					PaddingRight={new UDim(0, 4)}
 					PaddingBottom={new UDim(0, 4)}
 				/>
+
+				<Image
+					loading={() => <Spinner enabled />}
+					Image={Constants.PluginDisplayIcon}
+					Size={() => UDim2.fromOffset(Units().BaseOffsetHeight, Units().BaseOffsetHeight)}
+					BackgroundTransparency={1}
+				>
+					<uiaspectratioconstraint />
+				</Image>
+				<frame Size={new UDim2(1, 0, 0, 6)} BackgroundTransparency={1} />
 
 				{/* Hovering */}
 				<SettingContentSeperator seperatorText={"Hovering"} />
@@ -134,6 +157,12 @@ export function SettingsScreen() {
 					TargetSettingContext="DetectRuntimeSettingsChanges"
 					ToolTip="Whenever you make a plugin setting change during runtime, You will be prompted to save the changes when you exit the session.\n\nOnce enabled, whenever you make a setting change and leave the game, Roblox will prompt you that you've made some script changes, You must select yes at this step.\n\nNOTE: You may experience a flicker whenever the first setting is changed during runtime."
 					Dependencies={["PluginEnabled"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Right Click For Context Menu"
+					TargetSettingContext="RightClickForContextMenu"
+					ToolTip="Right click during runtime for a context menu.\n\nIf you have a hover detect activation keybind, You will need to be holding the key."
+					Dependencies={["HoverDetectionEnabled"]}
 				/>
 				<SettingContent titleText={"Studio Theme"} scaleDistribution={0.5}>
 					<ThemeToggleButton />

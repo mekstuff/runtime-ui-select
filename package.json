@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"build": "rbxtsc",
+		"build": "rbxtsc && rojo build -o plugin.rbxm",
 		"watch": "rbxtsc -w",
 		"dev": "concurrently \"yarn watch\" \"rojo serve serve.project.json\""
 	},
@@ -39,9 +39,9 @@
 		}
 	},
 	"dependencies": {
+		"@mekstuff-rbxts/collector": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\collector\\0.1.6",
 		"@mekstuff-rbxts/core": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\core\\0.1.5",
-		"@mekstuff-rbxts/vivid-ui": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\vivid-ui\\0.1.5",
 		"@mekstuff-rbxts/vivid": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\vivid\\0.1.0",
-		"@mekstuff-rbxts/collector": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\collector\\0.1.6"
+		"@mekstuff-rbxts/vivid-ui": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\vivid-ui\\0.1.5"
 	}
 }

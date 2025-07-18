@@ -48,6 +48,17 @@ export function DimensionBoxTextInfo(props: ButtonProps & { truthy: boolean }) {
 						tags={[Tags.IgnoreHoverDetection]}
 						variant="ghost"
 						padding={0}
+						props={{
+							IconImage: {
+								tags: [Tags.IgnoreHoverDetection],
+							},
+							SpinnerContainer: {
+								tags: [Tags.IgnoreHoverDetection],
+							},
+							TextLabel: {
+								tags: [Tags.IgnoreHoverDetection],
+							},
+						}}
 						BackgroundTransparency={1}
 						TextColor3={Theme().SubText}
 						TextSize={createEffect(() => Units().BaseTextSize - 1)()}

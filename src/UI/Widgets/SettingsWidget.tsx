@@ -4,7 +4,6 @@
 */
 
 import Vivid, { Suspense, use } from "@mekstuff-rbxts/vivid";
-import { Icons } from "@mekstuff-rbxts/vivid-ui";
 import { Constants } from "Core/Constants/Constants";
 import { GetPlugin } from "Core/Functions/GetPlugin";
 import { GetIsRunningSession } from "Core/Functions/GetUsageContext";
@@ -20,6 +19,7 @@ export function SettingsWidget(props: { Toolbar: PluginToolbar }) {
 					new DockWidgetPluginGuiInfo(Enum.InitialDockState.Float),
 				) as DockWidgetPluginGui & { Title: string };
 				Widget.Title = `${Constants.PluginDisplayName}${GetIsRunningSession() ? " - Client" : ""}`;
+				// Widget.Enabled = true;
 
 				const SettingsWidgetButton = use(() => props.Toolbar).CreateButton(
 					Constants.PluginDisplayName,

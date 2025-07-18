@@ -9,7 +9,7 @@ const PluginDisplayName = "Runtime UI Select";
 export const Constants = {
 	PluginDisplayName,
 	PluginDisplayIcon: Icons.fromName("fluency", "outline", "mouse-cursor-click"),
-	PluginWidgetIdentifierPrefix: "...",
+	PluginWidgetIdentifierPrefix: "runtime-ui-select",
 	PluginSharedSettingsKey: "PluginSharedSettings",
 	PluginSharedSettingTokenListener: `${PluginDisplayName}-PluginSharedSettingTokenListener`,
 	MainWidgetToolTipCollectionId: "MainWidgetToolTipCollectionId",

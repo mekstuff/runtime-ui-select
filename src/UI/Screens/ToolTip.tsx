@@ -16,7 +16,7 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 	const LabelReference = createRef<TextLabel>();
 
 	onMount(() => {
-		Collector.Bind<GuiObject>(Constants.MainWidgetToolTipCollectionId, (Object) => {
+		const Binder = Collector.Bind<GuiObject>(Constants.MainWidgetToolTipCollectionId, (Object) => {
 			const MouseEnterConnection = Object.MouseEnter.Connect(() => {
 				setCurrentTip(Object.GetAttribute(Constants.MainWidgetToolTipCollectionId) as string | undefined);
 			});
@@ -31,6 +31,10 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 				MouseEnterConnection.Disconnect();
 				MouseLeaveConnection.Disconnect();
 			};
+		});
+
+		createCleanup(() => {
+			Binder.Destroy();
 		});
 	});
 
@@ -71,7 +75,6 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 
 	const ToolTipDelayValueTweenValueBase = new Instance("IntValue");
 	ToolTipDelayValueTweenValueBase.Name = "ToolTipDelayValueTweenValueBase";
-	ToolTipDelayValueTweenValueBase.Parent = game.Workspace;
 
 	const ValueBaseListener = ToolTipDelayValueTweenValueBase.GetPropertyChangedSignal("Value").Connect(() => {
 		setToolTipDelayValue(ToolTipDelayValueTweenValueBase.Value);

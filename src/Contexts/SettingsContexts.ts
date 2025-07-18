@@ -29,6 +29,7 @@ export type Settings = {
 	BlockButtonActivations: boolean;
 
 	DetectRuntimeSettingsChanges: boolean;
+	RightClickForContextMenu: boolean;
 	DisableToolTips: boolean;
 };
 type SettingState<T> = {
@@ -48,12 +49,12 @@ export const DefaultSettingsContext: { [k in keyof Settings]: Settings[k] } = {
 	PluginEnabled: true,
 
 	HoverDetectionEnabled: true,
+	MultiHoverDetectionEnabled: false,
 	ShowDimensionsOnHover: true,
 	ShowAbsoluteSizeOnHover: true,
 	ShowAbsolutePositionOnHover: true,
 	ShowInstanceNameOnHover: true,
-	MultiHoverDetectionEnabled: false,
-	UseHoverDetectionActivationKeybind: false,
+	UseHoverDetectionActivationKeybind: true,
 
 	SelectedDetectionEnabled: false,
 	ShowDimensionsOnSelected: false,
@@ -63,9 +64,10 @@ export const DefaultSettingsContext: { [k in keyof Settings]: Settings[k] } = {
 
 	AllowUserRuntimeUISelection: true,
 	IgnoreTransparentGUIObjects: true,
-	BlockButtonActivations: false,
+	BlockButtonActivations: true,
 
 	DetectRuntimeSettingsChanges: false,
+	RightClickForContextMenu: true,
 	DisableToolTips: false,
 };
 
