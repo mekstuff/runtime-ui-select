@@ -33,7 +33,14 @@ createEffect(() => {
 			return;
 		}
 		if (UserInputService.IsKeyDown(Enum.KeyCode.LeftShift)) {
-			SelectionService.Set([...SelectionService.Get(), TargetItem]);
+			const CurrentSelections = SelectionService.Get();
+			const IndexOf = CurrentSelections.indexOf(TargetItem);
+			if (IndexOf > -1) {
+				CurrentSelections.remove(IndexOf);
+				SelectionService.Set(CurrentSelections);
+			} else {
+				SelectionService.Set([...SelectionService.Get(), TargetItem]);
+			}
 		} else {
 			SelectionService.Set([TargetItem]);
 		}

@@ -7,7 +7,10 @@ import { createCleanup, createEffect, createScope, createState, use } from "@mek
 import { Icons } from "@mekstuff-rbxts/vivid-ui";
 import { CurrentlyHoveringItems, CurrentlyHoveringItemsUnfiltered } from "Contexts/RuntimeContexts";
 import { SettingsContext } from "Contexts/SettingsContexts";
+import { Constants } from "Core/Constants/Constants";
+import { Tags } from "Core/Constants/Tags";
 import { GetPlugin } from "Core/Functions/GetPlugin";
+import { DismissToast, SendToast } from "UI/Screens/Toasts";
 
 const Selection = game.GetService("Selection");
 const UserInputService = game.GetService("UserInputService");
@@ -49,7 +52,47 @@ createEffect(() => {
 			Icons.fromName("fluency", "outline", "eye-invisible-dash-iris-pupil"),
 		) as PluginActionDef;
 		HideCurrentGuiPluginAction.Triggered.Connect(() => {
-			HoveringItems[0].Visible = false;
+			const TargetInstance = HoveringItems[0];
+			TargetInstance.Visible = false;
+
+			SendToast({
+				id: tostring(math.random()),
+				dismissable: true,
+				lifetime: false,
+				Text: `Hiding "${TargetInstance.GetFullName()}", Click to undo.`,
+				toastClicked: (Id) => {
+					TargetInstance.Visible = true;
+					if (Id === undefined) {
+						return;
+					}
+					DismissToast(Id);
+				},
+				icon: Constants.PluginDisplayIcon,
+			});
+		});
+
+		const DisableCurrentGuiPluginAction = ContextMenu.AddNewAction(
+			tostring(math.random()),
+			`Ignore ${HoveringItems[0].Name}`,
+		) as PluginActionDef;
+		DisableCurrentGuiPluginAction.Triggered.Connect(() => {
+			const TargetInstance = HoveringItems[0];
+			TargetInstance.AddTag(Tags.IgnoreHoverDetection);
+			SendToast({
+				id: tostring(math.random()),
+				dismissable: true,
+				lifetime: false,
+				Text: `Ignoring "${TargetInstance.GetFullName()}", Click to undo.`,
+
+				toastClicked: (Id) => {
+					TargetInstance.RemoveTag(Tags.IgnoreHoverDetection);
+					if (Id === undefined) {
+						return;
+					}
+					DismissToast(Id);
+				},
+				icon: Constants.PluginDisplayIcon,
+			});
 		});
 
 		const SelectCurrentGuiRootScreenGui = ContextMenu.AddNewAction(
@@ -73,7 +116,6 @@ createEffect(() => {
 				},
 			);
 		});
-
 		ContextMenu.AddMenu(SelectUILayerPluginMenu);
 
 		const SelectAllInstancesHoveredPluginAction = ContextMenu.AddNewAction(
@@ -89,8 +131,10 @@ createEffect(() => {
 
 		SelectCurrentGuiPluginAction.Destroy();
 		HideCurrentGuiPluginAction.Destroy();
+		DisableCurrentGuiPluginAction.Destroy();
 		SelectCurrentGuiRootScreenGui.Destroy();
 		SelectUILayerPluginMenu.Destroy();
+
 		SelectAllInstancesHoveredPluginAction.Destroy();
 		task.delay(0.1, () => {
 			setRuntimeContextMenuOpened(false);

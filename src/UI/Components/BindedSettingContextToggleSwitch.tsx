@@ -12,6 +12,7 @@ export function BindedSettingContextToggleSwitch(props: {
 	Text: string;
 	TargetSettingContext: keyof typeof SettingsContext;
 	Dependencies?: (keyof typeof SettingsContext)[];
+	InverseDependencies?: (keyof typeof SettingsContext)[];
 	ToolTip?: string;
 }) {
 	return (
@@ -20,7 +21,9 @@ export function BindedSettingContextToggleSwitch(props: {
 			attributes={{
 				[Constants.MainWidgetToolTipCollectionId]: createEffect(() => {
 					const DependenciesString =
-						props.Dependencies !== undefined ? `Requires: ${props.Dependencies.join(", ")}` : undefined;
+						props.Dependencies || props.InverseDependencies !== undefined
+							? `Requires: ${[...(props.Dependencies ?? []), ...(props.InverseDependencies?.map((InverseDep) => `Not ${InverseDep}`) ?? [])].join(", ")}`
+							: undefined;
 					// return (
 					if (props.ToolTip === undefined) {
 						return DependenciesString ?? "";
@@ -39,23 +42,40 @@ export function BindedSettingContextToggleSwitch(props: {
 				<ToggleSwitch
 					toggled={SettingsContext[use(() => props.TargetSettingContext)].get()}
 					disabled={createEffect(() => {
-						if (props.Dependencies === undefined) {
-							return false;
+						if (props.Dependencies !== undefined) {
+							for (const [_, Dependency] of pairs(props.Dependencies)) {
+								if (SettingsContext[Dependency].get() === false) {
+									let oldState = false;
+									SettingsContext[use(() => props.TargetSettingContext)].set((old) => {
+										oldState = old;
+										return false;
+									});
+									createCleanup((isDestroying) => {
+										if (isDestroying) {
+											return;
+										}
+										SettingsContext[use(() => props.TargetSettingContext)].set(oldState);
+									});
+									return true;
+								}
+							}
 						}
-						for (const [_, Dependency] of pairs(props.Dependencies)) {
-							if (SettingsContext[Dependency].get() === false) {
-								let oldState = false;
-								SettingsContext[use(() => props.TargetSettingContext)].set((old) => {
-									oldState = old;
-									return false;
-								});
-								createCleanup((isDestroying) => {
-									if (isDestroying) {
-										return;
-									}
-									SettingsContext[use(() => props.TargetSettingContext)].set(oldState);
-								});
-								return true;
+						if (props.InverseDependencies !== undefined) {
+							for (const [_, InverseDependency] of pairs(props.InverseDependencies)) {
+								if (SettingsContext[InverseDependency].get() === true) {
+									let oldState = false;
+									SettingsContext[use(() => props.TargetSettingContext)].set((old) => {
+										oldState = old;
+										return false;
+									});
+									createCleanup((isDestroying) => {
+										if (isDestroying) {
+											return;
+										}
+										SettingsContext[use(() => props.TargetSettingContext)].set(oldState);
+									});
+									return true;
+								}
 							}
 						}
 						return false;

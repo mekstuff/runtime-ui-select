@@ -3,12 +3,10 @@
 	02/07/2025 22:12:38
 */
 
-import { Theme } from "@mekstuff-rbxts/vivid-ui";
-Theme;
-
-import Vivid, { clearScopes, createScope } from "@mekstuff-rbxts/vivid";
+import Vivid, { clearScopes } from "@mekstuff-rbxts/vivid";
 import { setPluginContexts } from "Contexts/PluginContexts";
 import { GetIsRunningSession, GetIsRunningSessionServer } from "Core/Functions/GetUsageContext";
+import { Toasts } from "UI/Screens/Toasts";
 
 // Setting plugin context
 setPluginContexts({
@@ -44,12 +42,14 @@ function RuntimeRoot() {
 	import("Core/Runtime/RuntimeContextMenu").expect();
 	const HoverDimensionBoxes = import("UI/Screens/HoverDimensionBoxes").expect().HoverDimensionBoxes;
 	const SelectedDimensionBoxes = import("UI/Screens/SelectedDimensionBoxes").expect().SelectedDimensionBoxes;
+	const BorderDistanceBoxes = import("UI/Screens/BorderDistanceBoxes").expect().BorderDistanceBoxes;
 
 	return (
 		<>
 			<HoverDimensionBoxes />
 			<SelectedDimensionBoxes />
-			{/* <Toasts /> */}
+			<BorderDistanceBoxes />
+			<Toasts />
 		</>
 	);
 }

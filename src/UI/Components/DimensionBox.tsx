@@ -64,7 +64,6 @@ export function DimensionBox(props: DimensionBoxProps) {
 		createCleanup(() => {
 			AbsoluteSizeChangedListener.Disconnect();
 		});
-		setAdorneeAbsoluteSize(props.Adornee.AbsoluteSize);
 	});
 
 	return (

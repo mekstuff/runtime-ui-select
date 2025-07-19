@@ -92,7 +92,7 @@ export function SettingsScreen() {
 					Text="Show Instance Name On Hover"
 					TargetSettingContext="ShowInstanceNameOnHover"
 					ToolTip="Will show the Name property of the hovered items."
-					Dependencies={["PluginEnabled"]}
+					Dependencies={["HoverDetectionEnabled"]}
 				/>
 				<BindedSettingContextToggleSwitch
 					Text="Ctrl/Cmd Key Required For Hover Detection"
@@ -148,6 +148,41 @@ export function SettingsScreen() {
 					TargetSettingContext="BlockButtonActivations"
 					ToolTip="Will block any input activations, allowing you to select buttons/textboxes during runtime without firing any events."
 					Dependencies={["PluginEnabled"]}
+				/>
+
+				{/* BorderBoxes / Distance Indicators */}
+				<SettingContentSeperator seperatorText={"Distance Indicators"} />
+				<BindedSettingContextToggleSwitch
+					Text="Show Distance Indicators On Hover"
+					TargetSettingContext="ShowBorderBoxesOnHover"
+					ToolTip="Will show the distance between the Component and it's Parent component."
+					Dependencies={["HoverDetectionEnabled"]}
+					InverseDependencies={["MultiHoverDetectionEnabled"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Show Left Distance Indicator"
+					TargetSettingContext="ShowLeftBorderBox"
+					Dependencies={["ShowBorderBoxesOnHover"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Show Top Distance Indicator"
+					TargetSettingContext="ShowTopBorderBox"
+					Dependencies={["ShowBorderBoxesOnHover"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Show Right Distance Indicator"
+					TargetSettingContext="ShowRightBorderBox"
+					Dependencies={["ShowBorderBoxesOnHover"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Show Bottom Distance Indicator"
+					TargetSettingContext="ShowBottomBorderBox"
+					Dependencies={["ShowBorderBoxesOnHover"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Distance Indicators Are Always Relative To Viewport"
+					TargetSettingContext="CalculateBorderBoxRelativeToViewport"
+					Dependencies={["ShowBorderBoxesOnHover"]}
 				/>
 
 				{/* Plugin */}

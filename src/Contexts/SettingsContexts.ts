@@ -15,6 +15,12 @@ export type Settings = {
 	ShowAbsoluteSizeOnHover: boolean;
 	ShowAbsolutePositionOnHover: boolean;
 	ShowInstanceNameOnHover: boolean;
+	ShowBorderBoxesOnHover: boolean;
+	CalculateBorderBoxRelativeToViewport: boolean;
+	ShowLeftBorderBox: boolean;
+	ShowTopBorderBox: boolean;
+	ShowRightBorderBox: boolean;
+	ShowBottomBorderBox: boolean;
 	MultiHoverDetectionEnabled: boolean;
 	UseHoverDetectionActivationKeybind: boolean;
 
@@ -54,6 +60,12 @@ export const DefaultSettingsContext: { [k in keyof Settings]: Settings[k] } = {
 	ShowAbsoluteSizeOnHover: true,
 	ShowAbsolutePositionOnHover: true,
 	ShowInstanceNameOnHover: true,
+	ShowBorderBoxesOnHover: true,
+	CalculateBorderBoxRelativeToViewport: true,
+	ShowLeftBorderBox: true,
+	ShowTopBorderBox: true,
+	ShowRightBorderBox: true,
+	ShowBottomBorderBox: true,
 	UseHoverDetectionActivationKeybind: true,
 
 	SelectedDetectionEnabled: false,

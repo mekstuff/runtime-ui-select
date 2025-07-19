@@ -27,6 +27,9 @@ export function Toasts() {
 				sendToastProvider={SendToastProvider}
 				dismissToastProvider={DismissToastProvider}
 				BackgroundTransparency={1}
+				Position={new UDim2(1, 0, 1, 0)}
+				AnchorPoint={new Vector2(1, 1)}
+				Size={new UDim2(0.4, 0, 1, 0)}
 			/>
 		</screengui>
 	);
