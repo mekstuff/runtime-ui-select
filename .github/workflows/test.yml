@@ -19,5 +19,9 @@ jobs:
               run: yarn install --frozen-lockfile
             - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
               run: yarn audit
+            - name: Setup aftman
+              uses: ok-nick/setup-aftman@v0.4.2
+            - name: Install aftman packages
+              run: aftman install
             - name: Building
               run: yarn run build
