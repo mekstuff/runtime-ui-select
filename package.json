@@ -4,13 +4,15 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"build": "rbxtsc && rojo build -o rutus_plugin.rbxm",
+		"build": "rbxtsc && rojo build -o out/rutus_plugin.rbxm",
 		"watch": "rbxtsc -w",
 		"dev": "concurrently \"yarn watch\" \"rojo serve serve.project.json\""
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^3.0.0-types.0",
 		"@rbxts/types": "^1.0.861",
+		"@semantic-release/git": "^10.0.1",
+		"@semantic-release/github": "^11.0.3",
 		"@typescript-eslint/eslint-plugin": "^8.35.1",
 		"@typescript-eslint/parser": "^8.35.1",
 		"concurrently": "^9.2.0",
@@ -20,6 +22,7 @@
 		"eslint-plugin-roblox-ts": "^0.0.36",
 		"prettier": "^3.6.2",
 		"roblox-ts": "^3.0.0",
+		"semantic-release": "^24.2.7",
 		"typescript": "^5.8.3"
 	},
 	".zen": {
