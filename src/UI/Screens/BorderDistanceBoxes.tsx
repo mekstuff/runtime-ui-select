@@ -25,7 +25,7 @@ export function BorderDistanceBoxes() {
 					<screengui
 						Name={`${Constants.PluginDisplayName} - BorderDistances`}
 						Parent={PlayerGui}
-						DisplayOrder={997}
+						DisplayOrder={Constants.ScreenGuiDisplayOrderLimit - 2}
 						ResetOnSpawn={false}
 					>
 						<For
