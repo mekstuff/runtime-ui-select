@@ -1,0 +1,45 @@
+{
+	"name": "@mekstuff-rbxts/collector",
+	"version": "0.1.6",
+	"description": "",
+	"main": "out/init.lua",
+	"scripts": {
+		"build": "rbxtsc",
+		"watch": "rbxtsc -w --type=game -p test -i ../../include",
+		"serve": "rojo serve test",
+		"prepack": "yarn run build"
+	},
+	"keywords": [],
+	"author": "Mekstuff <contact@mekstuff.com> (https://github.com/mekstuff)",
+	"types": "out/index.d.ts",
+	"files": [
+		"out"
+	],
+	".zen": {
+		"dependencies": {
+			"@mekstuff-rbxts/core": {
+				"version": "^0.1.5"
+			},
+			"@mekstuff-rbxts/servant": {
+				"version": "^0.1.5"
+			}
+		}
+	},
+	"devDependencies": {
+		"@rbxts/compiler-types": "^3.0.0-types.0",
+		"@rbxts/types": "^1.0.808",
+		"@typescript-eslint/eslint-plugin": "^8.6.0",
+		"@typescript-eslint/parser": "^8.6.0",
+		"eslint": "^8.42.0",
+		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"eslint-plugin-roblox-ts": "^0.0.35",
+		"prettier": "^2.8.8",
+		"roblox-ts": "^3.0.0",
+		"typescript": "^5.0.4"
+	},
+	"dependencies": {
+		"@mekstuff-rbxts/core": "file:..\\..\\@mekstuff-rbxts\\core@0.1.5",
+		"@mekstuff-rbxts/servant": "file:..\\..\\@mekstuff-rbxts\\servant@0.1.5"
+	}
+}

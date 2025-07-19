@@ -28,23 +28,31 @@
 	".zen": {
 		"dependencies": {
 			"@mekstuff-rbxts/core": {
+				"import": true,
+				"traverse_imports": true,
 				"version": "^0.1.5"
 			},
 			"@mekstuff-rbxts/vivid-ui": {
+				"import": true,
+				"traverse_imports": true,
 				"version": "^0.1.5"
 			},
 			"@mekstuff-rbxts/vivid": {
+				"import": true,
+				"traverse_imports": true,
 				"version": "^0.1.0"
 			},
 			"@mekstuff-rbxts/collector": {
+				"import": true,
+				"traverse_imports": true,
 				"version": "^0.1.6"
 			}
 		}
 	},
 	"dependencies": {
-		"@mekstuff-rbxts/collector": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\collector\\0.1.6",
-		"@mekstuff-rbxts/core": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\core\\0.1.5",
-		"@mekstuff-rbxts/vivid": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\vivid\\0.1.0",
-		"@mekstuff-rbxts/vivid-ui": "file:C:\\Users\\Olanzo\\.zen-cli\\packages\\@mekstuff-rbxts\\vivid-ui\\0.1.5"
+		"@mekstuff-rbxts/collector": "file:.zen\\@mekstuff-rbxts\\collector@0.1.6",
+		"@mekstuff-rbxts/core": "file:.zen\\@mekstuff-rbxts\\core@0.1.5",
+		"@mekstuff-rbxts/vivid": "file:.zen\\@mekstuff-rbxts\\vivid@0.1.0",
+		"@mekstuff-rbxts/vivid-ui": "file:.zen\\@mekstuff-rbxts\\vivid-ui@0.1.5"
 	}
 }
