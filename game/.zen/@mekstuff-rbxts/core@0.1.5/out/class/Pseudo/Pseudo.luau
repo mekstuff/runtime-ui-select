@@ -1,0 +1,1765 @@
+-- Compiled with roblox-ts v3.0.0
+local TS = _G[script]
+--[[
+	
+		Typed with ❤️ @mekstuff
+		11a37868-f9df-4479-8bae-64cbd26d9a49::262366:e5e818
+	
+		PowerHorse Engine Core - Pseudo
+		Pseudo is now ServantNext. View PseudoNext.luau
+	
+]]
+local PseudoNext = TS.import(script, script.Parent, "PseudoNext").PseudoNext
+local ReplicatorScript = TS.import(script, script.Parent.Parent.Parent, "internal", "Replicator").ReplicatorScript
+local _PseudoIdentificationAttrServerName = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "GetPseudoByObject")._PseudoIdentificationAttrServerName
+local GetIsInReplicationEnvironment = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "GetIsInReplicationEnvironment").GetIsInReplicationEnvironment
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Pseudo = PseudoNext
+-- Distrubting Replicator (Server Sided.).
+local HANDLE_GIVE_USER_REPLICATOR = function(Player)
+	if Player:GetAttribute(`{_PseudoIdentificationAttrServerName}_replicator`) == true then
+		return nil
+	end
+	Player:SetAttribute(`{_PseudoIdentificationAttrServerName}_replicator`, true)
+	local Replicator = ReplicatorScript:Clone()
+	Replicator.Parent = Player:WaitForChild("PlayerGui")
+end
+local GIVE_USERS_REPLICATOR = function()
+	local _exp = Players:GetPlayers()
+	-- ▼ ReadonlyArray.forEach ▼
+	local _callback = function(Player)
+		HANDLE_GIVE_USER_REPLICATOR(Player)
+	end
+	for _k, _v in _exp do
+		_callback(_v, _k - 1, _exp)
+	end
+	-- ▲ ReadonlyArray.forEach ▲
+end
+if RunService:IsServer() and GetIsInReplicationEnvironment() then
+	Players.PlayerAdded:Connect(function(Player)
+		HANDLE_GIVE_USER_REPLICATOR(Player)
+		--[[
+			
+					if (SERVER_REPLICATED_PSEUDOS_COUNT > 0) {
+						HANDLE_GIVE_USER_REPLICATOR(Player);
+					}
+					
+		]]
+	end)
+	GIVE_USERS_REPLICATOR()
+end
+-- let SERVER_REPLICATED_PSEUDOS_COUNT = 0;
+-- eslint-disable roblox-ts/no-private-identifier 
+-- import { Shared } from "../../internal/shared/Shared";
+-- import { AssignAttributeValue } from "../../internal/functions/AssignAttributeValue";
+-- import { CalluseEffectServant, tryUseEffectCleanup } from "../../internal/functions/CalluseEffectServant";
+-- import { MapObjectDependencies } from "../../internal/functions/MapObjectDependencies";
+-- import { create__index } from "../../internal/metamethods/__index";
+-- import { create__newindex } from "../../internal/metamethods/__newindex";
+-- import { CreatePseudoClientReplicator } from "../../internal/proxy-create/CreatePseudoClientReplicator";
+-- import { PseudoReplicator } from "../Replication/PseudoReplicator";
+-- import { CreatePseudoReplicator } from "../../internal/proxy-create/CreatePseudoReplicator";
+-- import { PseudoNextConstructor } from "./PseudoNext";
+-- export enum StrictProperty {
+-- 	none,
+-- 	index,
+-- 	newindex,
+-- 	all,
+-- }
+-- const DEPS_STRING_ID_SEPERATOR = Shared.DEPS_STRING_ID_SEPERATOR;
+-- /**
+--  * The name of the Attribute that will be used to identify Pseudo's.
+--  */
+--
+-- const _NON_DEV_APPROPRIATE_KEYS = ["set", "get", "has", "size", "__id"];
+-- /**
+--  * Prevents setting reserved _dev keys.
+--  */
+-- const MUST_BE_DEV_APPROPRIATE = (key: unknown) => {
+-- 	if (typeIs(key, "string")) {
+-- 		if (_NON_DEV_APPROPRIATE_KEYS.indexOf(key) !== -1) {
+-- 			error(`You cannot use the index key "${key}" when assigning to _dev. This key is reserved.`);
+-- 		}
+-- 	}
+-- };
+--useMapping types
+-- type useMapping_mapsdeps = Instance | Pseudo | object;
+-- //usePropertyEffect types
+-- export type _usePropertyEffectMap = Map<string, useEffectServant[]>;
+-- export type _usePropertyEffectQuickSearchMap = Map<string, number>;
+-- /**
+--  * @param usePropertyEffectExecutingServant is a Servant that is created for every useEffect call, this Servant is automatically Destroy'd when the callback
+--  * cleanup is called. It should be used to keep any items that your useEffect created to verify that they're properly cleaned up even if the cleanup function isn't
+--  * called ( Sometimes a cleanup function may not be called if the property changes before the effect finishes executing and the returned function was not met, this can happen
+--  * in cases where there's yielding code in your useEffect callback. )
+--  */
+-- // export type usePropertyEffectCallback = (usePropertyEffectExecutingServant: Servant) => usePropertyEffectCleanup; // executing servant param was removed.
+-- export type usePropertyEffectCallback = () => usePropertyEffectCleanup;
+-- export type useEffectServant = Servant & {
+-- 	_dev: {
+-- 		___ue: {
+-- 			cb: usePropertyEffectCallback;
+-- 			cleanup?: usePropertyEffectCleanup;
+-- 			cbid: number;
+-- 			// executingServants?: Record<string, Servant>;
+-- 		};
+-- 	};
+-- };
+-- function CreateuseEffectServant(): useEffectServant {
+-- 	const Servant = CreateServant();
+-- 	Servant.Name = `useEffectServant`;
+-- 	Servant._dev.___ue = {};
+-- 	return Servant as unknown as useEffectServant;
+-- }
+-- export interface Pseudo {
+-- 	/**
+-- 	 * Gets the currently assigned properties of the `pseudo` (including nils)
+-- 	 *
+-- 	 * @param excludeKeys Will not include the given keys, think of it as a blacklist filter.
+-- 	 * @param IncludeHiddenProps Hidden props are considered properties that begin with `_`
+-- 	 * @param IncludeFunctions Both methods and callbacks are considered functions. (NOTE: functions by classes that inherit pseudo cannot be read, only `Pseudo` functions will exist. )
+-- 	 * @param IncludeSignals Will include RBXScriptSignals and some third party library signals, if item has a ClassName of `Signal` | `RBXScriptSignal` it will be considered a signal.
+-- 	 * @param AsDictionary Returns the objects as a dictionary with their values.
+-- 	 */
+-- 	_getCurrentProperties: (
+-- 		excludeKeys?: unknown[],
+-- 		IncludeHiddenProps?: boolean,
+-- 		IncludeFunctions?: boolean,
+-- 		IncludeSignals?: boolean,
+-- 		AsDictionary?: boolean,
+-- 	) => [];
+-- 	// { [P in string]: T }
+-- }
+-- type PseudoDevDefs<T extends object | unknown> = {
+--[[
+	*
+	 * Core class of pseudo objects.
+	 *
+	 * -
+	 * NOTE: If your class has possible `undefined` values, Make sure to initialize those values with `undefined` so
+	 * Pseudo can capture them.
+	 * If you fail to make Pseudo capture undefined values, whenever you try to index these values you
+	 * will get an error.
+	 *
+	 *```ts
+	 * class MyClass = {
+	 * 	DemonstrationNil: number | undefined = undefined; //will be captured.
+	 * 	DemonstrationNil2: number | undefined; //will not be captured.
+	 * }
+	 *```
+	 * -
+	 * NOTE: If you want your Pseudo's `ReferenceInstance` to be parented, you must add (you might want to include `Name` aswell):
+	 *
+	 * ```ts
+	 * class MyClass extends Pseudo {
+	 * 	constructor(){
+	 * 		super("MyClass");
+	 * 		useMapping(["Parent"], [this.GetRef()])
+	 * 	}
+	 * }
+	 * ```
+	 
+]]
+-- type StatefulPseudo<T extends Pseudo<any>> = {
+-- 	[K in keyof T]: T[K] extends Callback
+-- 		? T[K]
+-- 		: T[K] extends Signal | RBXScriptConnection
+-- 			? T[K]
+-- 			: T[K] extends State
+-- 				? never
+-- 				: K extends "_dev"
+-- 					? T[K]
+-- 					: State<boolean>;
+-- };
+--[[
+	*
+	 * TODO: usePropertyEffectWrap doesn't get cleanedup!
+	 * Core if PowerHorseEngine "Pseudo" components
+	 *
+	 * Some stuff to note:
+	 * * If a Pseudo has a property that will initially be undefined, you need to make it "undefined" so rbxts compiles it.
+	 * * For undefined properties directly in the Pseudo Class like "Parent" ( Not Properties that will be inherited ), We need to manually call
+	 * the __newindex method on it initially since the Pseudo will not know the property exists and will be considered not a member when attempting to index.
+	 *
+	 
+]]
+-- type foo = AsStateSupport<InstanceType<typeof State>>;
+-- export interface Pseudo extends AsStateSupport<Pseudo> {}
+-- export class Pseudo<T extends object | unknown = unknown, _REF extends Instance = Folder> {
+-- 	/**
+-- 	 * This method is only intended for typescript use. It does nothing but convert `this` to support State properties.
+-- 	 */
+-- 	public ToStatefulPseudo(): this | StatefulPseudo<this> {
+-- 		return this as never;
+-- 	}
+-- public $client:
+-- 	| ((
+-- 			initializedServant: Servant,
+-- 			PseudoClientReplicator: PHe.Pseudos["PseudoClientReplicator"],
+-- 	  ) => (() => void) | void)
+-- 	| undefined;
+-- public $server:
+-- 	| ((
+-- 			initializedServant: Servant,
+-- 			PseudoClientReplicator: PHe.Pseudos["PseudoClientReplicator"],
+-- 	  ) => (() => void) | void)
+-- 	| undefined;
+-- 	public _destroyed = false;
+-- 	public _G = PSEUDO_G;
+-- 	public warn(...args: unknown[]) {
+-- 		return warnp(...args);
+-- 	}
+-- 	public log(...args: unknown[]) {
+-- 		return logp(...args);
+-- 	}
+-- 	public error(err: unknown, level?: number) {
+-- 		return errorp(err, level);
+-- 	}
+-- 	public assert(condition: unknown, err?: unknown): asserts condition {
+-- 		return assertp(condition, err);
+-- 	}
+-- 	public Replicator!: PseudoReplicator;
+-- 	private _ReplicationEnabled: { filter: string[]; filterType: Enum.RaycastFilterType } | boolean = false;
+-- 	public _useReplicationSerializer: any | undefined = undefined;
+-- public EnableReplication(
+-- 	Serializer?: UnknownArray,
+-- 	filter?: string[],
+-- 	filterType: Enum.RaycastFilterType = Enum.RaycastFilterType.Exclude,
+-- ) {
+-- 		if (RunService.IsClient()) {
+-- 			return;
+-- 		}
+-- 		if (this._ReplicationEnabled) {
+-- 			throw `Replication for ${this} was already enabled! You can only call EnableReplication once on a Pseudo. Make sure an inherited class isn't calling this methid`;
+-- 		}
+-- 		if (Serializer) {
+-- 			this._useReplicationSerializer = Serializer;
+-- 			this._dev.set("_internal_useSerializer", Serializer as never);
+-- 		}
+-- 		if (filter) {
+-- 			this._ReplicationEnabled = {
+-- 				filter,
+-- 				filterType,
+-- 			};
+-- 		} else {
+-- 			this._ReplicationEnabled = true;
+-- 		}
+-- 		this.Replicator = CreatePseudoReplicator();
+-- 		/*
+-- 		const [s,r] = pcall(() => {
+-- 			if(this.$client && this.$server) {} // To get any missing methods
+-- 		});
+-- 		if(!s){
+-- 			warn(`Your "$client" and "$server" methods may not exist "${this}". ${r}`);
+-- 		}
+-- 		*/
+-- 		const ServerRepServant = CreateServant();
+-- 		this._dev.set("_internal_replication_servant", ServerRepServant as never);
+-- 		/* Replicator client side is given to every player on start by server / when the connector
+-- 		if (SERVER_REPLICATED_PSEUDOS_COUNT === 0) {
+-- 			GIVE_USERS_REPLICATOR();
+-- 		}
+-- 		SERVER_REPLICATED_PSEUDOS_COUNT += 1;
+-- 		*/
+-- 		const _handle_server = (serverCB?: Callback) => {
+-- 			const cb = (serverCB || this.$server!)(
+-- 				ServerRepServant,
+-- 				ServerRepServant.Keep(CreatePseudoClientReplicator(this as unknown as Pseudo))[0],
+-- 			);
+-- 			if (typeIs(cb, "function")) {
+-- 				ServerRepServant.useDestroying(() => {
+-- 					cb();
+-- 				});
+-- 			}
+-- 		};
+-- 		const __servers = (this as unknown as UnknownArray)["__$servers"];
+-- 		if (__servers) {
+-- 			for (const [_, serverCB] of pairs(__servers)) {
+-- 				if (serverCB === this["$server"]) {
+-- 					continue;
+-- 				}
+-- 				_handle_server(serverCB as Callback);
+-- 			}
+-- 			delete (this as unknown as UnknownArray)["__$servers"];
+-- 		}
+-- 		_handle_server();
+-- 		this.usePropertyRender(() => {
+-- 			_handle_server();
+-- 		}, ["$server"]);
+-- 	}
+-- 	/**
+-- 	 * Creates a servant for this `Pseudo`, it will automatically have the Servant `Keep` the Pseudo.
+-- 	 *
+-- 	 * use `CreateServantAsync` to Create a servant that isn't binded to this `Pseudo`.
+-- 	 */
+-- 	public ServantifyAsync(): Servant {
+-- 		let _internal___servantifyEntry = this._dev.get("_internal___servantifyEntry") as Servant;
+-- 		if (!_internal___servantifyEntry) {
+-- 			const Serv = this.CreateServantAsync();
+-- 			Serv.Keep(this);
+-- 			_internal___servantifyEntry = Serv;
+-- 		}
+-- 		return _internal___servantifyEntry;
+-- 	}
+-- 	public CreateServantAsync(): Servant {
+-- 		return CreateServant();
+-- 	}
+-- 	/**
+-- 	 * A unique container where items about the pseudo should be stored. Anything within this container will be destroyed/cleaned up
+-- 	 * whenever the pseudo is destroyed. (Good for storing Servants,Maids,etc.)
+-- 	 */
+-- 	public _dev: PseudoDevDefs & T = {
+-- 		has: (targetItem) => {
+-- 			const _dev = this._dev as UnknownArray;
+-- 			if (_dev[targetItem as string] !== undefined) {
+-- 				return true;
+-- 			}
+-- 			return false;
+-- 		},
+-- 		set: (targetItem, targetValue) => {
+-- 			MUST_BE_DEV_APPROPRIATE(targetItem);
+-- 			const _dev = this._dev as UnknownArray;
+-- 			_dev[targetItem as string] = targetValue;
+-- 		},
+-- 		assign: (k, v) => {
+-- 			return this._dev.set(k as never, v as never);
+-- 		},
+-- 		get: (targetItem) => {
+-- 			const _dev = this._dev as UnknownArray;
+-- 			return _dev[targetItem as string];
+-- 		},
+-- 		size: () => {
+-- 			const _dev = this._dev as UnknownArray;
+-- 			let s = 0;
+-- 			for (const [k] of pairs(_dev)) {
+-- 				if (typeIs(k, "string") && _NON_DEV_APPROPRIATE_KEYS.indexOf(k as string) === -1) {
+-- 					s++;
+-- 				}
+-- 			}
+-- 			return s;
+-- 		},
+-- 		insert: (item: unknown) => {
+-- 			const _dev = this._dev as unknown as defined[];
+-- 			_dev.push(item as defined);
+-- 		},
+-- 	} as PseudoDevDefs & T;
+-- 	/**
+-- 	 * A list of inherited classnames
+-- 	 */
+-- 	public _classNames!: string[];
+-- 	/**
+-- 	 * The name of the pseudo
+-- 	 */
+-- 	public Name = "Pseudo";
+-- /**
+--  * The parent of the pseudo object
+--  */
+-- 	public Parent: Instance | Pseudo | undefined = undefined;
+-- 	/**
+-- 	 * The unique id of the pseudo
+-- 	 */
+-- 	public _id!: string;
+-- 	/**
+-- 	 * Fired when the Pseudo is being destroyed.
+-- 	 */
+-- 	public Destroying!: Signal; // Created only when __index
+-- 	public PrePropertyChanged!: Signal<(Key: unknown, Value: unknown) => void>; // Created only when __index (internal usage. fired before the property value is assigned.)
+-- 	public PropertyChanged!: Signal<(Key: unknown, Value: unknown) => void>; // Created only when __index
+-- 	/**
+-- 	 * You should be careful when using this method as it will create the signal even if the property does not exist.
+-- 	 */
+-- 	public GetPropertyChangedSignal(PropertyName: string): Signal {
+-- 		if (this.ClassName === "InstanceMap") {
+-- 			// For instance maps, we return the actual property of the ref.
+-- 			return this.GetRef().GetPropertyChangedSignal(PropertyName as never) as unknown as Signal;
+-- 		}
+-- 		return this.GetSignal(`_internal_propertychanged_${PropertyName}`);
+-- 	}
+-- 	/**
+-- 	 * How "deep" .Destroy will go to cleanup _dev (per array). (_dev doesn't contribute to total)
+-- 	 */
+-- 	protected _devCleanupTraverseDepth = 3;
+-- 	private _create_signal_entries!: { [key: string]: boolean };
+-- 	/**
+-- 	 * Creates the signal only when it is required. Use `GetSignal` if you wish to create the signal.
+-- 	 */
+-- 	public CreateSignal(...Signals: string[]): void {
+-- 		Signals.forEach((SignalName) => {
+-- 			this._create_signal_entries[SignalName] = true;
+-- 		});
+-- 	}
+-- 	/**
+-- 	 * Creates the signal if it doesn't exist
+-- 	 */
+-- 	public GetSignal<T extends Callback>(SignalName: string): Signal<T> {
+-- 		this.CreateSignal(SignalName);
+-- 		return (this as unknown as UnknownArray)[SignalName] as Signal<T>;
+-- 	}
+-- 	/**
+-- 	 * @private
+-- 	 *
+-- 	 * This _referenceInstance is only created when referenced with `GetRef`
+-- 	 */
+-- 	public _referenceInstance: Instance | undefined = undefined;
+-- 	protected useAssignReadonlyProperty(Property: string, Value: unknown) {
+-- 		this.useSetNewIndexAssignment(Property, Value, false, false);
+-- 	}
+-- 	/**
+-- 	 * Checks if the class inherits another class
+-- 	 */
+-- 	public IsA<T extends keyof PHe.Pseudos>(this: Pseudo, ClassName: T): this is PHe.Pseudos[T] {
+-- 		if (ClassName === "Pseudo") {
+-- 			return true;
+-- 		}
+-- 		if (this.ClassName === ClassName) {
+-- 			return true;
+-- 		}
+-- 		if (!this._classNames) {
+-- 			return false;
+-- 		}
+-- 		if (this._classNames.indexOf(ClassName) !== -1) {
+-- 			return true;
+-- 		}
+-- 		return false;
+-- 	}
+-- 	/**
+-- 	 * Converts dependencies into a singular string.
+-- 	 */
+-- 	private _GetDependencyArrayStringId(dependencies?: unknown, ignoreDepErrors?: boolean): string {
+-- 		if (dependencies === undefined) {
+-- 			return "*";
+-- 		}
+-- 		if (typeIs(dependencies, "table")) {
+-- 			const deps = dependencies as [];
+-- 			if (deps.size() === 0) {
+-- 				return ".";
+-- 			} else {
+-- 				return "~";
+-- 				/*
+-- 				let str = "";
+-- 				deps.forEach((dep) => {
+-- 					const [s, r] = pcall(() => {
+-- 						return (this as unknown as UnknownArray)[dep];
+-- 					});
+-- 					if (s === false && !ignoreDepErrors) {
+-- 						throw `Failed to _GetDependencyArrayStringId() due to dependency "${dep}". ERROR: ${r}`;
+-- 					}
+-- 					str += DEPS_STRING_ID_SEPERATOR + dep;
+-- 				});
+-- 				return str;
+-- 				*/
+-- 			}
+-- 		}
+-- 		throw `You may have accidentally passed an incorrect param to your use__Effect, the _GetDependencyArrayStringId() expected a table or "*", but instead got ${dependencies}`;
+-- 	}
+-- 	private _useIndexQueries!: Callback[];
+-- 	public useIndexQuery(
+-- 		callback: (
+-- 			key: unknown,
+-- 			currentValue: unknown,
+-- 			updateValue: (newValue: unknown, doNotUpdatePseudo?: boolean) => void,
+-- 			_this: object,
+-- 		) => unknown,
+-- 	): Servant {
+-- 		const QueryServant = CreateServant();
+-- 		const uid = `_useIndexQueryServant:${QueryServant._id}`;
+-- 		this._dev.set(uid, QueryServant as never);
+-- 		QueryServant.useDestroying(() => {
+-- 			const x = this._dev[uid] as PHe.Pseudos["Servant"];
+-- 			if (x) {
+-- 				x.Destroy();
+-- 			}
+-- 			delete this._dev[uid];
+-- 			for (let index = 0; index < this._useIndexQueries.size(); index++) {
+-- 				const element = this._useIndexQueries[index];
+-- 				if (element === callback) {
+-- 					this._useIndexQueries.remove(index);
+-- 					break;
+-- 				}
+-- 			}
+-- 		});
+-- 		this._useIndexQueries.push(callback);
+-- 		return QueryServant;
+-- 	}
+-- 	/**
+-- 	 * Run a function whenever `Pseudo` is being `Destroyed`
+-- 	 *
+-- 	 * It is recommended to use the .Destroying event over this method as it is slower.
+-- 	 *
+-- 	 * @resturns Sevant
+-- 	 */
+-- 	public useDestroying(callback: Callback): Servant {
+-- 		const s = CreateServant();
+-- 		if (this._destroyed) {
+-- 			callback();
+-- 			s.Destroy();
+-- 		} else {
+-- 			s.Keep(
+-- 				this.Destroying.Connect(() => {
+-- 					s.Destroy();
+-- 					callback();
+-- 				}),
+-- 			);
+-- 		}
+-- 		return s;
+-- 	}
+-- 	/**
+-- 	 * @param excludeKeys When using "*", You can exclude keys that will be retrieved with the `_getCurrentProperties`. excluding a key will not prevent
+-- 	 * the key from triggering the map, however it will be excluded in assignment. (Don't forget to exclude "ClassName" if you're mapping to a readonly ClassName Instance property.)
+-- 	 *
+-- 	 * @param IncludeHiddenProps When using "*", You can include hidden props for `_getCurrentProperties`. Hidden props are properties that begin with an `underscore`(_)
+-- 	 */
+-- 	useMappingEffect(
+-- 		props: "*",
+-- 		dependencies: useMapping_mapsdeps,
+-- 		excludeKeys?: unknown[],
+-- 		IncludeHiddenProps?: boolean,
+-- 	): Servant;
+-- 	useMappingEffect(props: string[], dependencies: useMapping_mapsdeps): Servant;
+-- 	useMappingEffect(props: { [key: string]: string }[], dependencies: useMapping_mapsdeps): Servant;
+-- 	useMappingEffect(props: Record<string, string>, dependencies: useMapping_mapsdeps): Servant;
+-- 	/**
+-- 	 * This does exactly what `useMapping` does, but carries it out differently by using the `usePropertyEffect` method, which provides
+-- 	 * a `Servant`. Meaning you can "disconnect" from this `useMapping`.
+-- 	 * Also, unlike normal `useMapping`, you can pass custom properties like so:
+-- 	 * ```ts
+-- 	 * useMappingEffect({MyCustomPositionProperty: "Position", MyCustomPositionProperty2: "Position2"}, [ObjectWithPositionProperty]) // Good
+-- 	 * // ^^^ Is not possible in normal useMapping, Note that the props is a dictionary, not an array. (Preferred method.)
+-- 	 * ```
+-- 	 * or so:
+-- 	 * ```ts
+-- 	 * useMappingEffect([ {MyCustomPositionProperty: "Position"} , {MyCustomPositionProperty2: "Position2"} ], [ObjectWithPositionProperty]) // Good
+-- 	 * // ^^^ Similar to normal useMapping. (Not preferred, this only exists to support the old useMapping behaviour.)
+-- 	 *
+-- 	 * By default, "ClassName" is excluded when props is "*" and no excludeKeys is defined.
+-- 	 * ```
+-- 	 */
+-- 	public useMappingEffect(
+-- 		props: (string | { [key: string]: string })[] | Record<string, string> | "*",
+-- 		dependencies: useMapping_mapsdeps[],
+-- 		excludeKeys?: unknown[],
+-- 		IncludeHiddenProps?: boolean,
+-- 	): Servant {
+-- 		if (props === "*") {
+-- 			return this.useEffect(() => {
+-- 				this._getCurrentProperties(excludeKeys, IncludeHiddenProps).forEach((prop) => {
+-- 					if (prop === "ClassName" && !excludeKeys) {
+-- 						return;
+-- 					}
+-- 					dependencies.forEach((dep) => {
+-- 						if (dep === this) {
+-- 							print(this);
+-- 							throw "^^^ You may have unexpectedly attempt to useMappingEffect* recursively";
+-- 						}
+-- 						const [s, r] = pcall(() => {
+-- 							const tdep = dep as unknown as UnknownArray;
+-- 							// const tprop = prop as string;
+-- 							const tthis = this as unknown as UnknownArray;
+-- 							//this checks to make sure that the property is valid existing members of the dep.
+-- 							const _ = tdep[prop];
+-- 							//this will assign the value but will trigger an __index on pseudo to make sure prop is a valid existing member of this.
+-- 							tdep[prop] = tthis[prop];
+-- 						});
+-- 						if (s === false) {
+-- 							print(this, dep);
+-- 							warnp(
+-- 								`^^^^\nFailed to map property* "${prop}" to dependency ${dep} from Pseudo ${this}.\n\n${r}`,
+-- 							);
+-- 						}
+-- 					});
+-- 				});
+-- 			});
+-- 		}
+-- 		const _t: Record<string, string> = {};
+-- 		for (const [a, b] of pairs(props)) {
+-- 			//eslint-disable-line
+-- 			if (typeIs(b, "string")) {
+-- 				// ["Property"] || {MyProperty: "Property"}
+-- 				const k = typeIs(a, "number") ? b : a;
+-- 				_t[k] = b;
+-- 			} else if (typeIs(b, "table")) {
+-- 				for (const [aa, bb] of pairs(b)) {
+-- 					_t[aa as string] = bb as string;
+-- 				}
+-- 			} else {
+-- 				throw "Unknown mapping behaviour passed. Expected an Array of strings, a Record of strings or an Array of Records of strings";
+-- 				// unknown map.
+-- 			}
+-- 		}
+-- 		const _keys: string[] = [];
+-- 		for (const [k] of pairs(_t)) {
+-- 			_keys.push(k);
+-- 		}
+-- 		return this.useEffect(() => {
+-- 			_keys.forEach((key) => {
+-- 				const targetMappedToKey = _t[key];
+-- 				dependencies.forEach((dep) => {
+-- 					if (dep === this) {
+-- 						print(this);
+-- 						throw "^^^ You may have unexpectedly attempt to useMappingEffect recursively";
+-- 					}
+-- 					const [s, r] = pcall(() => {
+-- 						const tdep = dep as unknown as UnknownArray;
+-- 						// const tprop = prop as string;
+-- 						const tthis = this as unknown as UnknownArray;
+-- 						//this checks to make sure that the property is valid existing members of the dep.
+-- 						const _ = tdep[targetMappedToKey];
+-- 						//this will assign the value but will trigger an __index on pseudo to make sure prop is a valid existing member of this.
+-- 						tdep[targetMappedToKey] = tthis[key];
+-- 					});
+-- 					if (s === false) {
+-- 						print(this, dep);
+-- 						warnp(
+-- 							`^^^^\nFailed to map property "${key}" to dependency ${dep} as "${targetMappedToKey}" from Pseudo ${this}.\n\n${r}`,
+-- 						);
+-- 					}
+-- 				});
+-- 			});
+-- 		}, _keys);
+-- 	}
+-- 	/**
+-- 	 * @deprecated Use `useMappingEffect` instead.
+-- 	 *
+-- 	 * For automatically passing properties of `Pseudo` to an `Instance` or another `Pseudo`, Most likely the `Reference Instance`.
+-- 	 *
+-- 	 * You can also pass `"*"` as props so every viable property is mapped to dependencies.
+-- 	 * We recommend using the `._getCurrentProperties` function of `Pseudo`'s to explicitly define what properties to map.
+-- 	 *
+-- 	 * @todo Improve performance, useMapping might not be very performant is large mapping scenarios.
+-- 	 *
+-- 	 * @example
+-- 	 * useMapping(["Position"], [ObjectWithPositionProperty]) //Whenever "Position" is changed on pseudo, ObjectWithPositionProperty will receive that change.
+-- 	 *
+-- 	 * useMapping can map from custom properties aswell.
+-- 	 * @example
+-- 	 * useMapping([{MyCustomPositionProperty: "Position"}], [ObjectWithPositionProperty]) //Whenever "MyCustomPositionProperty" is changed on pseudo, ObjectWithPositionProperty will receive change to its "Position" property
+-- 	 * //Only a single map in this object will be caught, each map should be seperated as dependencies and not listed under a single object
+-- 	 * useMapping([ {MyCustomPositionProperty: "Position"} , {MyCustomPositionProperty2: "Position2"} ], [ObjectWithPositionProperty]) //Good
+-- 	 * useMapping([ {MyCustomPositionProperty: "Position", MyCustomPositionProperty2: "Position2"} ], [ObjectWithPositionProperty]) //Bad (will on work for one.)
+-- 	 */
+-- 	public useMapping(props: (string | { [key: string]: string })[] | "*", dependencies: useMapping_mapsdeps[]) {
+-- 		assert(
+-- 			typeIs(props, "table") || (typeIs(props, "string") && props === "*"),
+-- 			`got ${typeOf(props)} as useMapping props, expected table or '*'`,
+-- 		);
+-- 		assert(typeIs(dependencies, "table"), `got ${typeOf(dependencies)} as useMapping dependencies, expected table`);
+-- 		if (this._dev.get("_useMapping_maps") === undefined) {
+-- 			this._dev.assign("_useMapping_maps", new Map());
+-- 		}
+-- 		const _useMapping_maps = this._dev.get("_useMapping_maps") as Map<string, useMapping_mapsdeps[]>;
+-- 		if (props === "*") {
+-- 			let global = _useMapping_maps.get("*");
+-- 			if (global === undefined) {
+-- 				_useMapping_maps.set("*", []);
+-- 				global = _useMapping_maps.get("*");
+-- 			}
+-- 			const nt = [...global!, ...(dependencies as [])];
+-- 			_useMapping_maps.set("*", nt);
+-- 			return;
+-- 		}
+-- 		const propsPassed: string[] = [];
+-- 		props.forEach((prop, index) => {
+-- 			if (typeIs(prop, "string")) {
+-- 				if (propsPassed.find((e) => e === prop) !== undefined) {
+-- 					warnp(`Duplicate prop passed for useMapping(), "${prop}". Will skip duplication.`);
+-- 					return;
+-- 				}
+-- 				let t = _useMapping_maps.get(prop);
+-- 				if (t === undefined) {
+-- 					_useMapping_maps.set(prop, []);
+-- 					t = _useMapping_maps.get(prop);
+-- 				}
+-- 				const nt = [...t!, ...(dependencies as [])];
+-- 				_useMapping_maps.set(prop, nt);
+-- 				propsPassed.push(prop);
+-- 			} else if (typeIs(prop, "table")) {
+-- 				for (const [MyPropertyName, MapToPropertyName] of pairs(prop)) {
+-- 					assert(
+-- 						typeIs(MyPropertyName, "string"),
+-- 						`Could build map for property ${this.Name} as it was expected to be a string, but got ${typeOf(
+-- 							MyPropertyName,
+-- 						)}`,
+-- 					);
+-- 					assert(
+-- 						typeIs(MapToPropertyName, "string"),
+-- 						`Could build map for property ${MyPropertyName} as the property it is mapping to was expected to be a string, but got ${typeOf(
+-- 							MapToPropertyName,
+-- 						)}`,
+-- 					);
+-- 					const TargetName = MyPropertyName + DEPS_STRING_ID_SEPERATOR + MapToPropertyName;
+-- 					let t = _useMapping_maps.get(TargetName);
+-- 					if (t === undefined) {
+-- 						_useMapping_maps.set(TargetName, []);
+-- 						t = _useMapping_maps.get(TargetName);
+-- 					}
+-- 					const nt = [...t!, ...(dependencies as [])];
+-- 					_useMapping_maps.set(TargetName, nt);
+-- 					props[index] = TargetName;
+-- 					break;
+-- 				}
+-- 			} else {
+-- 				throw `Unexpected property, expected string or table, got ${typeOf(prop)}`;
+-- 			}
+-- 		});
+-- 		MapObjectDependencies(this, props, dependencies);
+-- 	}
+-- 	/**
+-- 	 * @deprecated `usePropertyEffect` supports this feature by default.
+-- 	 *
+-- 	 * Wraps the `usePropertyRender` in a coroutine.
+-- 	 *
+-- 	 * @todo Only a single coroutine should be spawned for each usePropertyRenderWrap callback instead of the current behaviour
+-- 	 * of all callbacks having their own threads.
+-- 	 */
+-- 	public usePropertyRenderWrap(callback: usePropertyEffectCallback, dependencies?: string[]): PHe.Pseudos["Servant"] {
+-- 		warnp("`usePropertyRenderWrap` is deprecated, switch to using `usePropertyRender` instead.");
+-- 		return this.usePropertyRender(callback, dependencies);
+-- 	}
+-- 	/**
+-- 	 * Wraps `usePropertyEffect` but only triggers callback after the initial render.
+-- 	 *
+-- 	 * @remarks
+-- 	 *
+-- 	 * This should not be used in cases where it is ran under a condition, it should only be called at top level where the it's called with the initial
+-- 	 * render of the component.
+-- 	 */
+-- 	public usePropertyRender(callback: usePropertyEffectCallback, dependencies?: string[]): PHe.Pseudos["Servant"] {
+-- 		return this.useNextEffect(callback, dependencies);
+-- 	}
+-- 	/**
+-- 	 * @deprecated `usePropertyEffect` supports this feature by default.
+-- 	 *
+-- 	 * Wraps the `usePropertyEffect` in a coroutine.
+-- 	 *
+-- 	 * @todo Only a single coroutine should be spawned for each usePropertyEffectWrap callback instead of the current behaviour
+-- 	 * of all callbacks having their own threads.
+-- 	 */
+-- 	public usePropertyEffectWrap(callback: usePropertyEffectCallback, dependencies?: string[]): PHe.Pseudos["Servant"] {
+-- 		warnp("`usePropertyEffectWrap` is deprecated, switch to using `usePropertyEffect` instead.");
+-- 		return this.usePropertyEffect(callback, dependencies);
+-- 	}
+-- 	public useExpectEffects(callback: usePropertyEffectCallback, dependencies: Servant[]): Servant {
+-- 		return this.useExpectPropertyEffects(callback, dependencies);
+-- 	}
+-- 	public useExpectPropertyEffects(callback: usePropertyEffectCallback, dependencies: Servant[]): Servant {
+-- 		const s = CreateServant();
+-- 		(s as unknown as UnknownArray)._internal_usePropertyEffects_updateValue = undefined;
+-- 		s.Keep(s.useExpectPropertyEffect(callback, ["_internal_usePropertyEffects_updateValue"]));
+-- 		dependencies.forEach((_servant) => {
+-- 			let oldcb = (_servant._dev.___ue as UnknownArray).cb as Callback;
+-- 			(_servant._dev.___ue as UnknownArray).cb = (...args: unknown[]) => {
+-- 				s.useSetNewIndexAssignment("_internal_usePropertyEffects_updateValue", "_", true);
+-- 				if (oldcb) {
+-- 					oldcb(...args);
+-- 				}
+-- 				return () => {
+-- 					s.useSetNewIndexAssignment("_internal_usePropertyEffects_updateValue", undefined, true);
+-- 				};
+-- 			};
+-- 		});
+-- 		return s;
+-- 	}
+-- 	public useExpectEffect(dependencies?: string[]): Servant;
+-- 	public useExpectEffect(callback?: usePropertyEffectCallback, dependencies?: string[]): Servant;
+-- 	public useExpectEffect(
+-- 		callback?: usePropertyEffectCallback | string[],
+-- 		dependencies?: string[] | boolean,
+-- 	): Servant {
+-- 		if (typeIs(callback, "function")) {
+-- 			return this.useExpectPropertyEffect(callback, dependencies as string[]);
+-- 		} else {
+-- 			return this.useExpectPropertyEffect(undefined, callback);
+-- 		}
+-- 	}
+-- 	/**
+-- 	 * This method will ignore dep errors and only call the usePropertyEffect callback when the dependencies aren't `nil` / `undefined`!
+-- 	 */
+-- 	public useExpectPropertyEffect(
+-- 		callback?: usePropertyEffectCallback,
+-- 		dependencies?: string[],
+-- 	): PHe.Pseudos["Servant"] {
+-- 		if (!dependencies) {
+-- 			return this.usePropertyEffect(callback, dependencies);
+-- 		}
+-- 		return this.usePropertyEffect(
+-- 			(...args) => {
+-- 				let total = 0;
+-- 				dependencies.forEach((dep) => {
+-- 					pcall(() => {
+-- 						if ((this as unknown as UnknownArray)[dep] !== undefined) {
+-- 							total += 1;
+-- 						}
+-- 					});
+-- 				});
+-- 				if (total >= dependencies.size()) {
+-- 					if (callback) {
+-- 						return callback(...args);
+-- 					}
+-- 				}
+-- 			},
+-- 			dependencies,
+-- 			true,
+-- 		);
+-- 	}
+-- 	public useEffects(callback: usePropertyEffectCallback, dependencies: Servant[]): Servant {
+-- 		return this.usePropertyEffects(callback, dependencies);
+-- 	}
+-- 	public usePropertyEffects(callback: usePropertyEffectCallback, dependencies: Servant[]): Servant {
+-- 		const s = CreateServant();
+-- 		(s as unknown as UnknownArray)._internal_usePropertyEffects_updateValue = "_";
+-- 		s.Keep(s.usePropertyEffect(callback, ["_internal_usePropertyEffects_updateValue"]));
+-- 		dependencies.forEach((_servant) => {
+-- 			let oldcb = (_servant._dev.___ue as UnknownArray).cb as Callback;
+-- 			(_servant._dev.___ue as UnknownArray).cb = () => {
+-- 				s.useSetNewIndexAssignment("_internal_usePropertyEffects_updateValue", "_", true);
+-- 				if (oldcb) {
+-- 					oldcb();
+-- 				}
+-- 			};
+-- 		});
+-- 		return s;
+-- 	}
+-- 	public ObserveNext(
+-- 		Callback: ObserveCallback,
+-- 		dependencies?: ObserveDependencies,
+-- 		CallbackQueue: number = 1,
+-- 	): Servant {
+-- 		let _executed = 0;
+-- 		return this.Observe((...args) => {
+-- 			if (_executed >= CallbackQueue) {
+-- 				Callback(...args);
+-- 			}
+-- 			if (_executed < CallbackQueue) {
+-- 				_executed += 1;
+-- 			}
+-- 		}, dependencies);
+-- 	}
+-- 	private _internalCreateObserver(
+-- 		Callback: ObserveCallback | ObserveDependencies,
+-- 		dependencies?: ObserveDependencies,
+-- 		_runInitialImmediately?: boolean,
+-- 	): ObserveListener | Servant {
+-- 		if (true === true) {
+-- 			// return undefined as never;
+-- 		}
+-- 		if (!typeIs(Callback, "function")) {
+-- 			const _x: ObserveListener = {
+-- 				_deps: Callback,
+-- 				_pointer: this,
+-- 			};
+-- 			return _x;
+-- 		}
+-- 		let _cleanup: usePropertyEffectCleanup | undefined;
+-- 		const ObserverServant = CreateServant();
+-- 		const _thisdevinternal = this._dev as UnknownArray;
+-- 		_thisdevinternal._internal_observers = _thisdevinternal._internal_observers ?? [];
+-- 		if ((_thisdevinternal._internal_observers as object[]).indexOf(ObserverServant) === -1) {
+-- 			(_thisdevinternal._internal_observers as object[]).push(ObserverServant);
+-- 		}
+-- 		ObserverServant._dev.set("_internal_pseudo_cleanup_method_servant_cleanup", () => {
+-- 			tryUseEffectCleanup(_cleanup, true);
+-- 			if (!_thisdevinternal || !_thisdevinternal._internal_observers) {
+-- 				return;
+-- 			}
+-- 			(_thisdevinternal._internal_observers as object[]).remove(
+-- 				(_thisdevinternal._internal_observers as object[]).indexOf(ObserverServant),
+-- 			);
+-- 		});
+-- 		let activeCallbackThread: thread | undefined;
+-- 		let RealExecutingObserverServant: Servant | undefined;
+-- 		const getRealExecutingObserverServant = (): UnknownArray => {
+-- 			if (RealExecutingObserverServant !== undefined) {
+-- 				return RealExecutingObserverServant as never;
+-- 			}
+-- 			RealExecutingObserverServant = CreateServant();
+-- 			ObserverServant.Keep(RealExecutingObserverServant);
+-- 			return RealExecutingObserverServant as never;
+-- 		};
+-- 		const ExecutingObserverServantProxy = setmetatable(
+-- 			{},
+-- 			{
+-- 				__index: (_, k) => {
+-- 					return getRealExecutingObserverServant()[k as string];
+-- 				},
+-- 				__newindex: (_, k, v) => {
+-- 					return (getRealExecutingObserverServant()[k as string] = v);
+-- 				},
+-- 				__tostring: () => {
+-- 					return tostring(getRealExecutingObserverServant());
+-- 				},
+-- 			},
+-- 		);
+-- 		let callbackYields = true;
+-- 		let _isInitialCall = true;
+-- 		const INTERNAL_DEBUGTRACEBACK_BEFORE_COROUTINES = debug.traceback();
+-- 		const callCallback = (): void => {
+-- 			if (activeCallbackThread) {
+-- 				/**
+-- 				 * Update: We can safely assume that two render effects were triggered back to back without any yield, in that case we only need
+-- 				 * to render once since the values of the pseudo would've been updated by time the first call ran.
+-- 				 *
+-- 				 * Pseudo.A = true;
+-- 				 * Pseudo.B = true;
+-- 				 * --^^ Causes only one render
+-- 				 *
+-- 				 * Pseudo.A = true;
+-- 				 * task.wait();
+-- 				 * Pseudo.B = true;
+-- 				 * --^^ Renders twice, one for A, then B.
+-- 				 */
+-- 				/** This has become obsolete, Yielding within an Observe is not supported whatsoever. Code remains just in case. 8/18/2024. */
+-- 				// this.error("Yielding code detected.");
+-- 				// let _t = activeCallbackThread;
+-- 				// _cleanup = undefined;
+-- 				// activeCallbackThread = undefined;
+-- 				// task.cancel(_t); // cancel callCallback + activeCallbackThread I presume? Not returning/ cancelling callCallback will prevent the scheduler from closing activeCallbackThread. I presume atleast.
+-- 				// callCallback();
+-- 				return;
+-- 			}
+-- 			let thread: thread | undefined = undefined;
+-- 			const ExecuteThreadFunc = () => {
+-- 				_isInitialCall = false;
+-- 				const cleanup = [Callback(ExecutingObserverServantProxy as Servant)] as LuaTuple<unknown[]>;
+-- 				callbackYields = false;
+-- 				if (activeCallbackThread !== thread) {
+-- 					if (RealExecutingObserverServant) {
+-- 						RealExecutingObserverServant.Destroy();
+-- 						RealExecutingObserverServant = undefined;
+-- 					}
+-- 					tryUseEffectCleanup(cleanup, false, INTERNAL_DEBUGTRACEBACK_BEFORE_COROUTINES);
+-- 					_cleanup = undefined;
+-- 				} else {
+-- 					_cleanup = cleanup;
+-- 					activeCallbackThread = undefined;
+-- 				}
+-- 			};
+-- 			const coroutineThread = coroutine.create(ExecuteThreadFunc);
+-- 			thread = coroutineThread;
+-- 			activeCallbackThread = thread;
+-- 			if (_runInitialImmediately === true && _isInitialCall === true) {
+-- 				// Run "immediately"
+-- 				task.spawn(coroutineThread);
+-- 			} else {
+-- 				// Run at end of call stack.
+-- 				task.defer(coroutineThread);
+-- 			}
+-- 		};
+-- 		callCallback();
+-- 		task.defer(() => {
+-- 			if (callbackYields) {
+-- 				this.error(
+-- 					`You have yielding code within your Observe callback. Any form of yielding, task.wait(), Event:Wait(), etc. Cannot be executed within an Observe callback. You must wrap it in a Promise and/or execute it on a different thread. \n\nStackTrace: ${INTERNAL_DEBUGTRACEBACK_BEFORE_COROUTINES}`,
+-- 				);
+-- 			}
+-- 			callbackYields = true;
+-- 		});
+-- 		if (dependencies && dependencies.size() === 0) {
+-- 			return ObserverServant;
+-- 		}
+-- 		ObserverServant.Keep(
+-- 			this.PrePropertyChanged.Connect((key) => {
+-- 				if (dependencies && dependencies.indexOf(key as string) === -1) {
+-- 					return;
+-- 				}
+-- 				task.spawn(() => {
+-- 					if (RealExecutingObserverServant) {
+-- 						RealExecutingObserverServant.Destroy();
+-- 						RealExecutingObserverServant = undefined;
+-- 					}
+-- 					tryUseEffectCleanup(_cleanup, false, INTERNAL_DEBUGTRACEBACK_BEFORE_COROUTINES);
+-- 					_cleanup = undefined;
+-- 				});
+-- 			}),
+-- 		);
+-- 		ObserverServant.Keep(
+-- 			this.PropertyChanged.Connect((key) => {
+-- 				if (dependencies) {
+-- 					if (dependencies.indexOf(key as string) === -1) {
+-- 						return;
+-- 					}
+-- 					callCallback();
+-- 				} else {
+-- 					// no dependencies, render every change
+-- 					callCallback();
+-- 				}
+-- 			}),
+-- 		);
+-- 		if (dependencies) {
+-- 			dependencies.forEach((dep) => {
+-- 				if (typeIs(dep, "table")) {
+-- 					if (!dep._deps) {
+-- 						return;
+-- 					}
+-- 					// If dependency is a ObserverListener
+-- 					ObserverServant.Keep(dep._pointer.ObserveNext(callCallback, dep._deps));
+-- 				}
+-- 			});
+-- 		}
+-- 		return ObserverServant;
+-- 	}
+-- 	/**
+-- 	 * The initial run will be called immediately on the thread with `task.spawn`. `Observe` executes your initial call
+-- 	 * on the end of the thread with `task.defer`, note that any following calls will execute at the end of the thread.
+-- 	 */
+-- 	public ObserveNow(Callback: ObserveCallback, dependencies?: ObserveDependencies): Servant {
+-- 		// return this.Observe(...args);
+-- 		return this._internalCreateObserver(Callback, dependencies, true) as Servant;
+-- 	}
+-- 	public Observe(dependencies: ObserveDependencies): ObserveListener;
+-- 	public Observe(Callback: ObserveCallback, dependencies?: ObserveDependencies): Servant;
+-- 	/**
+-- 	 * NEW DOCS:
+-- 	 *
+-- 	 * Unlike `usePropertyEffect`, You cannot yield within an Observe callback and also passes a `Servant` argument.
+-- 	 *
+-- 	 * With that Servant, you can then add cleanup logic "per-block" within your code. @see [Servant.Keep]
+-- 	 *
+-- 	 * --- OLD DOCS:
+-- 	 *
+-- 	 * Unlike `useEffect`, Observe will not allow execution of your callback "parallelly". If a previous callback is being executed and the observer
+-- 	 * detected a change during that process, the previous callback will end executing on the next frame, then your callback will be called again.
+-- 	 *
+-- 	 * It is recommended that you use the ObserverServant to Keep anything that should be cleaned up or used ObserverServant:Keep(cleanupFunc) rather
+-- 	 * that using the return function cleanup.
+-- 	 *
+-- 	 * Lifecycle:
+-- 	 * Initiated: defer(Callback)
+-- 	 * Property Change: PrePropertyChange -> spawn(Cleanup) -> PostPropertyChange -> defer(Callback)
+-- 	 * Destroying: Cleanup.
+-- 	 */
+-- 	public Observe(
+-- 		Callback: ObserveCallback | ObserveDependencies,
+-- 		dependencies?: ObserveDependencies,
+-- 	): Servant | ObserveListener {
+-- 		return this._internalCreateObserver(Callback, dependencies);
+-- 	}
+-- 	public useNextEffect(...args: Parameters<Pseudo["ObserveNext"]>): ReturnType<Pseudo["ObserveNext"]> {
+-- 		return this.ObserveNext(...args);
+-- 	}
+-- 	/**
+-- 	 * `useEffect` utilizes `Observe` over `usePropertyEffect` as of 8/18/2024.
+-- 	 */
+-- 	public useEffect(...args: Parameters<Pseudo["Observe"]>): ReturnType<Pseudo["Observe"]> {
+-- 		return this.Observe(...args);
+-- 		// if (typeIs(callback, "function")) {
+-- 		// 	return this.usePropertyEffect(callback, dependencies as string[], ignoreDepErrors);
+-- 		// } else {
+-- 		// 	return this.usePropertyEffect(undefined, callback, dependencies as boolean);
+-- 		// }
+-- 	}
+-- 	private _optimizedTrackEntriesReusableKeypairsEffects: { [key: string]: Servant } = {};
+-- 	public useKeyPairsEffect(
+-- 		callback: (key: unknown, value: unknown) => usePropertyEffectCleanup,
+-- 		dependencies: string[],
+-- 		trackEntries: boolean = false,
+-- 	): Servant {
+-- 		const mainDep = dependencies[0];
+-- 		const thisUnknown = this as unknown as UnknownArray;
+-- 		const kpEntries: { [key: string]: usePropertyEffectCleanup } = {};
+-- 		let storedValuesInitialized = false;
+-- 		let storedValues: { [key: string]: unknown } = {};
+-- 		const ue = this.useEffect(() => {
+-- 			if (!typeIs(thisUnknown[mainDep], "table")) {
+-- 				return;
+-- 			}
+-- 			if (!trackEntries) {
+-- 				for (const [key, value] of pairs(storedValues)) {
+-- 					if (!kpEntries[key]) {
+-- 						continue;
+-- 					}
+-- 					if ((thisUnknown[mainDep] as UnknownArray)[key] !== value) {
+-- 						tryUseEffectCleanup(kpEntries[key]);
+-- 						delete kpEntries[key];
+-- 					}
+-- 				}
+-- 			}
+-- 			for (const [key, value] of pairs(thisUnknown[mainDep] as UnknownArray)) {
+-- 				if (storedValues[key] === value) {
+-- 					continue;
+-- 				}
+-- 				storedValues[key] = value;
+-- 				kpEntries[key] = callback(key, value);
+-- 			}
+-- 			storedValuesInitialized = true;
+-- 			return (...args) => {
+-- 				for (const [key, value] of pairs(kpEntries)) {
+-- 					tryUseEffectCleanup(value, ...args);
+-- 					delete kpEntries[key];
+-- 				}
+-- 			};
+-- 		}, [mainDep]);
+-- 		const initiateTracking = () => {
+-- 			ue._dev._internal_detected_change_tracking = new Signal();
+-- 			this._optimizedTrackEntriesReusableKeypairsEffects[mainDep] = ue;
+-- 			ue.Keep(
+-- 				RunService.Heartbeat.Connect(() => {
+-- 					if (!typeIs(thisUnknown[mainDep], "table")) {
+-- 						return;
+-- 					}
+-- 					for (const [key, value] of pairs(thisUnknown[mainDep] as UnknownArray)) {
+-- 						if (storedValues[key] !== value) {
+-- 							if (!storedValuesInitialized) {
+-- 								return;
+-- 							}
+-- 							//changed
+-- 							tryUseEffectCleanup(kpEntries[key]);
+-- 							delete kpEntries[key];
+-- 							kpEntries[key] = callback(key, value);
+-- 							storedValues[key] = value;
+-- 							(ue._dev._internal_detected_change_tracking as Signal).Fire(key, value);
+-- 						}
+-- 					}
+-- 				}),
+-- 			);
+-- 		};
+-- 		const setupTracking = () => {
+-- 			if (this._optimizedTrackEntriesReusableKeypairsEffects[mainDep]) {
+-- 				// -- connecting to an existing tracker for optimization sake. (no extra heartbeat and processing of data)
+-- 				const t = this._optimizedTrackEntriesReusableKeypairsEffects[mainDep];
+-- 				ue.Keep(
+-- 					(t._dev._internal_detected_change_tracking as Signal).Connect((key, value) => {
+-- 						tryUseEffectCleanup(kpEntries[key as string]);
+-- 						delete kpEntries[key as string];
+-- 						kpEntries[key as string] = callback(key, value);
+-- 						// storedValues[key as string] = value;
+-- 					}),
+-- 				);
+-- 				ue.Keep(
+-- 					t.Destroying.Connect(() => {
+-- 						delete this._optimizedTrackEntriesReusableKeypairsEffects[mainDep];
+-- 						task.wait(0.1);
+-- 						setupTracking();
+-- 					}),
+-- 				);
+-- 				return;
+-- 			}
+-- 			initiateTracking();
+-- 		};
+-- 		if (trackEntries) {
+-- 			setupTracking();
+-- 		}
+-- 		return ue;
+-- 	}
+-- 	/**
+-- 	 * `Callback` is called whenever property is changed, if `dependencies` is provided then it will only trigger when those properties changed.
+-- 	 * `Callback` will run when initiated.
+-- 	 *
+-- 	 * `Callbacks` are not ran in any particular order but do note
+-- 	 * that `independent` callbacks are exeecuted after `dependent` callbacks.
+-- 	 *
+-- 	 * Please note if no dependencies are provided, No Servant will be returned nor will a ExecutingServant be passed to the callback.
+-- 	 *
+-- 	 * Whenever the value changes, Based on what your `usePropertyEffect` returns, the following will happen:
+-- 	 * * If you return a `Promise`, If the `Promise` state is `Started`, then it will will be cancelled.
+-- 	 * * If you return a `Servant`, then it will be Destroyed. Meaning you can chain `usePropertyEffect` together
+-- 	 * * If you return a `Function`, it will be called
+-- 	 *
+-- 	 * @deprecated
+-- 	 */
+-- 	public usePropertyEffect(
+-- 		callback?: usePropertyEffectCallback,
+-- 		dependencies?: string[],
+-- 		ignoreDepErrors?: boolean,
+-- 	): PHe.Pseudos["Servant"] {
+-- 		callback =
+-- 			callback ||
+-- 			function () {
+-- 				return;
+-- 			};
+-- 		const _thisdevinternal = this._dev as UnknownArray;
+-- 		_thisdevinternal._internal_usePropertyEffectsQueryMaps =
+-- 			_thisdevinternal._internal_usePropertyEffectsQueryMaps ?? {};
+-- 		const QueryMaps = _thisdevinternal._internal_usePropertyEffectsQueryMaps as { [key: string]: Servant[] };
+-- 		const depsStr = this._GetDependencyArrayStringId(dependencies, ignoreDepErrors);
+-- 		//means an empty array was passed, so only render once ("onMount")
+-- 		if (depsStr === ".") {
+-- 			// const cleanup = callback(undefined as never); // executing servant param was removed.
+-- 			const cleanup = callback();
+-- 			if (cleanup !== undefined) {
+-- 				this.Destroying.Connect(() => {
+-- 					tryUseEffectCleanup(cleanup, true);
+-- 				});
+-- 			}
+-- 			return undefined as unknown as PHe.Pseudos["Servant"];
+-- 		}
+-- 		const usePropertyEffectServant = CreateuseEffectServant();
+-- 		usePropertyEffectServant._dev.___ue.cb = callback;
+-- 		// const depStringSplit = depsStr.split(DEPS_STRING_ID_SEPERATOR);
+-- 		usePropertyEffectServant.Keep(
+-- 			this.PrePropertyChanged.Connect((Property) => {
+-- 				if (depsStr === "*") {
+-- 					task.defer(() => {
+-- 						CalluseEffectServant(usePropertyEffectServant);
+-- 					});
+-- 					return;
+-- 				}
+-- 				const isMappedToQuery = QueryMaps[Property as string];
+-- 				// cleanup servants mapped to this key.
+-- 				if (isMappedToQuery) {
+-- 					isMappedToQuery.forEach((_, i) => {
+-- 						const targetEntry = isMappedToQuery[isMappedToQuery.size() - 1 - i];
+-- 						CalluseEffectServant(targetEntry as useEffectServant, false, true);
+-- 						delete (targetEntry as useEffectServant)._dev.___ue.cleanup;
+-- 					});
+-- 				}
+-- 				for (let index = 0; index < (dependencies as string[]).size(); index++) {
+-- 					const split = (dependencies as string[])[index];
+-- 					if (split === Property) {
+-- 						task.defer(() => {
+-- 							CalluseEffectServant(usePropertyEffectServant, false, false);
+-- 						});
+-- 						break;
+-- 					}
+-- 				}
+-- 			}),
+-- 		);
+-- 		task.spawn(() => {
+-- 			CalluseEffectServant(usePropertyEffectServant);
+-- 		});
+-- 		// Instead of creating these events ^^ we try to not creating them using the logic below. Still needs optimizing.
+-- 		usePropertyEffectServant._dev.set("_internal_pseudo_cleanup_method_servant_cleanup", () => {
+-- 			CalluseEffectServant(usePropertyEffectServant, true, true);
+-- 			if ((this._dev as UnknownArray)._internal_usePropertyEffects) {
+-- 				const _x = (this._dev as UnknownArray)._internal_usePropertyEffects as object[];
+-- 				_x.remove(_x.indexOf(usePropertyEffectServant));
+-- 				if (depsStr !== "*") {
+-- 					dependencies?.forEach((dep) => {
+-- 						if (QueryMaps[dep]) {
+-- 							QueryMaps[dep].remove(QueryMaps[dep].indexOf(usePropertyEffectServant));
+-- 						}
+-- 					});
+-- 				}
+-- 			}
+-- 		});
+-- 		for (let index = 0; index < (dependencies as string[]).size(); index++) {
+-- 			const split = (dependencies as string[])[index];
+-- 			QueryMaps[split] = QueryMaps[split] || [];
+-- 			QueryMaps[split].push(usePropertyEffectServant);
+-- 		}
+-- 		_thisdevinternal._internal_usePropertyEffects = _thisdevinternal._internal_usePropertyEffects ?? [];
+-- 		if ((_thisdevinternal._internal_usePropertyEffects as object[]).indexOf(usePropertyEffectServant) === -1) {
+-- 			(_thisdevinternal._internal_usePropertyEffects as object[]).push(usePropertyEffectServant);
+-- 		}
+-- 		return usePropertyEffectServant;
+-- 	}
+-- 	/**
+-- 	 * @deprecated
+-- 	 *
+-- 	 * @see useEffect
+-- 	 * @see useEffects
+-- 	 */
+-- 	public useCombinePropertyEffects(
+-- 		callback: usePropertyEffectCallback,
+-- 		...usePropertyEffectServants: PHe.Pseudos["Servant"][]
+-- 	): PHe.Pseudos["Servant"] {
+-- 		let _callbackServant = CreateuseEffectServant();
+-- 		let _isfirstRun = true;
+-- 		_callbackServant._dev.___ue.cb = callback;
+-- 		usePropertyEffectServants.forEach((servant, i) => {
+-- 			_callbackServant.Keep(servant);
+-- 			const oldCB = (servant as useEffectServant)._dev.___ue.cb;
+-- 			/* executing servant param was removed.
+-- 			(servant as useEffectServant)._dev.ue.cb = (_executingServant) => {
+-- 				const res = oldCB(_executingServant);
+-- 				if(_isfirstRun){
+-- 					return res;
+-- 				}
+-- 				CalluseEffectServant(_callbackServant);
+-- 				return res;
+-- 			}
+-- 			*/
+-- 			(servant as useEffectServant)._dev.___ue.cb = () => {
+-- 				const res = oldCB();
+-- 				if (_isfirstRun) {
+-- 					return res;
+-- 				}
+-- 				CalluseEffectServant(_callbackServant);
+-- 				return res;
+-- 			};
+-- 			CalluseEffectServant(servant as useEffectServant);
+-- 			if (i === usePropertyEffectServants.size() - 1) {
+-- 				CalluseEffectServant(_callbackServant); // only call the callback for the last useEffect servant in the index.
+-- 				_isfirstRun = false;
+-- 			}
+-- 		});
+-- 		return _callbackServant;
+-- 	}
+-- 	/**
+-- 	 * @deprecated
+-- 	 *
+-- 	 * @see useEffect
+-- 	 * @see useEffects
+-- 	 */
+-- 	public usePropertyEffectCombine(
+-- 		callback: usePropertyEffectCallback,
+-- 		dependencies?: string[],
+-- 	): PHe.Pseudos["Servant"] {
+-- 		return this.usePropertyRender(callback, dependencies);
+-- 	}
+-- 	/**
+-- 	 * Destroys the Pseudo.
+-- 	 */
+-- 	public Destroy() {
+-- 		if (this._dev._destroyed === true) {
+-- 			return;
+-- 		}
+-- 		(this._dev._destroyed as boolean) = true;
+-- 		// remove from pseudo collector
+-- 		if (this.__idCreated) {
+-- 			delete PseudoCollector[this._id];
+-- 		}
+-- 		this.Destroying.Fire();
+-- 		// cleanup everything in _dev.
+-- 		_destroyOnObject(
+-- 			this._dev as UnknownArray,
+-- 			this._devCleanupTraverseDepth,
+-- 			this.__idCreated ? this._id : `<[NO_ID-001]>`,
+-- 		);
+-- 		if (this._referenceInstance) {
+-- 			this.GetRef().Destroy();
+-- 			this._referenceInstance = undefined;
+-- 		}
+-- 	}
+-- 	/**
+-- 	 * Creates the Reference Instance if it did not exist.
+-- 	 */
+-- 	public CreateRef() {
+-- 		this.GetRef();
+-- 	}
+-- 	/**
+-- 	 * Returns the reference instance of the pseudo
+-- 	 *
+-- 	 * The reference Instance will not exist prior to the first call of this method for optimization sake.
+-- 	 */
+-- 	private _initializeReferenceInstanceCallback: Callback;
+-- 	public GetRef<T = _REF>(): T {
+-- 		if (!this._referenceInstance) {
+-- 			this._initializeReferenceInstanceCallback();
+-- 			// this._referenceInstance!.Destroying.Connect(() => {
+-- 			// 	this._referenceInstance = undefined;
+-- 			// 	this.Destroy();
+-- 			// });
+-- 		}
+-- 		return this._referenceInstance as T;
+-- 	}
+-- 	/**
+-- 	 * Creates a `usePropertyEffect` effect to the `ReferenceInstance` for the `"Name"` & `"Parent"` properties.
+-- 	 *
+-- 	 * Note that if no Reference Instance exists, if the `Parent` is undefined/nil, the `GetRef` method will not be called, ultimately no ref will be created by
+-- 	 * this method unless the `Parent` exists, only then will the `GetRef` be called, which will create the reference instance if it didn't exist.
+-- 	 *
+-- 	 * ```ts
+-- 	 * this.useReferenceInstance()
+-- 	 * // same as
+-- 	 * return this.usePropertyEffect(() => {
+-- 	 *  this.GetRef().Name = this.Name;
+-- 	 *  this.GetRef().Parent = _typeIs(this.Parent, "Pseudo") ? this.Parent.GetRef() : this.Parent;
+-- 	 * }, ["Name", "Parent"]);
+-- 	 * // same as (sorta)
+-- 	 * this.useMapping(["Name","Parent"], [this.GetRef()]) // However, Mapping Parent to a Pseudo will throw an error, so the method above is recommended.
+-- 	 * ```
+-- 	 */
+-- 	public useReferenceInstanceBehaviour(): Servant {
+-- 		this.warn(
+-- 			`Using useReferenceInstanceBehaviour is deprecated. Parenting the Pseudo to DataModel automatically does what useReferenceInstanceBehaviour did.`,
+-- 		);
+-- 		return CreateServant();
+-- 		/*
+-- 		return this.useEffect(() => {
+-- 			if (this._referenceInstance === undefined && this.Parent === undefined) {
+-- 				return; // Do not do anything unless the reference instance exists or it does exist and the parent isn't nil.
+-- 			}
+-- 			this.GetRef().Name = this.Name;
+-- 			this.GetRef().Parent = _typeIs(this.Parent, "Pseudo") ? this.Parent.GetRef() : this.Parent;
+-- 		}, ["Name", "Parent"]);
+-- 		*/
+-- 	}
+-- 	public _USE_STRICT_PROPERTIES: StrictProperty = StrictProperty.index;
+-- 	private _useStrictProperties!: Callback;
+-- 	/**
+-- 	 * Using strict properties will throw an error if an attempt to __newindex a property that doesn't already exist
+-- 	 * is made. To enable, it is expected that this method is called after you assign your internal properties but before
+-- 	 * you write your class logic.
+-- 	 *
+-- 	 * @param strict
+-- 	 * Setting this to `true` will only throw errors when __newindex is called and the property doesn't exist
+-- 	 * Setting this to `type` will throw an error when __newindex is called and the property doesn't exist OR the property
+-- 	 * exists but the currently assigned type is not of the current value.
+-- 	 *
+-- 	 * @deprecated
+-- 	 */
+-- 	protected useStrictProperties(strict: StrictProperty) {
+-- 		this.warn(`useStrictProperties is deprecated and does nothing.`);
+-- 		return;
+-- 		// this._useStrictProperties(strict);
+-- 	}
+-- 	private _useSetNewIndexAssignment: Callback = undefined!; // Assigned in constructor
+-- 	/**
+-- 	 * Assigns the key with the value to the class.with the internal `__newindex` function.
+-- 	 *
+-- 	 * @param allowSameValueWrite Will trigger the assignment even if the current value is the same. This is useful in cases where the value of a table changed but the actual
+-- 	 * table reference remains the same. Since the property did not technical change, you wull need to "fake" the change by using this method.
+-- 	 */
+-- 	protected useSetNewIndexAssignment(
+-- 		key: unknown,
+-- 		value: unknown,
+-- 		allowSameValueWrite?: boolean,
+-- 		allowNoTypeAndNonMemberCheck?: boolean,
+-- 	) {
+-- 		// (this as unknown as UnknownArray)[key as string] = value;
+-- 		this._useSetNewIndexAssignment(key, value, allowSameValueWrite, allowNoTypeAndNonMemberCheck);
+-- 	}
+-- 	private _useIndexAssignment!: Callback[]; // Assigned in constructor
+-- 	/***/
+-- 	protected useIndexAssignment(callback: (key: unknown, value: unknown) => unknown) {
+-- 		this._useIndexAssignment.push(callback);
+-- 	}
+-- 	private _useNewIndexAssignment!: Callback[]; // Assigned in constructor
+-- 	/**
+-- 	 * Assigns the key with the value to the class.with the internal `__newindex` function.
+-- 	 *
+-- 	 * @param allowSameValueWrite Will trigger the assignment even if the current value is the same. This is useful in cases where the value of a table changed but the actual
+-- 	 * table reference remains the same. Since the property did not technical change, you wull need to "fake" the change by using this method.
+-- 	 */
+-- 	protected useNewIndexAssignment(callback: (key: unknown, value: unknown) => unknown) {
+-- 		this._useNewIndexAssignment.push(callback);
+-- 	}
+-- 	private _usePropertyRelationBinding: Callback;
+-- 	/**
+-- 	 * This creates a "relation" between the `RelationalProperties` and the `RelationProperty`, If the `RelationValue` is the current value of the `RelationProperty`
+-- 	 * then the `RelationalProperties` will become available, else they will be unavailable.
+-- 	 *
+-- 	 * A property becoming available only currently shows/hides it from the Attributes list, you can still read/write to these properties from scripts as usual.
+-- 	 *
+-- 	 * @example
+-- 	 * class Test extends Pseudo {
+-- 	 * LimitsEnabled = false;
+-- 	 * UpperLimit = 2;
+-- 	 * LowerLimit = 1;
+-- 	 * constructor() {
+-- 	 * 	super("Test");
+-- 	 * 	this.usePropertyRelationBinding(["UpperLimit", "LowerLimit"], "LimitsEnabled", true);
+-- 	 * 	this.usePropertyEffect(() => {
+-- 	 * 		if (this.LimitsEnabled) {
+-- 	 * 			// This will only execute whenever LimitsEnabled is true.
+-- 	 * 			return this.usePropertyEffect(() => {
+-- 	 * 				// since we are returning the useEffect Servant, whenever LimitsEnabled goes from true->false, the Servant will be destroyed. so this will not run while LimitsEnabled is false
+-- 	 * 				print("Upper Limit:", this.UpperLimit, "Lower Limit:", this.LowerLimit);
+-- 	 * 			}, ["UpperLimit", "LowerLimit"]);
+-- 	 * 		}
+-- 	 * 	}, ["LimitsEnabled"]);
+-- 	 * }
+-- }
+-- 	 */
+-- 	protected usePropertyRelationBinding(
+-- 		RelationalProperties: string[],
+-- 		RelationProperty: string,
+-- 		RelationValue: unknown,
+-- 	): Servant {
+-- 		return this._usePropertyRelationBinding(RelationalProperties, RelationProperty, RelationValue);
+-- 	}
+-- 	private _useSetPropertiesLocked!: { [key: string]: string }; // Assigned in constructor
+-- 	protected useSetPropertiesLocked(
+-- 		Properties: string[],
+-- 		LockedStatus: boolean,
+-- 		AccessError: string = `Property is locked.`,
+-- 	) {
+-- 		Properties.forEach((prop) => {
+-- 			if (LockedStatus === false) {
+-- 				delete this._useSetPropertiesLocked[prop];
+-- 				return;
+-- 			}
+-- 			this._useSetPropertiesLocked[prop] = AccessError;
+-- 		});
+-- 	}
+-- 	private __idCreated = false;
+-- 	constructor(
+-- 		/**The ClassName of the pseudo*/
+-- 		public readonly ClassName: string,
+-- 		/**The item ClassName of the instance that should be used as the reference instnce of the pseudo*/
+-- 		private _ReferenceInstanceType?: CreatableReferenceInstanceTypes,
+-- 	) {
+-- 		//create id
+-- 		let _ID: string | undefined = undefined;
+-- 		const _getID = (): string => {
+-- 			if (_ID) {
+-- 				return _ID;
+-- 			}
+-- 			this.__idCreated = true;
+-- 			_ID = getAbstractPseudoId(ClassName);
+-- 			PseudoCollector[_ID] = this as never;
+-- 			return _ID;
+-- 		};
+-- 		// const OBJECT_DATA: {
+-- 		// 	ASSIGNING_ATTRIBUTES: Map<string, boolean | undefined>;
+-- 		// 	HIDDEN_ATTRIBUTES: string[];
+-- 		// 	ORIGINAL_THIS_INDEX: typeof OBJECT_PROXY; //store the origin index so we can capture methods.
+-- 		// 	_DEFINED_NILS: string[]; //Incases where you attempt to index child that doesn't seem to exist but the child is actual set to nil by developer.
+-- 		// } = {
+-- 		// 	ASSIGNING_ATTRIBUTES: new Map(),
+-- 		// 	HIDDEN_ATTRIBUTES: [],
+-- 		// 	ORIGINAL_THIS_INDEX: (this as unknown as typeof OBJECT_PROXY).__index as typeof OBJECT_PROXY,
+-- 		// 	_DEFINED_NILS: [],
+-- 		// };
+-- 		// //metatables __indexing
+-- 		const OBJECT_PROXY: UnknownArray = {
+-- 			_dev: this._dev,
+-- 			// _useIndexAssignment: [],
+-- 			// _useNewIndexAssignment: [],
+-- 			// _useSetPropertiesLocked: {},
+-- 			// _create_signal_entries: {},
+-- 			// _dev: this._dev,
+-- 		};
+-- 		/*
+-- 		const OBJECT_PROXY: UnknownArray = {
+-- 			Name: this.Name,
+-- 			ClassName: this.ClassName,
+-- 			_useIndexAssignment: [],
+-- 			_useNewIndexAssignment: [],
+-- 			_useSetPropertiesLocked: {},
+-- 			_create_signal_entries: {},
+-- 			_ReferenceInstanceType: this._ReferenceInstanceType,
+-- 			_dev: this._dev,
+-- 			_getCurrentProperties: (
+-- 				excludeKeys?: unknown[],
+-- 				IncludeHiddenProps?: boolean,
+-- 				IncludeFunctions?: boolean,
+-- 				IncludeSignals?: boolean,
+-- 				AsDictionary?: boolean,
+-- 			) => {
+-- 				const p = [];
+-- 				let t = { ...OBJECT_PROXY };
+-- 				t["Name"] = this.Name;
+-- 				// if (!OBJECT_DATA._DEFINED_NILS.isEmpty()) {
+-- 				// 	const pushTot: typeof t = {};
+-- 				// 	//include defined nil properties aswell
+-- 				// 	OBJECT_DATA._DEFINED_NILS.forEach((n) => {
+-- 				// 		pushTot[n as string] = "*!EXCLUDE-FROM-AS-DICTIONARY!*--?=true!"; //when as-dictionary is false, we want to include defined nil values in the array
+-- 				// 	});
+-- 				// 	t = { ...t, ...pushTot };
+-- 				// }
+-- 				for (const [a, b] of pairs(t)) {
+-- 					if (excludeKeys) {
+-- 						const existsInExclude = (excludeKeys as string[]).indexOf(a as string) !== -1;
+-- 						if (existsInExclude) {
+-- 							continue;
+-- 						}
+-- 					}
+-- 					if (typeIs(a, "string")) {
+-- 						if (!IncludeHiddenProps && a.match("^_")[0]) {
+-- 							continue;
+-- 						}
+-- 					}
+-- 					if (typeIs(b, "function") && !IncludeFunctions) {
+-- 						continue;
+-- 					}
+-- 					if (typeIs(b, "RBXScriptSignal") && !IncludeSignals) {
+-- 						continue;
+-- 					}
+-- 					if (
+-- 						typeIs(b, "table") &&
+-- 						a === "Destroying" &&
+-- 						this._referenceInstance === undefined &&
+-- 						!IncludeSignals
+-- 					) {
+-- 						continue;
+-- 					}
+-- 					if (AsDictionary) {
+-- 						let v = b;
+-- 						if (b === "*!EXCLUDE-FROM-AS-DICTIONARY!*--?=true!") {
+-- 							v = undefined; //if it's a defined nil, dictionary should not show
+-- 						}
+-- 						(p as unknown as Map<unknown, unknown>).set(a, v);
+-- 					} else {
+-- 						p.push(a);
+-- 					}
+-- 				}
+-- 				return p;
+-- 			},
+-- 		};
+-- 		*/
+-- 		// const ___useIndexQueries = this._useIndexQueries; // define it here to prevent stack overflow.
+-- 		// Setting up internal private methods a props
+-- 		this._initializeReferenceInstanceCallback = () => {
+-- 			//creating reference instance
+-- 			let CreateNewInstance = true;
+-- 			if (!this._ReferenceInstanceType) {
+-- 				this._ReferenceInstanceType = "Folder";
+-- 			} else if (typeIs(this._ReferenceInstanceType, "function")) {
+-- 				// If a function is passed, call it and use the returned value as the _ReferenceInstanceType.
+-- 				const results = this._ReferenceInstanceType();
+-- 				assert(typeIs(results, "Instance"), "Your _ReferenceInstanceType function did not return an Instance.");
+-- 				this._ReferenceInstanceType = results; // So that the following code treats "_ReferenceInstanceType" as an Instance and not a function.
+-- 			}
+-- 			if (typeIs(this._ReferenceInstanceType, "string")) {
+-- 				CreateNewInstance = true;
+-- 			} else if (typeIs(this._ReferenceInstanceType, "Instance")) {
+-- 				assert(
+-- 					this._ReferenceInstanceType.GetAttribute(_PseudoIdentificationAttrServerName) === undefined,
+-- 					`_pseudoid already existed on instance ${this._ReferenceInstanceType.ClassName} || ${this._ReferenceInstanceType.Name}`,
+-- 				);
+-- 				CreateNewInstance = false;
+-- 			} else {
+-- 				error(`Unknown reference instance type received ${tostring(this._ReferenceInstanceType)}`);
+-- 			}
+-- 			const ReferenceInstance =
+-- 				((CreateNewInstance === true &&
+-- 					new Instance(this._ReferenceInstanceType as keyof CreatableInstances)) as Instance) ||
+-- 				(this._ReferenceInstanceType as typeof this._ReferenceInstanceType);
+-- 			// reference instance id
+-- 			// ReferenceInstance.SetAttribute(_PseudoIdentificationAttrServerName, this._id);
+-- 			// // setting attributes since the ref can be created after props were __newindexed.
+-- 			// for (const [k, v] of pairs(
+-- 			// 	this._getCurrentProperties(undefined, false, false, false, true) as unknown as Record<string, unknown>,
+-- 			// )) {
+-- 			// 	AssignAttributeValue(ReferenceInstance, k, v);
+-- 			// }
+-- 			// // handling attributes changed
+-- 			// ReferenceInstance.AttributeChanged.Connect((attr) => {
+-- 			// 	if (attr === _PseudoIdentificationAttrServerName) {
+-- 			// 		return;
+-- 			// 	}
+-- 			// 	if (OBJECT_DATA.ASSIGNING_ATTRIBUTES.has(attr) === false) {
+-- 			// 		if (OBJECT_DATA.HIDDEN_ATTRIBUTES.indexOf(attr) !== -1) {
+-- 			// 			return;
+-- 			// 		}
+-- 			// 		const v = ReferenceInstance.GetAttribute(attr);
+-- 			// 		// we use `***` at the start and end of the attribute value if it is not a supported attribute type (or just should not be considered a value.)
+-- 			// 		if (typeIs(v, "string") && v.match("^***")[0] !== undefined && v.match("***$")[0] !== undefined) {
+-- 			// 			return;
+-- 			// 		}
+-- 			// 		OBJECT_DATA.ASSIGNING_ATTRIBUTES.set(attr, true);
+-- 			// 		(this as unknown as typeof OBJECT_PROXY)[attr] = v;
+-- 			// 		OBJECT_DATA.ASSIGNING_ATTRIBUTES.delete(attr);
+-- 			// 	}
+-- 			// });
+-- 			// // If the reference Instance is destroyed, destroy the Pseudo. The `Destroy` method of the Pseudo also calls to Destroy the ReferenceInstance
+-- 			// // But ROBLOX handles that if the case is reference-destroyed -> pseudo-destroyed -> pseudo destroy reference
+-- 			// ReferenceInstance.Destroying.Connect(() => {
+-- 			// 	this.Destroy();
+-- 			// });
+-- 			this._referenceInstance = ReferenceInstance;
+-- 		};
+-- 		this._useSetNewIndexAssignment = (key, value, allowSameValueWrite, allowNoTypeAndNonMemberCheck) => {
+-- 			/*
+-- 			if ((allowNoTypeAndNonMemberCheck as boolean) !== true) {
+-- 				__index(this, key); // make sure the key is assignable first.
+-- 			}
+-- 			*/
+-- 			__newindex(this, key, value, allowSameValueWrite);
+-- 		};
+-- 		this._usePropertyRelationBinding = (
+-- 			RelationalProperties: string[],
+-- 			RelationProperty: string,
+-- 			RelationValue: unknown,
+-- 		): Servant => {
+-- 			const t = this as unknown as UnknownArray;
+-- 			const ue = this.Observe(() => {
+-- 				if (t[RelationProperty] !== RelationValue) {
+-- 					// Hide attributes
+-- 					RelationalProperties.forEach((prop) => {
+-- 						if (t[prop] === undefined) {
+-- 							return; // ^^ so it will error if the relational prop is not a member.
+-- 						}
+-- 						// OBJECT_DATA.HIDDEN_ATTRIBUTES.push(prop);
+-- 						if (this._referenceInstance) {
+-- 							AssignAttributeValue(this._referenceInstance, prop, undefined);
+-- 						}
+-- 					});
+-- 				} else {
+-- 					// Show attributes
+-- 					let Shift = 0;
+-- 					RelationalProperties.forEach((prop, index) => {
+-- 						// const ds = OBJECT_DATA.HIDDEN_ATTRIBUTES.remove(index - Shift);
+-- 						// if (ds !== undefined) {
+-- 						// 	Shift++;
+-- 						// 	if (this._referenceInstance) {
+-- 						// 		AssignAttributeValue(this._referenceInstance, prop, t[prop]);
+-- 						// 	}
+-- 						// }
+-- 					});
+-- 				}
+-- 			}, [RelationProperty]);
+-- 			ue.useDestroying(() => {
+-- 				// Show attributes
+-- 				let Shift = 0;
+-- 				RelationalProperties.forEach((prop, index) => {
+-- 					// const ds = OBJECT_DATA.HIDDEN_ATTRIBUTES.remove(index - Shift);
+-- 					// if (ds !== undefined) {
+-- 					// 	Shift++;
+-- 					// 	if (this._referenceInstance) {
+-- 					// 		AssignAttributeValue(this._referenceInstance, prop, t[prop]);
+-- 					// 	}
+-- 					// }
+-- 				});
+-- 			});
+-- 			return ue;
+-- 		};
+-- 		if (RunService.IsClient()) {
+-- 			// Create a placeholder Replicator in cases where this pseudo is going to be replicated.
+-- 			// The pseudo may exist before the replicated version takes control, meaning the .Replicator
+-- 			// that the replicated version creates may not exist at that time.
+-- 			// this placeholder will store all information that the replicated version will execute when it takes control.
+-- 			// update: this yields until the new replicator takes control.
+-- 			let _thisTempReplicator = {
+-- 				Define(Callback: Callback, ...args: unknown[]) {
+-- 					return awaitReplicator().Define(
+-- 						(...args) => {
+-- 							return Callback(...(args as unknown[]));
+-- 						},
+-- 						...args,
+-- 					);
+-- 				},
+-- 			};
+-- 			const awaitReplicator = (): PseudoReplicator => {
+-- 				let t = 0;
+-- 				let _warnedTime = false;
+-- 				if (OBJECT_PROXY["Replicator"] !== _thisTempReplicator) {
+-- 					_thisTempReplicator = undefined as never;
+-- 					return OBJECT_PROXY["Replicator"] as never;
+-- 				}
+-- 				while (true) {
+-- 					if (OBJECT_PROXY["Replicator"] !== _thisTempReplicator) {
+-- 						_thisTempReplicator = undefined as never;
+-- 						return OBJECT_PROXY["Replicator"] as never;
+-- 					}
+-- 					t += 0.1;
+-- 					if (t * 1 >= 10 && !_warnedTime) {
+-- 						// Replication should not be taking > 20 seconds
+-- 						_warnedTime = true;
+-- 						this.warn(
+-- 							`.Replicator seems to not be getting overriden and may yield this thread forever! Object may not be getting Replicated from the server correctly and/or this object is not meant to have a Replicator. ${this}. This loop will break in 20 seconds.`,
+-- 						);
+-- 					}
+-- 					if (t * 1 >= 30) {
+-- 						_thisTempReplicator = undefined as never;
+-- 						return OBJECT_PROXY["Replicator"] as never;
+-- 					}
+-- 					task.wait(0.1);
+-- 				}
+-- 			};
+-- 			OBJECT_PROXY["Replicator"] = _thisTempReplicator;
+-- 		}
+-- 		const mt = getmetatable(this) as UnknownArray;
+-- 		const originalMTindex = mt.__index as UnknownArray;
+-- 		const __newindex = create__newindex(this as never, _getID, OBJECT_PROXY);
+-- 		const __index = create__index(Pseudo as never, originalMTindex as never, _getID, OBJECT_PROXY);
+-- 		this.Name = undefined as never;
+-- 		setmetatable(OBJECT_PROXY, {
+-- 			__index: __index,
+-- 		});
+-- 		// Create main metatable.
+-- 		setmetatable(this, {
+-- 			__index: __index,
+-- 			__newindex: __newindex,
+-- 			__tostring: () => {
+-- 				return `${this.ClassName}(${this.Name}) ++ ${this._id}`;
+-- 			},
+-- 		});
+-- 		/**/
+-- 	}
+-- }
+return {
+	Pseudo = Pseudo,
+}

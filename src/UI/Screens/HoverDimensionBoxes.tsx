@@ -25,7 +25,7 @@ export function HoverDimensionBoxes() {
 					<screengui
 						Name={`${Constants.PluginDisplayName} - HoverDimensions`}
 						Parent={PlayerGui}
-						DisplayOrder={998}
+						DisplayOrder={Constants.ScreenGuiDisplayOrderLimit - 1}
 						ResetOnSpawn={false}
 					>
 						<For

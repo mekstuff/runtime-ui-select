@@ -1,0 +1,82 @@
+-- Compiled with roblox-ts v3.0.0
+-- import { Signal } from "../../class/Signal/Signal";
+-- import { Pseudo } from "../../class/Pseudo/Pseudo";
+-- const RunService = game.GetService("RunService");
+-- const _CreateSignalsWhenNeeded: { [key: string]: true } = {
+-- 	Destroying: true,
+-- 	PropertyChanged: true,
+-- 	PrePropertyChanged: true,
+-- };
+-- export const create__index = (
+-- 	_Pseudo: Pseudo,
+-- 	inheritedClass: UnknownArray,
+-- 	_getID: Callback,
+-- 	OBJECT_PROXY: UnknownArray,
+-- 	// ORIGINAL__THIS_INDEX: UnknownArray,
+-- 	// _DEFINED_NILS: string[],
+-- 	// ___useIndexQueries: Callback[],
+-- ) => {
+-- 	let _createdSignals: { [key: string]: Signal } | undefined;
+-- 	const _create_signal_entries = OBJECT_PROXY["_create_signal_entries"] as UnknownArray | undefined;
+-- 	const _useIndexAssignment = OBJECT_PROXY["_useIndexAssignment"] as Callback[] | undefined;
+-- 	return (_: unknown, key: unknown) => {
+-- 		if (key === "_id") {
+-- 			return _getID();
+-- 		}
+-- 		if (
+-- 			typeIs(key, "string") &&
+-- 			(_CreateSignalsWhenNeeded[key] || (_create_signal_entries && _create_signal_entries[key]))
+-- 		) {
+-- 			if (!_createdSignals) {
+-- 				_createdSignals = {};
+-- 				(OBJECT_PROXY._dev as UnknownArray)._internal_createdSignals = _createdSignals;
+-- 			}
+-- 			/*
+-- 			if (
+-- 				key === "Destroying" &&
+-- 				OBJECT_PROXY["_dev"] &&
+-- 				(OBJECT_PROXY["_dev"] as UnknownArray)._destroyed === true
+-- 			) {
+-- 				// Pseudo was already destroyed and we're still connecting to .Destroying
+-- 				// Run the callback on the next frame.
+-- 				return ProxyDestroyingNextFrameExecutor;
+-- 			}
+-- 			*/
+-- 			if (_createdSignals[key]) {
+-- 				return _createdSignals[key];
+-- 			}
+-- 			_createdSignals[key] = new Signal();
+-- 			return _createdSignals[key];
+-- 		}
+-- 		let toReturn = inheritedClass[key as string] ?? _Pseudo[key as never];
+-- 		if (key !== "_useIndexAssignment" && _useIndexAssignment && _useIndexAssignment.size() > 0) {
+-- 			_useIndexAssignment.forEach((callback) => {
+-- 				toReturn = callback(key, toReturn);
+-- 			});
+-- 		}
+-- 		if (RunService.IsClient() && key !== "_ReplicationEnabled") {
+-- 			// supported server methods that are shared must either end with "$" or start with a lowerCase letter and end with the word "Server".
+-- 			if (
+-- 				OBJECT_PROXY["_ReplicationEnabled"] === true &&
+-- 				key !== "$client" &&
+-- 				key !== "$server" &&
+-- 				typeIs(key, "string") &&
+-- 				(key.match("%$$")[0] ?? key.match("^%l.*Server$")[0])
+-- 			) {
+-- 				return (...args: unknown[]) => {
+-- 					return ((inheritedClass._dev as UnknownArray).___pseudoreplicator_queryServerCall as Callback)(
+-- 						key,
+-- 						toReturn,
+-- 						...args,
+-- 					);
+-- 				};
+-- 			}
+-- 		}
+-- 		return toReturn;
+-- 		// if(inheritedClass[key as string]) {
+-- 		//     return inheritedClass[key as string];
+-- 		// }
+-- 		// return _Pseudo[key as never]
+-- 	};
+-- };
+return nil

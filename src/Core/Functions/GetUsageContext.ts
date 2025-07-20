@@ -19,3 +19,10 @@ export function GetIsRunningSession(): boolean {
 export function GetIsRunningSessionServer(): boolean {
 	return RunService.IsEdit() === false && GetIsStudio() === true && GetIsClient() === false;
 }
+
+export function GetIsNonPluginEnv(): boolean {
+	if (GetIsStudio() === false) {
+		return true;
+	}
+	return script.FindFirstAncestorWhichIsA("Plugin") === undefined;
+}

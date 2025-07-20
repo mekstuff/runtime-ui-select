@@ -1,0 +1,44 @@
+-- Compiled with roblox-ts v3.0.0
+-- /*
+--     Typed with ❤️ @mekstuff
+--     11/06/2025 20:25:08
+-- */
+-- import Vivid, { createRef, withProps } from "@mekstuff-rbxts/vivid";
+-- import { Button, ButtonProps, Image } from "./Base";
+-- import { Popover } from "./Popover";
+-- import { Icons } from "../Icons";
+-- import { Units } from "../Utils";
+-- export type DropdownButtonProps = ButtonProps & {
+-- 	expanded?: boolean;
+-- };
+-- export function DropdownButton(props: DropdownButtonProps) {
+-- 	const Properties = withProps(props, true) as Partial<typeof props>;
+-- 	delete Properties.expanded;
+-- 	const ButtonRef = createRef<TextButton>();
+-- 	return (
+-- 		<>
+-- 			<Button ref={ButtonRef} Text={"Dropdown"} {...Properties}>
+-- 				<imagelabel
+-- 					Image={() =>
+-- 						props.expanded
+-- 							? Icons.fromName("fluency", "outline", "chevron-up")
+-- 							: Icons.fromName("fluency", "outline", "chevron-down")
+-- 					}
+-- 					Size={() => UDim2.fromOffset(Units().BaseTextSize, Units().BaseTextSize)}
+-- 					BackgroundTransparency={1}
+-- 					LayoutOrder={4}
+-- 				/>
+-- 			</Button>
+-- 			<Popover
+-- 				opened={props.expanded}
+-- 				adornee={ButtonRef()}
+-- 				horizontalAlignment={Enum.HorizontalAlignment.Center}
+-- 				verticalAlignment={Enum.VerticalAlignment.Bottom}
+-- 				scale={0.2}
+-- 			>
+-- 				<Button Text={"Example"}></Button>
+-- 			</Popover>
+-- 		</>
+-- 	);
+-- }
+return nil

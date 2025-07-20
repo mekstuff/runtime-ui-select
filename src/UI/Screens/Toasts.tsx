@@ -19,7 +19,7 @@ export function Toasts() {
 		<screengui
 			Parent={PlayerGui}
 			Name={`${Constants.PluginDisplayName}-Toasts`}
-			DisplayOrder={997}
+			DisplayOrder={Constants.ScreenGuiDisplayOrderLimit - 3}
 			IgnoreGuiInset={true}
 			ResetOnSpawn={false}
 		>

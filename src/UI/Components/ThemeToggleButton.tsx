@@ -5,8 +5,13 @@
 
 import Vivid, { createCleanup, createEffect, createState, use } from "@mekstuff-rbxts/vivid";
 import { Button } from "@mekstuff-rbxts/vivid-ui";
+import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
+import { UnavailableFeature } from "./UnavailableFeature";
 
 export function ThemeToggleButton() {
+	if (GetIsNonPluginEnv() === true) {
+		return <UnavailableFeature />;
+	}
 	const SettingsStudio = settings().Studio as Studio & { Theme: Instance };
 	const [CurrentTheme, setCurrentTheme] = createState(SettingsStudio.Theme);
 	const [AvailableThemes, setAvailableThemes] = createState(SettingsStudio.GetAvailableThemes() as Instance[]);

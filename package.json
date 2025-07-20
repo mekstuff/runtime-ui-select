@@ -1,12 +1,22 @@
 {
-	"name": "runtime-ui-select",
+	"name": "@mekstuff-rbxts/runtime-ui-select",
+	"private": "true",
 	"version": "1.0.0",
-	"main": "index.js",
+	"main": "out/init.luau",
+	"files": [
+		"out"
+	],
+	"types": "out/index.d.ts",
 	"license": "MIT",
 	"scripts": {
 		"build": "rbxtsc && rojo build -o out/rutus_plugin.rbxm",
 		"watch": "rbxtsc -w",
-		"dev": "concurrently \"yarn watch\" \"rojo serve serve.project.json\""
+		"dev": "concurrently \"yarn watch\" \"rojo serve serve.project.json\"",
+		"dev-game": "cd game && yarn run dev && cd ../",
+		"build-game": "cd game && yarn run build && cd ../",
+		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
+		"sync-game": "zen publish && yarn run zen-pull-game",
+		"prepack": "yarn run build"
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^3.0.0-types.0",

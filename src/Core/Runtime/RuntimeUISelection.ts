@@ -52,5 +52,3 @@ createEffect(() => {
 });
 
 RuntimeUISelectionScope.Close();
-
-export = undefined;

@@ -25,7 +25,7 @@ export function SelectedDimensionBoxes() {
 					<screengui
 						Name={`${Constants.PluginDisplayName} - SelectedDimensions`}
 						Parent={PlayerGui}
-						DisplayOrder={998}
+						DisplayOrder={Constants.ScreenGuiDisplayOrderLimit - 1}
 						ResetOnSpawn={false}
 					>
 						<For

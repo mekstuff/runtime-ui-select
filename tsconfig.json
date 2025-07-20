@@ -5,7 +5,7 @@
 		"downlevelIteration": true,
 		"jsx": "react",
 		"jsxFactory": "Vivid.createElement",
-		"jsxFragmentFactory": "Vivid.Fragment",
+		"jsxFragmentFactory": "Vivid.createFragment",
 		"module": "commonjs",
 		"moduleResolution": "Node",
 		"noLib": true,
@@ -23,6 +23,11 @@
 		"outDir": "out",
 		"baseUrl": "src",
 		"incremental": true,
-		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo"
-	}
+		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo",
+		"declaration": true,
+
+		"skipLibCheck": true
+	},
+	"include": ["src/**/*"],
+	"exclude": ["game/**/*"]
 }

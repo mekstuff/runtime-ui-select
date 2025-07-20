@@ -1,0 +1,51 @@
+{
+	"name": "@mekstuff-rbxts/vivid-ui",
+	"version": "0.1.5",
+	"description": "",
+	"main": "out/init.lua",
+	"scripts": {
+		"build": "rbxtsc",
+		"watch": "rbxtsc -w --type=game -p test -i ../../include",
+		"serve": "rojo serve test",
+		"dev": "concurrently \"yarn watch\" \"yarn serve\"",
+		"prepack": "yarn run build"
+	},
+	"keywords": [],
+	"author": "Mekstuff <contact@mekstuff.com> (https://github.com/mekstuff)",
+	"license": "MIT",
+	"types": "out/index.d.ts",
+	"files": [
+		"out"
+	],
+	"devDependencies": {
+		"@rbxts/compiler-types": "^3.0.0-types.0",
+		"@rbxts/types": "^1.0.813",
+		"@rbxts/ui-labs": "^2.3.8",
+		"@typescript-eslint/eslint-plugin": "^8.11.0",
+		"@typescript-eslint/parser": "^8.11.0",
+		"concurrently": "^9.1.2",
+		"eslint": "^9.13.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-prettier": "^5.2.1",
+		"eslint-plugin-roblox-ts": "^0.0.36",
+		"prettier": "^3.3.3",
+		"roblox-ts": "^3.0.0",
+		"typescript": "5.6.3"
+	},
+	".zen": {
+		"dependencies": {
+			"@mekstuff-rbxts/core": {
+				"version": "^0.1.5"
+			},
+			"@mekstuff-rbxts/vivid": {
+				"version": "^0.1.0"
+			}
+		},
+		"peerDependencies": {}
+	},
+	"dependencies": {
+		"@mekstuff-rbxts/core": "file:..\\..\\@mekstuff-rbxts\\core@0.1.5",
+		"@mekstuff-rbxts/vivid": "file:..\\..\\@mekstuff-rbxts\\vivid@0.1.0"
+	},
+	"peerDependencies": {}
+}

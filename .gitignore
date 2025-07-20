@@ -1,6 +1,6 @@
-/node_modules
+node_modules/
+sourcemap.json
 /out
-/include
-/sourcemap.json
+/game/out
 *.tsbuildinfo
 *.lock

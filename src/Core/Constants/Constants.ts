@@ -13,4 +13,5 @@ export const Constants = {
 	PluginSharedSettingsKey: "PluginSharedSettings",
 	PluginSharedSettingTokenListener: `${PluginDisplayName}-PluginSharedSettingTokenListener`,
 	MainWidgetToolTipCollectionId: "MainWidgetToolTipCollectionId",
+	ScreenGuiDisplayOrderLimit: 2147483647,
 };

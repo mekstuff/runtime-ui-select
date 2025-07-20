@@ -1,0 +1,30 @@
+{
+	"name": "game",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"scripts": {
+		"build": "rbxtsc && rojo build -o out/rutus_game.rbxm",
+		"watch": "rbxtsc -w",
+		"dev": "concurrently \"yarn watch\" \"rojo serve default.project.json\""
+	},
+	"devDependencies": {
+		"@rbxts/compiler-types": "^3.0.0-types.0",
+		"@rbxts/types": "^1.0.864",
+		"roblox-ts": "^3.0.0",
+		"typescript": "^5.8.3",
+		"concurrently": "^9.2.0"
+	},
+	".zen": {
+		"dependencies": {
+			"@mekstuff-rbxts/runtime-ui-select": {
+				"import": true,
+				"traverse_imports": true,
+				"version": "^1.0.0"
+			}
+		}
+	},
+	"dependencies": {
+		"@mekstuff-rbxts/runtime-ui-select": "file:.zen\\@mekstuff-rbxts\\runtime-ui-select@1.0.0"
+	}
+}

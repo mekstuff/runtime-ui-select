@@ -4,6 +4,7 @@ on:
     pull_request:
         branches:
             - main
+            - develop
 
 jobs:
     test:
@@ -16,12 +17,14 @@ jobs:
               with:
                   node-version: lts/*
             - name: Install dependencies
-              run: yarn install --frozen-lockfile
+              run: yarn install --frozen-lockfile && cd game && yarn install --frozen-lockfile && cd ../
             - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
-              run: yarn audit
+              run: yarn audit && cd game && yarn audit && cd ../
             - name: Setup aftman
               uses: ok-nick/setup-aftman@v0.4.2
             - name: Install aftman packages
               run: aftman install
             - name: Building
               run: yarn run build
+            - name: Building Game
+              run: yarn run build-game
