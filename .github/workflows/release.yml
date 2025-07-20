@@ -34,7 +34,7 @@ jobs:
               run: yarn audit && cd game && yarn audit && cd ../
 
             - name: Setup aftman
-              uses: ok-nick/setup-aftman@v0.4.2\
+              uses: ok-nick/setup-aftman@v0.4.2
 
             - name: Install aftman packages
               run: aftman install
