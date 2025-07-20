@@ -4,5 +4,3 @@ include/
 sourcemap.json
 *.tsbuildinfo
 *.lock
-
-game/.zen

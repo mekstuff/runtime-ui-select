@@ -1,0 +1,13 @@
+{
+	"pkgs": {
+		"@mekstuff-rbxts/core": {
+			"signature": "DxN5sT1FAYlLFIP3qk8D7qcQAzQ=914103163d203ae6616f",
+			"version": "^0.1.5",
+			"version_resolve": "0.1.5"
+		}
+	},
+	"tree": {
+		"@mekstuff-rbxts/core@0.1.5>>@mekstuff-rbxts/threader@0.1.0": "K5pFdmXVWJapKa0ypzICDxMfImg=9de0300f40596b59dd2a"
+	},
+	"version": "0"
+}
