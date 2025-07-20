@@ -3,8 +3,6 @@
     15/07/2025 18:07:05
 */
 
-const ScriptEditorService = game.GetService("ScriptEditorService");
-
 import { Engine } from "@mekstuff-rbxts/core";
 import { Constants } from "Core/Constants/Constants";
 
@@ -27,6 +25,7 @@ export function InsertPluginSharedSettingToken() {
 }
 
 export function UpdatePluginSharedToken(OpenDocument: boolean) {
+	const ScriptEditorService = game.GetService("ScriptEditorService");
 	Promise.try(() => {
 		const PluginSharedSettingToken = GetPluginSharedSettingToken();
 		if (OpenDocument === true) {

@@ -7,18 +7,25 @@ import { createCleanup, createEffect, use } from "@mekstuff-rbxts/vivid";
 import { Settings, SettingsContext } from "Contexts/SettingsContexts";
 import { Constants } from "Core/Constants/Constants";
 import { GetPlugin } from "Core/Functions/GetPlugin";
-import { GetIsRunningSession } from "Core/Functions/GetUsageContext";
+import { GetIsNonPluginEnv, GetIsRunningSession } from "Core/Functions/GetUsageContext";
 import { GetPluginSharedSettingToken, UpdatePluginSharedToken } from "./GetPluginSharedSettingToken";
 import { PromptAcceptRuntimeChanges } from "UI/Prompts/PromptAcceptRuntimeChanges";
 
 export type SettingsModuleData = { [k in keyof Settings]?: Settings[k] };
 
 export function ClearSettingsModule() {
+	if (GetIsNonPluginEnv()) {
+		return;
+	}
 	const plugin = GetPlugin();
 	plugin.SetSetting(Constants.PluginSharedSettingsKey, undefined);
 }
 
 export function SaveSettingsModule() {
+	if (GetIsNonPluginEnv()) {
+		return;
+	}
+
 	const plugin = GetPlugin();
 	const SettingsData: SettingsModuleData = {};
 	for (const [Key, Value] of pairs(SettingsContext)) {
@@ -28,6 +35,10 @@ export function SaveSettingsModule() {
 }
 
 export function LoadSettingsModule() {
+	if (GetIsNonPluginEnv()) {
+		return;
+	}
+
 	const plugin = GetPlugin();
 	const Settings = plugin.GetSetting(Constants.PluginSharedSettingsKey) as SettingsModuleData | undefined;
 	if (Settings === undefined) {
@@ -47,6 +58,10 @@ export function LoadSettingsModule() {
 }
 
 export function InitSettingsListener() {
+	if (GetIsNonPluginEnv()) {
+		return;
+	}
+
 	let DidDependencyLoop = false;
 	let DidUpdateSessionSaveScript = false;
 

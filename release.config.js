@@ -6,7 +6,7 @@ const config = {
 		[
 			"@semantic-release/git",
 			{
-				assets: ["out/rutus_plugin.rbxm"],
+				assets: ["out/rutus_plugin.rbxm", "game/out/rutus_game.rbxm"],
 				message: "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
 			},
 		],

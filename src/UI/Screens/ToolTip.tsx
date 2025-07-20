@@ -8,7 +8,7 @@ import { Theme, Units } from "@mekstuff-rbxts/vivid-ui";
 import { Constants } from "Core/Constants/Constants";
 import { SettingsContext } from "Contexts/SettingsContexts";
 
-export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
+export function ToolTip(props: { Mount?: Instance; MainWidget: DockWidgetPluginGui }) {
 	const [CurrentTip, setCurrentTip, CurrentTipState] = createState<string | undefined>(undefined);
 	const [CurrentPosition, setCurrentPosition] = createState<UDim2 | undefined>(new UDim2());
 	const [ToolTipDelayValue, setToolTipDelayValue, ToolTipDelayValueState] = createSpring(0); // 0=off | 1=on (delay on hovering)
@@ -99,7 +99,7 @@ export function ToolTip(props: { MainWidget: DockWidgetPluginGui }) {
 					SettingsContext.DisableToolTips.get() === false
 				);
 			}}
-			Parent={props.MainWidget}
+			Parent={props.Mount ?? props.MainWidget}
 		>
 			<uistroke ApplyStrokeMode={Enum.ApplyStrokeMode.Border} Color={Theme().Border} />
 			<uipadding

@@ -16,6 +16,7 @@ import {
 } from "@mekstuff-rbxts/vivid-ui";
 import { SettingsContext } from "Contexts/SettingsContexts";
 import { Constants } from "Core/Constants/Constants";
+import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 import { ResetPluginToDefault } from "Core/Functions/ResetPlugin";
 import { BindedSettingContextToggleSwitch } from "UI/Components/BindedSettingContextToggleSwitch";
 import { ThemeToggleButton } from "UI/Components/ThemeToggleButton";
@@ -23,7 +24,7 @@ import { ThemeToggleButton } from "UI/Components/ThemeToggleButton";
 export function SettingsScreen() {
 	const ToggleButtonOffset = 10;
 	return (
-		<frame Size={UDim2.fromScale(1, 1)} BackgroundTransparency={1}>
+		<frame Size={UDim2.fromScale(1, 1)} BackgroundColor3={Theme().MainBackground}>
 			<Slot slotId="#root"></Slot>
 			<scrollingframe
 				Size={createEffect(() => new UDim2(1, 0, 1, -(Units().BaseOffsetHeight + ToggleButtonOffset * 2)))()}
@@ -136,6 +137,7 @@ export function SettingsScreen() {
 					TargetSettingContext="AllowUserRuntimeUISelection"
 					ToolTip="Enables the ability for the plugin to allow the user to select hovered UI during runtime."
 					Dependencies={["HoverDetectionEnabled"]}
+					UnavailableFeature={GetIsNonPluginEnv()}
 				/>
 				<BindedSettingContextToggleSwitch
 					Text="Ignore Transparent GUI Objects"
@@ -147,7 +149,7 @@ export function SettingsScreen() {
 					Text="Block Input Activations"
 					TargetSettingContext="BlockButtonActivations"
 					ToolTip="Will block any input activations, allowing you to select buttons/textboxes during runtime without firing any events."
-					Dependencies={["PluginEnabled"]}
+					Dependencies={["PluginEnabled", "UseHoverDetectionActivationKeybind"]}
 				/>
 
 				{/* BorderBoxes / Distance Indicators */}
@@ -192,12 +194,14 @@ export function SettingsScreen() {
 					TargetSettingContext="DetectRuntimeSettingsChanges"
 					ToolTip="Whenever you make a plugin setting change during runtime, You will be prompted to save the changes when you exit the session.\n\nOnce enabled, whenever you make a setting change and leave the game, Roblox will prompt you that you've made some script changes, You must select yes at this step.\n\nNOTE: You may experience a flicker whenever the first setting is changed during runtime."
 					Dependencies={["PluginEnabled"]}
+					UnavailableFeature={GetIsNonPluginEnv()}
 				/>
 				<BindedSettingContextToggleSwitch
 					Text="Right Click For Context Menu"
 					TargetSettingContext="RightClickForContextMenu"
 					ToolTip="Right click during runtime for a context menu.\n\nIf you have a hover detect activation keybind, You will need to be holding the key."
 					Dependencies={["HoverDetectionEnabled"]}
+					UnavailableFeature={GetIsNonPluginEnv()}
 				/>
 				<SettingContent titleText={"Studio Theme"} scaleDistribution={0.5}>
 					<ThemeToggleButton />

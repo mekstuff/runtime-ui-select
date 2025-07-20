@@ -29,6 +29,8 @@ jobs:
               run: aftman install
             - name: Building
               run: yarn run build
+            - name: Building Game
+              run: yarn run build-game
             - name: Release
               run: npx semantic-release
               env:
