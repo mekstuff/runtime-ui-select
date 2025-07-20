@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.1...v1.1.2) (2025-07-20)
+
+
+### Bug Fixes
+
+* added npm release plugin to bump package json version ([c565351](https://github.com/mekstuff/runtime-ui-select/commit/c56535184786a964a98a95af2ae52a4c1ef99801))
+
 ## [1.1.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.0...v1.1.1) (2025-07-20)
 
 
