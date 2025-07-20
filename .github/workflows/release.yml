@@ -5,6 +5,12 @@ on:
         branches:
             - main
 
+env:
+    ITCH_USERNAME: mekstuff
+    ITCH_GAME_ID: rutus
+    ROBLOX_UNIVERSE_ID: 8203353679
+    ROBLOX_PLACE_ID: 137885571653335
+
 jobs:
     release:
         permissions:
@@ -15,22 +21,57 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
                   node-version: lts/*
+
             - name: Install dependencies
               run: yarn install --frozen-lockfile && cd game && yarn install --frozen-lockfile && cd ../
+
             - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
               run: yarn audit && cd game && yarn audit && cd ../
+
             - name: Setup aftman
-              uses: ok-nick/setup-aftman@v0.4.2
+              uses: ok-nick/setup-aftman@v0.4.2\
+
             - name: Install aftman packages
               run: aftman install
+
             - name: Building
               run: yarn run build
+
             - name: Building Game
               run: yarn run build-game
+
+            # Get next release version - https://stackoverflow.com/questions/69082517/is-it-possible-to-get-the-version-released-by-semantic-release-in-github-actions
+            - name: Dry run to get the next release version
+              id: tag_version
+              run: |
+                  export NEXT_TAG_VERSION=$(npx semantic-release --dry-run | grep 'The next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')
+                  echo "new_tag_version=${NEXT_TAG_VERSION}" >> $GITHUB_OUTPUT
+
+            # Deploy Experience/Game .rbxl file to Roblox
+            - name: Deploy Roblox Demo Place
+              shell: bash
+              env:
+                  UID: ${{ env.ROBLOX_UNIVERSE_ID }} # Universe ID
+                  PID: ${{ env.ROBLOX_PLACE_ID }} # Place ID
+                  API_KEY: ${{ secrets.ROBLOX_GAME }}
+                  FILE: game/out/rutus_game.rbxl # Roblox place file (e.g. might have a step before this to build the file with Rojo)
+              run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -p "$PID" -t published -f "$FILE"
+
+            # Deploy plugin file to Itch.io
+            - name: Delpoy to Itch
+              uses: Ayowel/butler-to-itch@v1
+              with:
+                  butler_key: ${{secrets.BUTLER_API_KEY}}
+                  itch_user: ${{env.ITCH_USERNAME}}
+                  itch_game: ${{env.ITCH_GAME_ID}}
+                  version: ${{ steps.tag_version.outputs.new_tag_version }}
+                  files: out/rutus_plugin.rbxm
+
             - name: Release
               run: npx semantic-release
               env:
