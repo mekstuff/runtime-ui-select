@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"build": "rbxtsc && rojo build -o out/rutus_game.rbxm",
+		"build": "rbxtsc && rojo build -o out/rutus_game.rbxl",
 		"watch": "rbxtsc -w",
 		"dev": "concurrently \"yarn watch\" \"rojo serve default.project.json\""
 	},
