@@ -22,9 +22,6 @@
 						"$path": "node_modules/@mekstuff-rbxts"
 					}
 				}
-			},
-			"TS": {
-				"$path": "out/shared"
 			}
 		},
 		"StarterPlayer": {
