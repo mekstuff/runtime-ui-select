@@ -27,4 +27,4 @@ jobs:
             - name: Building
               run: yarn run build
             - name: Building Game
-              run: cd game && yarn list && cd ../ && yarn run build-game
+              run: yarn run build-game
