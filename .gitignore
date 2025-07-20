@@ -2,5 +2,9 @@ node_modules/
 sourcemap.json
 /out
 /game/out
+
+!/out/rutus_plugin.rbxm
+!/game/out/rutus_game.rbxl
+
 *.tsbuildinfo
 *.lock
