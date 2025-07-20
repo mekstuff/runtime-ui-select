@@ -1,0 +1,17 @@
+-- Compiled with roblox-ts v3.0.0-dev-d48bd20
+local TS = _G[script]
+--[[
+	
+	    Typed with ❤️ @mekstuff
+	    01/01/2025 19:31:40
+	
+]]
+local createElement = TS.import(script, script.Parent, "createElement").createElement
+local function createRoot(Callback)
+	return createElement(function()
+		return createElement(Callback)
+	end, nil, nil)
+end
+return {
+	createRoot = createRoot,
+}

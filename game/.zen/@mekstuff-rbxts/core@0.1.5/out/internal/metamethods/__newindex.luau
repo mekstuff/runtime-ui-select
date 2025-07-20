@@ -1,0 +1,188 @@
+-- Compiled with roblox-ts v3.0.0
+-- import { Pseudo, _usePropertyEffectMap, _usePropertyEffectQuickSearchMap } from "../../class/Pseudo/Pseudo";
+-- import { AssignAttributeValue } from "../functions/AssignAttributeValue";
+-- import { MapObjectDependencies } from "../functions/MapObjectDependencies";
+-- import { Shared } from "../shared/Shared";
+-- import { _typeIs } from "../functions/typeIs";
+-- import { _getCanPropertyReplicateBasedOnReplicationInfo } from "../functions/GetCanPropertyReplicateBasedOnReplicationInfo";
+-- import { State } from "../../class/State/State";
+-- import { Signal } from "../../class/Signal/Signal";
+-- import _PseudoIdentificationAttrServerName from "../functions/PseudoIdentificationAttrServerName";
+-- const RunService = game.GetService("RunService");
+-- type useMapping_mapsdeps = Instance | PHe.Pseudos["Pseudo"] | object;
+-- export const create__newindex = (
+-- 	_this: Pseudo,
+-- 	_getID: Callback,
+-- 	OBJECT_PROXY: UnknownArray,
+-- 	// ASSIGNING_ATTRIBUTES: Map<string, boolean | undefined>,
+-- 	// HIDDEN_ATTRIBUTES: string[],
+-- 	// _DEFINED_NILS: string[],
+-- ) => {
+-- 	let _USE_STATE_SERVANT_ENTRIES: Map<unknown, State> | undefined;
+-- 	const _useNewIndexAssignment = OBJECT_PROXY["_useNewIndexAssignment"] as Callback[];
+-- 	return function (_: object, sentKey: unknown, sentValue: unknown, allowSameValueWrite?: boolean) {
+-- 		const __runNewIndex = (key: unknown, value: unknown, _wasRenderedByState?: boolean) => {
+-- 			if (key !== "_useSetPropertiesLocked") {
+-- 				const lockedProps = OBJECT_PROXY["_useSetPropertiesLocked"] as { [key: string]: string } | undefined;
+-- 				if (lockedProps !== undefined && lockedProps[key as string] !== undefined) {
+-- 					_this.error(lockedProps[key as string]);
+-- 				}
+-- 			}
+-- 			// remove any state controlled servants if the value was not rendered by the previous state that had control.
+-- 			if (_USE_STATE_SERVANT_ENTRIES?.get(key) && !_wasRenderedByState) {
+-- 				_USE_STATE_SERVANT_ENTRIES.get(sentKey)!.Destroy();
+-- 				_USE_STATE_SERVANT_ENTRIES.delete(sentKey);
+-- 			}
+-- 			if (_this._USE_STRICT_PROPERTIES === 2 || _this._USE_STRICT_PROPERTIES === 3) {
+-- 				const [s, r] = pcall(() => {
+-- 					return (_this as unknown as UnknownArray)[key as string];
+-- 				});
+-- 				if (s === false) {
+-- 					throw `{StrictProperty} => ${r}`;
+-- 				}
+-- 			}
+-- 			if (key === "ClassName" && typeIs(value, "string")) {
+-- 				_this._classNames = _this._classNames || {};
+-- 				_this._classNames.push(value);
+-- 			}
+-- 			if (key !== "_useNewIndexAssignment" && _useNewIndexAssignment && _useNewIndexAssignment.size() > 0) {
+-- 				_useNewIndexAssignment.forEach((callback) => {
+-- 					value = callback(key, value);
+-- 				});
+-- 			}
+-- 			// if (value === undefined) {
+-- 			// 	//push to defined nils
+-- 			// 	if (_DEFINED_NILS.find((e) => e === key) === undefined) {
+-- 			// 		_DEFINED_NILS.push(key as string);
+-- 			// 	}
+-- 			// } else {
+-- 			// 	//if it's no longer nil and it was defined in _DEFINED_NILS then remove
+-- 			// 	_DEFINED_NILS.remove(_DEFINED_NILS.indexOf(key as string));
+-- 			// 	// _DEFINED_NILS.filter((e) => e === key);
+-- 			// }
+-- 			// assigned same value, ignore newindex.
+-- 			if (OBJECT_PROXY[key as string] === value && allowSameValueWrite !== true) {
+-- 				return;
+-- 			}
+-- 			// If we are parenting, use GetRef() so the Ref is created.
+-- 			if (key === "Parent" && value !== undefined) {
+-- 				// _this.GetRef().Name = OBJECT_PROXY["Name"] as string;
+-- 				_this.GetRef().Parent = _typeIs(value, "Pseudo") ? value.GetRef() : (value as Instance);
+-- 			}
+-- 			// If we change the name, only update the Ref Name if the Ref exists.
+-- 			if (key === "Name") {
+-- 				if (OBJECT_PROXY["_referenceInstance"]) {
+-- 					_this.GetRef().Name = value as string;
+-- 				}
+-- 			}
+-- 			if (
+-- 				_this._dev !== undefined &&
+-- 				_this._dev._internal_createdSignals !== undefined &&
+-- 				(_this._dev._internal_createdSignals as UnknownArray)["PrePropertyChanged"] !== undefined
+-- 			) {
+-- 				_this.PrePropertyChanged.Fire(key, value);
+-- 			}
+-- 			// if (!_noObjectProxyUpdate) {
+-- 			OBJECT_PROXY[key as string] = value;
+-- 			// }
+-- 			if (
+-- 				_this._dev !== undefined &&
+-- 				_this._dev._internal_createdSignals !== undefined &&
+-- 				(_this._dev._internal_createdSignals as UnknownArray)["PropertyChanged"] !== undefined
+-- 			) {
+-- 				_this.PropertyChanged.Fire(key, value);
+-- 			}
+-- 			if (
+-- 				_this._dev !== undefined &&
+-- 				_this._dev._internal_createdSignals !== undefined &&
+-- 				(_this._dev._internal_createdSignals as UnknownArray)[`_internal_propertychanged_${key}`] !== undefined
+-- 			) {
+-- 				(
+-- 					(_this._dev._internal_createdSignals as UnknownArray)[`_internal_propertychanged_${key}`] as Signal
+-- 				).Fire();
+-- 			}
+-- 			//trigger any Mappings
+-- 			const _useMapping_maps = (OBJECT_PROXY._dev as Map<unknown, unknown>).get("_useMapping_maps") as Map<
+-- 				string,
+-- 				useMapping_mapsdeps[]
+-- 			>;
+-- 			if (_useMapping_maps) {
+-- 				const DirectMap = _useMapping_maps.get(key as string); //for cases where it's not a custom property name.
+-- 				if (DirectMap) {
+-- 					MapObjectDependencies(_this, [key as string], DirectMap);
+-- 				}
+-- 				//mapping customs
+-- 				for (const [_n, _deps] of _useMapping_maps) {
+-- 					if (_n === "*") {
+-- 						MapObjectDependencies(_this, [key as string], _deps);
+-- 					} else {
+-- 						const split = string.split(_n, Shared.DEPS_STRING_ID_SEPERATOR);
+-- 						const name = split[0];
+-- 						assert(
+-- 							typeIs(name, "string"),
+-- 							`Could not resolve property name to compare to prepare for map. ${_this} || Property ${key}. Got ${name}`,
+-- 						);
+-- 						MapObjectDependencies(_this, [_n], _deps);
+-- 					}
+-- 				}
+-- 			}
+-- 			// using attributes to display the properties of the pseudo ( only if reference instance exists. )
+-- 			// if (_this._referenceInstance !== undefined) {
+-- 			// 	if (typeIs(key, "string")) {
+-- 			// 		if (ASSIGNING_ATTRIBUTES.has(key) === false) {
+-- 			// 			if (HIDDEN_ATTRIBUTES.indexOf(key) !== -1) {
+-- 			// 				return;
+-- 			// 			}
+-- 			// 			ASSIGNING_ATTRIBUTES.set(key, true);
+-- 			// 			AssignAttributeValue(_this.GetRef(), key, value);
+-- 			// 			ASSIGNING_ATTRIBUTES.delete(key);
+-- 			// 		}
+-- 			// 	}
+-- 			// }
+-- 			if (key === "$server" && RunService.IsServer()) {
+-- 				OBJECT_PROXY["__$servers"] = OBJECT_PROXY["__$servers"] || {};
+-- 				(OBJECT_PROXY["__$servers"] as defined[]).push(value as defined);
+-- 			}
+-- 			if (key === "$client" && RunService.IsClient()) {
+-- 				OBJECT_PROXY["__$clients"] = OBJECT_PROXY["__$clients"] || {};
+-- 				(OBJECT_PROXY["__$clients"] as defined[]).push(value as defined);
+-- 			}
+-- 		};
+-- 		let value = sentValue;
+-- 		// Pseudo State support
+-- 		if (_typeIs(value, "State")) {
+-- 			if (_USE_STATE_SERVANT_ENTRIES && _USE_STATE_SERVANT_ENTRIES.get(sentKey)) {
+-- 				_USE_STATE_SERVANT_ENTRIES.get(sentKey)!.Destroy();
+-- 				_USE_STATE_SERVANT_ENTRIES.delete(sentKey);
+-- 			}
+-- 			if (!_USE_STATE_SERVANT_ENTRIES) {
+-- 				_USE_STATE_SERVANT_ENTRIES = new Map();
+-- 				_this.Destroying.Connect(() => {
+-- 					// clear all useState servants associated with the pseudo when it's destroyed.
+-- 					_USE_STATE_SERVANT_ENTRIES?.forEach((servant) => {
+-- 						servant.Destroy();
+-- 					});
+-- 					_USE_STATE_SERVANT_ENTRIES = undefined;
+-- 				});
+-- 			}
+-- 			_USE_STATE_SERVANT_ENTRIES && _USE_STATE_SERVANT_ENTRIES.set(sentKey, value);
+-- 			__runNewIndex(sentKey, value.State, true);
+-- 			value.ObserveNext(() => {
+-- 				__runNewIndex(sentKey, value.State, true);
+-- 			}, ["State"]);
+-- 			return;
+-- 		} else {
+-- 			if (_USE_STATE_SERVANT_ENTRIES && _USE_STATE_SERVANT_ENTRIES.get(sentKey)) {
+-- 				const newState = _USE_STATE_SERVANT_ENTRIES.get(sentKey as string);
+-- 				const newStateValue = newState!.State;
+-- 				if (newStateValue === value) {
+-- 					return;
+-- 				}
+-- 				_USE_STATE_SERVANT_ENTRIES.get(sentKey)!.Destroy();
+-- 				_USE_STATE_SERVANT_ENTRIES.delete(sentKey);
+-- 			}
+-- 		}
+-- 		__runNewIndex(sentKey, value);
+-- 	};
+-- };
+return nil

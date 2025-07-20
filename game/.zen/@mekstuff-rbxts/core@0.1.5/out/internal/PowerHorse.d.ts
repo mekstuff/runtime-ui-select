@@ -1,0 +1,61 @@
+import { threader } from "@mekstuff-rbxts/threader";
+import { Signal } from "../class/Signal/Signal";
+import { State } from "../class/State/State";
+import { _typeIs } from "./functions/typeIs";
+import { GetPseudoById } from "./functions/GetPseudoById";
+import { GetPseudoFromObject } from "./functions/GetPseudoByObject";
+import RecursiveTry from "./functions/RecursiveTry";
+import BatchIterate from "./functions/BatchIterate";
+import RuntimeDebugger from "../class/RuntimeDebugger/RuntimeDebugger";
+declare const PowerHorse: {
+    _G: UnknownArray & {
+        set: (key: unknown, value: unknown) => void;
+        get: <T>(key: unknown, timeout?: number) => Promise<T>;
+    };
+    Pseudo: import("../class/Pseudo/PseudoNext").PseudoNextConstructor;
+    State: <T>(defaultValue?: T) => LuaTuple<[State<T>, State<T>["setState"]]>;
+    Spring: {};
+    Servant: import("../class/Servant/ServantNext").ServantNextConstructor;
+    Signal: typeof Signal;
+    threader: typeof threader;
+    SpreadOperator: (...t: object[]) => {};
+    typeIs: typeof _typeIs;
+    GetPseudoById: typeof GetPseudoById;
+    GetPseudoFromObject: typeof GetPseudoFromObject;
+    RecursiveTry: typeof RecursiveTry;
+    BatchIterate: BatchIterate;
+    Color3: {
+        new: (r: number | Color3, g: number, b: number, alpha?: number) => Color3;
+        fromRGB: (r: number, g: number, b: number, alpha?: number) => Color3;
+        fromHSV: (h: number, s: number, v: number, alpha?: number) => Color3;
+    };
+    Engine: {
+        InitServer: () => void;
+        FetchReplicatedStorage: (TargetSubContainer?: string) => Instance;
+        FetchWorkspaceStorage: (TargetSubContainer?: string) => Instance;
+        FetchServerStorage: (TargetSubContainer?: string) => Instance;
+        FetchServerScripts: (TargetSubContainer?: string) => Instance;
+    };
+    Compatibility: import("../class/Compatibility/Compatibility").CompatibilityClass;
+    Observables: import("../class/Observables/Observables").ObservablesClass;
+    RuntimeDebugger: typeof RuntimeDebugger;
+    InstanceMapper: import("../class/InstanceMapper/InstanceMapper").InstanceMapperClass;
+    Syncer: import("../class/Replication/Syncer").SyncerUsageClass;
+    Debouncer: import("../class/Debounce/Debounce").DebounceClass;
+    setNodeModules(node_modules: Folder): void;
+    createClass(constructor: (...args: unknown[]) => any, ...args: unknown[]): any;
+    PKG: {};
+    _getluaprovider(): {
+        require: Callback;
+        class: Callback;
+    } | undefined;
+    luaproviderRequire(module: ModuleScript): any;
+    require(root: string | Instance, path?: string): unknown;
+    importAsync(root: string | Instance, path?: string): unknown;
+    import(root: string | Instance, path?: string): Promise<unknown>;
+    error: (err: unknown, level?: number) => never;
+    warn: (...args: unknown[]) => void;
+    log: (...args: unknown[]) => void;
+    Promise: PromiseConstructor;
+};
+export { PowerHorse };
