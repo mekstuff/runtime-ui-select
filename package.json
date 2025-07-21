@@ -17,8 +17,7 @@
 		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
 		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
 		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
-		"prepack": "yarn run build",
-		"pre-commit": "yarn run sync-game"
+		"prepack": "yarn run build"
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^3.0.0-types.0",
