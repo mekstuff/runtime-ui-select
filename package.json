@@ -1,5 +1,5 @@
 {
-	"name": "@mekstuff-rbxts/runtime-ui-select",
+	"name": "runtime-ui-select",
 	"private": "true",
 	"version": "1.0.0",
 	"main": "out/init.luau",
@@ -15,7 +15,8 @@
 		"dev-game": "cd game && yarn run dev && cd ../",
 		"build-game": "cd game && yarn run build && cd ../",
 		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
-		"sync-game": "zen publish && yarn run zen-pull-game",
+		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
+		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
 		"prepack": "yarn run build"
 	},
 	"devDependencies": {
@@ -31,6 +32,7 @@
 		"eslint-config-prettier": "^10.1.5",
 		"eslint-plugin-prettier": "^5.5.1",
 		"eslint-plugin-roblox-ts": "^0.0.36",
+		"npm": "^11.4.2",
 		"prettier": "^3.6.2",
 		"roblox-ts": "^3.0.0",
 		"semantic-release": "^24.2.7",

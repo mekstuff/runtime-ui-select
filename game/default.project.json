@@ -32,6 +32,31 @@
 					"$path": "out/client"
 				}
 			}
+		},
+		"StarterGui": {
+			"$className": "StarterGui",
+			"DemoUIs": {
+				"$path": "DemoUIs.rbxm"
+			}
+		},
+		"Workspace": {
+			"$className": "Workspace",
+			"Baseplate": {
+				"$className": "Part",
+				"$properties": {
+					"Anchored": true,
+					"CanCollide": true,
+					"Size": { "Vector3": [2048.0, 12.0, 2048.0] }
+				}
+			},
+			"SpawnLocation": {
+				"$className": "SpawnLocation",
+				"$properties": {
+					"Anchored": true,
+					"CanCollide": true,
+					"Size": { "Vector3": [14.0, 13.0, 14.0] }
+				}
+			}
 		}
 	}
 }
