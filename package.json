@@ -17,7 +17,8 @@
 		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
 		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
 		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
-		"prepack": "yarn run build"
+		"prepack": "yarn run build",
+		"pre-commit": "yarn run sync-game"
 	},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^3.0.0-types.0",
@@ -37,6 +38,7 @@
 		"roblox-ts": "^3.0.0",
 		"semantic-release": "^24.2.7",
 		"semantic-release-export-data": "^1.1.1",
+		"simple-git-hooks": "^2.13.0",
 		"typescript": "^5.8.3"
 	},
 	".zen": {
