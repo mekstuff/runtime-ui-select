@@ -3,7 +3,7 @@
     02/07/2025 22:18:19
 */
 
-import Vivid, { Suspense, use } from "@mekstuff-rbxts/vivid";
+import Vivid, { createEffect, createScope, Suspense, use } from "@mekstuff-rbxts/vivid";
 import { Constants } from "Core/Constants/Constants";
 import { GetPlugin } from "Core/Functions/GetPlugin";
 import { GetIsRunningSession } from "Core/Functions/GetUsageContext";
@@ -20,6 +20,7 @@ export function SettingsWidget(props: { Toolbar: PluginToolbar }) {
 				) as DockWidgetPluginGui & { Title: string };
 				Widget.Title = `${Constants.PluginDisplayName}${GetIsRunningSession() ? " - Client" : ""}`;
 
+				Widget.Enabled = true;
 				if (GetPlugin().GetSetting(Constants.PluginSharedSettingsKey) === undefined) {
 					// FTUE
 					Widget.Enabled = true;
@@ -28,8 +29,15 @@ export function SettingsWidget(props: { Toolbar: PluginToolbar }) {
 				const SettingsWidgetButton = use(() => props.Toolbar).CreateButton(
 					Constants.PluginDisplayName,
 					"Select GUI During Runtime.",
-					Constants.PluginDisplayIcon,
+					use(() => Constants.Dynamic_PluginDisplayIcon()),
 				);
+
+				const DynamicIconScope = createScope();
+				createEffect(() => {
+					(SettingsWidgetButton as unknown as { Icon: string }).Icon = Constants.Dynamic_PluginDisplayIcon();
+				});
+
+				DynamicIconScope.Close();
 
 				SettingsWidgetButton.Click.Connect(() => {
 					Widget.Enabled = !Widget.Enabled;

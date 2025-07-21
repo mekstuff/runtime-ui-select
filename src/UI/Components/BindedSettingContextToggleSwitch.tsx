@@ -5,7 +5,7 @@
 
 import Vivid, { Case, createCleanup, createEffect, Switch, use } from "@mekstuff-rbxts/vivid";
 import { SettingContent, ToggleSwitch } from "@mekstuff-rbxts/vivid-ui";
-import { SettingsContext } from "Contexts/SettingsContexts";
+import { SettingsContext, SettingState } from "Contexts/SettingsContexts";
 import { Constants } from "Core/Constants/Constants";
 import { UnavailableFeature } from "./UnavailableFeature";
 
@@ -17,6 +17,16 @@ export function BindedSettingContextToggleSwitch(props: {
 	UnavailableFeature?: boolean;
 	ToolTip?: string;
 }) {
+	const SettingContextObject = SettingsContext[use(() => props.TargetSettingContext)] as SettingState<boolean>;
+
+	assert(
+		typeIs(
+			use(() => SettingContextObject.get()),
+			"boolean",
+		),
+		"SettingContextObject not a boolean.",
+	);
+
 	return (
 		<frame
 			tags={[Constants.MainWidgetToolTipCollectionId]}
@@ -46,13 +56,13 @@ export function BindedSettingContextToggleSwitch(props: {
 					<Case condition={false}>
 						{() => (
 							<ToggleSwitch
-								toggled={SettingsContext[use(() => props.TargetSettingContext)].get()}
+								toggled={SettingContextObject.get()}
 								disabled={createEffect(() => {
 									if (props.Dependencies !== undefined) {
 										for (const [_, Dependency] of pairs(props.Dependencies)) {
 											if (SettingsContext[Dependency].get() === false) {
 												let oldState = false;
-												SettingsContext[use(() => props.TargetSettingContext)].set((old) => {
+												SettingContextObject.set((old) => {
 													oldState = old;
 													return false;
 												});
@@ -60,9 +70,7 @@ export function BindedSettingContextToggleSwitch(props: {
 													if (isDestroying) {
 														return;
 													}
-													SettingsContext[use(() => props.TargetSettingContext)].set(
-														oldState,
-													);
+													SettingContextObject.set(oldState);
 												});
 												return true;
 											}
@@ -72,7 +80,7 @@ export function BindedSettingContextToggleSwitch(props: {
 										for (const [_, InverseDependency] of pairs(props.InverseDependencies)) {
 											if (SettingsContext[InverseDependency].get() === true) {
 												let oldState = false;
-												SettingsContext[use(() => props.TargetSettingContext)].set((old) => {
+												SettingContextObject.set((old) => {
 													oldState = old;
 													return false;
 												});
@@ -80,9 +88,7 @@ export function BindedSettingContextToggleSwitch(props: {
 													if (isDestroying) {
 														return;
 													}
-													SettingsContext[use(() => props.TargetSettingContext)].set(
-														oldState,
-													);
+													SettingContextObject.set(oldState);
 												});
 												return true;
 											}
@@ -91,7 +97,7 @@ export function BindedSettingContextToggleSwitch(props: {
 									return false;
 								})()}
 								Activated={() => {
-									SettingsContext[use(() => props.TargetSettingContext)].set((old) => !old);
+									SettingContextObject.set((old) => !old);
 								}}
 							/>
 						)}

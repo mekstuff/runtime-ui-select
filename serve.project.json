@@ -8,6 +8,12 @@
 			"Plugin": {
 				"$path": "./default.project.json"
 			}
+		},
+		"StarterGui": {
+			"$className": "StarterGui",
+			"DemoUIs": {
+				"$path": "game/DemoUIs.rbxmx"
+			}
 		}
 	}
 }

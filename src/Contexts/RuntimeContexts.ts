@@ -38,10 +38,19 @@ createEffect(() => {
 	});
 	*/
 
+	const HoverDetectionAccuracy = SettingsContext.HoverDetectionAccuracy.get();
 	const MultiHoverDetectionEnabled = SettingsContext.MultiHoverDetectionEnabled.get();
 	const IgnoreTransparentGUIObjects = SettingsContext.IgnoreTransparentGUIObjects.get();
 	const UseHoverDetectionActivationKeybind = SettingsContext.UseHoverDetectionActivationKeybind.get();
-	const Update = RunService.Heartbeat.Connect(() => {
+
+	let LastUpdateTick = tick() + HoverDetectionAccuracy;
+
+	const Update = RunService.Heartbeat.Connect((dt) => {
+		const TickNow = tick();
+		if (TickNow - LastUpdateTick - dt < HoverDetectionAccuracy) {
+			return;
+		}
+		LastUpdateTick = TickNow;
 		if (UseHoverDetectionActivationKeybind === true) {
 			if (UserInputService.IsKeyDown(Enum.KeyCode.LeftControl) === false) {
 				setCurrentlyHoveringItems((old) => {
@@ -62,6 +71,7 @@ createEffect(() => {
 				return f;
 			})
 			.filterUndefined();
+
 		setCurrentlyHoveringItemsUnfiltered(AllGuiObjectsAtPosition);
 		let GuiObjectsAtPosition = AllGuiObjectsAtPosition.map((f) => {
 			/*

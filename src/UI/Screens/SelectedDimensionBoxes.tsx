@@ -5,7 +5,7 @@
 
 const Players = game.GetService("Players");
 
-import Vivid, { Case, createEffect, For, Switch } from "@mekstuff-rbxts/vivid";
+import Vivid, { Case, createCleanup, createEffect, createState, For, Switch } from "@mekstuff-rbxts/vivid";
 import { Theme } from "@mekstuff-rbxts/vivid-ui";
 import { CurrentlySelectedItems } from "Contexts/RuntimeContexts";
 import { SettingsContext } from "Contexts/SettingsContexts";
@@ -14,6 +14,27 @@ import { DimensionBox } from "UI/Components/DimensionBox";
 
 export function SelectedDimensionBoxes() {
 	const PlayerGui = Players.LocalPlayer.WaitForChild("PlayerGui");
+
+	const [CurrentCamera, setCurrentCamera] = createState<Camera | undefined>(game.Workspace.CurrentCamera);
+	const [ViewportSize, setViewportSize] = createState(new Vector2(1920, 1080));
+
+	const CameraChangedListener = game.Workspace.GetPropertyChangedSignal("CurrentCamera").Connect(() => {
+		setCurrentCamera(game.Workspace.CurrentCamera);
+	});
+
+	createEffect(() => {
+		const Camera = CurrentCamera();
+		if (Camera === undefined) {
+			setViewportSize(new Vector2(1920, 1080));
+			return;
+		}
+		setViewportSize(Camera.ViewportSize);
+	});
+
+	createCleanup(() => {
+		CameraChangedListener.Disconnect();
+	});
+
 	return (
 		<Switch
 			conditional={createEffect(() => {
@@ -34,6 +55,7 @@ export function SelectedDimensionBoxes() {
 							children={(props) => (
 								<DimensionBox
 									Adornee={props}
+									ViewportSize={ViewportSize()}
 									PrimaryColor={Theme().BrightText}
 									BackgroundColor={Theme().MainButton}
 									ShowAbsoluteSize={SettingsContext.ShowAbsoluteSizeOnSelected.get()}
