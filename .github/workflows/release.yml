@@ -80,12 +80,12 @@ jobs:
             # Deploy plugin file to Itch.io
             - name: Delpoy to Itch
               uses: yeslayla/butler-publish-itchio-action@master
-              with:
+              env:
                   BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
                   CHANNEL: windows
-                  ITCH_USER: ${{ env.ITCH_USERNAME }}
                   ITCH_GAME: ${{ env.ITCH_GAME_ID }}
-                  PACKAGE: ./out/rutus_plugin.rbxm
+                  ITCH_USER: ${{ env.ITCH_USERNAME }}
+                  PACKAGE: out/rutus_plugin.rbxm
                   VERSION: ${{ needs.get-next-version.outputs.new-release-version }}
 
             - name: Release
