@@ -85,7 +85,7 @@ jobs:
                   itch_user: ${{ env.ITCH_USERNAME }}
                   itch_game: ${{ env.ITCH_GAME_ID }}
                   channel: windows
-                  files: out/rutus_plugin.rbxm
+                  package: ./out/rutus_plugin.rbxm
                   version: ${{ needs.get-next-version.outputs.new-release-version }}
 
             - name: Release
