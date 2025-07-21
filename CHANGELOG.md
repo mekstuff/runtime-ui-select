@@ -1,3 +1,13 @@
+## [1.1.4](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.3...v1.1.4) (2025-07-21)
+
+
+### Bug Fixes
+
+* added no-verify to git commit message for semantic release git and fixed constants usage to make it game demo friendly ([a280393](https://github.com/mekstuff/runtime-ui-select/commit/a2803934698b345acbd29406e0e40e14cc7389c3))
+* fixed compiled rbxl and rbxm files ([4e86728](https://github.com/mekstuff/runtime-ui-select/commit/4e867284f0e2ae3a6ec15ebd6e6d6f86d081ba26))
+* optimization to runtime context and plugin ([74e07b8](https://github.com/mekstuff/runtime-ui-select/commit/74e07b875ae3a756c4d1ebc7d2230eb518e2bfd8))
+* removed simple-git-hooks ([43aaf6d](https://github.com/mekstuff/runtime-ui-select/commit/43aaf6dd403c90c5f3b5cb22c1418b8f6adaa2e6))
+
 ## [1.1.3](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.2...v1.1.3) (2025-07-21)
 
 
