@@ -23,28 +23,12 @@ local function DimensionBox(props)
 	local AdorneeStatic = use(function()
 		return props.Adornee
 	end)
-	local CurrentCamera, setCurrentCamera = createState(game.Workspace.CurrentCamera)
-	local ViewportSize, setViewportSize = createState(Vector2.new(1920, 1080))
 	local AdorneeAbsoluteSize, setAdorneeAbsoluteSize = createState(use(function()
 		return AdorneeStatic.AbsoluteSize
 	end))
 	local AdorneeAbsolutePosition, setAdorneeAbsolutePosition = createState(use(function()
 		return AdorneeStatic.AbsolutePosition
 	end))
-	local CameraChangedListener = game.Workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-		setCurrentCamera(game.Workspace.CurrentCamera)
-	end)
-	createCleanup(function()
-		CameraChangedListener:Disconnect()
-	end)
-	createEffect(function()
-		local Camera = CurrentCamera()
-		if Camera == nil then
-			setViewportSize(Vector2.new(1920, 1080))
-			return nil
-		end
-		setViewportSize(Camera.ViewportSize)
-	end)
 	createEffect(function()
 		local AbsolutePositionChangedListener = props.Adornee:GetPropertyChangedSignal("AbsolutePosition"):Connect(function()
 			setAdorneeAbsolutePosition(props.Adornee.AbsolutePosition)
@@ -79,7 +63,7 @@ local function DimensionBox(props)
 		end),
 		Color = props.PrimaryColor,
 	}), Vivid.createElement(DimensionBoxTextInfoList, {
-		ViewportSize = ViewportSize(),
+		ViewportSize = props.ViewportSize,
 		AnchorPoint = Vector2.new(1, 1),
 		Position = UDim2.new(1, 0, 0, -6),
 		PrimaryColor = props.PrimaryColor,
@@ -101,7 +85,7 @@ local function DimensionBox(props)
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 	}), Vivid.createElement(DimensionBoxTextInfoList, {
-		ViewportSize = ViewportSize(),
+		ViewportSize = props.ViewportSize,
 		AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.new(1, 0, 1, 6),
 		PrimaryColor = props.PrimaryColor,

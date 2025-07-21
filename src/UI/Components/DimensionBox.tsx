@@ -18,34 +18,17 @@ type DimensionBoxProps = {
 	ShowAbsoluteSize: boolean;
 	ShowAbsolutePosition: boolean;
 	ShowInstanceName: boolean;
+
+	ViewportSize: Vector2;
 };
 
 export function DimensionBox(props: DimensionBoxProps) {
 	const AdorneeStatic = use(() => props.Adornee);
 
-	const [CurrentCamera, setCurrentCamera] = createState<Camera | undefined>(game.Workspace.CurrentCamera);
-
-	const [ViewportSize, setViewportSize] = createState(new Vector2(1920, 1080));
 	const [AdorneeAbsoluteSize, setAdorneeAbsoluteSize] = createState(use(() => AdorneeStatic.AbsoluteSize));
 	const [AdorneeAbsolutePosition, setAdorneeAbsolutePosition] = createState(
 		use(() => AdorneeStatic.AbsolutePosition),
 	);
-
-	const CameraChangedListener = game.Workspace.GetPropertyChangedSignal("CurrentCamera").Connect(() => {
-		setCurrentCamera(game.Workspace.CurrentCamera);
-	});
-	createCleanup(() => {
-		CameraChangedListener.Disconnect();
-	});
-
-	createEffect(() => {
-		const Camera = CurrentCamera();
-		if (Camera === undefined) {
-			setViewportSize(new Vector2(1920, 1080));
-			return;
-		}
-		setViewportSize(Camera.ViewportSize);
-	});
 
 	createEffect(() => {
 		const AbsolutePositionChangedListener = props.Adornee.GetPropertyChangedSignal("AbsolutePosition").Connect(
@@ -89,7 +72,7 @@ export function DimensionBox(props: DimensionBoxProps) {
 
 			{/* Top List */}
 			<DimensionBoxTextInfoList
-				ViewportSize={ViewportSize()}
+				ViewportSize={props.ViewportSize}
 				AnchorPoint={new Vector2(1, 1)}
 				Position={new UDim2(1, 0, 0, -6)}
 				PrimaryColor={props.PrimaryColor}
@@ -117,7 +100,7 @@ export function DimensionBox(props: DimensionBoxProps) {
 
 			{/* Bottom List */}
 			<DimensionBoxTextInfoList
-				ViewportSize={ViewportSize()}
+				ViewportSize={props.ViewportSize}
 				AnchorPoint={new Vector2(1, 0)}
 				Position={new UDim2(1, 0, 1, 6)}
 				PrimaryColor={props.PrimaryColor}

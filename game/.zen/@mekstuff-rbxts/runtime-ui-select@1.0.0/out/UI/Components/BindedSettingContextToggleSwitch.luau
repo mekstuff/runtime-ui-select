@@ -20,6 +20,14 @@ local SettingsContext = TS.import(script, script.Parent.Parent.Parent, "Contexts
 local Constants = TS.import(script, script.Parent.Parent.Parent, "Core", "Constants", "Constants").Constants
 local UnavailableFeature = TS.import(script, script.Parent, "UnavailableFeature").UnavailableFeature
 local function BindedSettingContextToggleSwitch(props)
+	local SettingContextObject = SettingsContext[use(function()
+		return props.TargetSettingContext
+	end)]
+	local _arg0 = use(function()
+		return SettingContextObject.get()
+	end)
+	local _arg0_1 = type(_arg0) == "boolean"
+	assert(_arg0_1, "SettingContextObject not a boolean.")
 	return Vivid.createElement("frame", {
 		tags = { Constants.MainWidgetToolTipCollectionId },
 		attributes = {
@@ -86,17 +94,13 @@ local function BindedSettingContextToggleSwitch(props)
 		condition = false,
 	}, function()
 		return Vivid.createElement(ToggleSwitch, {
-			toggled = SettingsContext[use(function()
-				return props.TargetSettingContext
-			end)].get(),
+			toggled = SettingContextObject.get(),
 			disabled = createEffect(function()
 				if props.Dependencies ~= nil then
 					for _, Dependency in pairs(props.Dependencies) do
 						if SettingsContext[Dependency].get() == false then
 							local oldState = false
-							SettingsContext[use(function()
-								return props.TargetSettingContext
-							end)].set(function(old)
+							SettingContextObject.set(function(old)
 								oldState = old
 								return false
 							end)
@@ -104,9 +108,7 @@ local function BindedSettingContextToggleSwitch(props)
 								if isDestroying ~= 0 and isDestroying == isDestroying and isDestroying ~= "" and isDestroying then
 									return nil
 								end
-								SettingsContext[use(function()
-									return props.TargetSettingContext
-								end)].set(oldState)
+								SettingContextObject.set(oldState)
 							end)
 							return true
 						end
@@ -116,9 +118,7 @@ local function BindedSettingContextToggleSwitch(props)
 					for _, InverseDependency in pairs(props.InverseDependencies) do
 						if SettingsContext[InverseDependency].get() == true then
 							local oldState = false
-							SettingsContext[use(function()
-								return props.TargetSettingContext
-							end)].set(function(old)
+							SettingContextObject.set(function(old)
 								oldState = old
 								return false
 							end)
@@ -126,9 +126,7 @@ local function BindedSettingContextToggleSwitch(props)
 								if isDestroying ~= 0 and isDestroying == isDestroying and isDestroying ~= "" and isDestroying then
 									return nil
 								end
-								SettingsContext[use(function()
-									return props.TargetSettingContext
-								end)].set(oldState)
+								SettingContextObject.set(oldState)
 							end)
 							return true
 						end
@@ -137,9 +135,7 @@ local function BindedSettingContextToggleSwitch(props)
 				return false
 			end)(),
 			Activated = function()
-				SettingsContext[use(function()
-					return props.TargetSettingContext
-				end)].set(function(old)
+				SettingContextObject.set(function(old)
 					return not old
 				end)
 			end,

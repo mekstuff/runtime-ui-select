@@ -20,6 +20,7 @@ end
 local DefaultSettingsContext = {
 	PluginEnabled = true,
 	HoverDetectionEnabled = true,
+	HoverDetectionAccuracy = 0.1,
 	MultiHoverDetectionEnabled = false,
 	ShowDimensionsOnHover = true,
 	ShowAbsoluteSizeOnHover = true,
@@ -47,8 +48,8 @@ local DefaultSettingsContext = {
 local SettingsContext = {}
 local function SetSettingsContextDefault()
 	for SettingKey, SettingValue in pairs(DefaultSettingsContext) do
-		SettingsContext[SettingKey] = SettingsContext[SettingKey] or CreateSettingState(SettingValue)
-		SettingsContext[SettingKey].set(SettingValue)
+		SettingsContext[SettingKey] = (SettingsContext[SettingKey] or CreateSettingState(SettingValue));
+		(SettingsContext[SettingKey]).set(SettingValue)
 	end
 end
 SetSettingsContextDefault()

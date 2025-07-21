@@ -14,6 +14,7 @@ import Vivid, {
 	useResponsive,
 	WithTransition,
 } from "@mekstuff-rbxts/vivid";
+import { Icons, Input, Label, Theme } from "@mekstuff-rbxts/vivid-ui";
 import { HoverDimensionBoxes } from "@mekstuff-rbxts/runtime-ui-select/out/UI/Screens/HoverDimensionBoxes";
 import { BorderDistanceBoxes } from "@mekstuff-rbxts/runtime-ui-select/out/UI/Screens/BorderDistanceBoxes";
 import { ToolTip } from "@mekstuff-rbxts/runtime-ui-select/out/UI/Screens/ToolTip";
@@ -21,7 +22,6 @@ import { UnavailableFeature } from "@mekstuff-rbxts/runtime-ui-select/out/UI/Com
 import { SettingsScreen } from "@mekstuff-rbxts/runtime-ui-select/out/UI/Screens/SettingsScreen";
 import { SettingsContext } from "@mekstuff-rbxts/runtime-ui-select/out/Contexts/SettingsContexts";
 import { Tags } from "@mekstuff-rbxts/runtime-ui-select/out/Core/Constants/Tags";
-import { Icons, Input, Label, Theme } from "@mekstuff-rbxts/vivid-ui";
 
 const IsStudio = RunService.IsStudio();
 

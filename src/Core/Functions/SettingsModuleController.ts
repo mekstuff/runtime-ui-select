@@ -4,7 +4,7 @@
 */
 
 import { createCleanup, createEffect, use } from "@mekstuff-rbxts/vivid";
-import { Settings, SettingsContext } from "Contexts/SettingsContexts";
+import { Settings, SettingsContext, SettingState } from "Contexts/SettingsContexts";
 import { Constants } from "Core/Constants/Constants";
 import { GetPlugin } from "Core/Functions/GetPlugin";
 import { GetIsNonPluginEnv, GetIsRunningSession } from "Core/Functions/GetUsageContext";
@@ -29,7 +29,7 @@ export function SaveSettingsModule() {
 	const plugin = GetPlugin();
 	const SettingsData: SettingsModuleData = {};
 	for (const [Key, Value] of pairs(SettingsContext)) {
-		SettingsData[Key] = use(() => Value.get());
+		SettingsData[Key] = use(() => Value.get()) as never;
 	}
 	plugin.SetSetting(Constants.PluginSharedSettingsKey, SettingsData);
 }
@@ -50,7 +50,7 @@ export function LoadSettingsModule() {
 			if (SettingExists === undefined) {
 				continue;
 			}
-			SettingExists.set(value);
+			(SettingExists as SettingState<unknown>).set(value);
 		}
 	};
 	RunToggleLoop();

@@ -4,18 +4,8 @@
 */
 
 import Vivid, { createEffect, Slot } from "@mekstuff-rbxts/vivid";
-import {
-	Button,
-	Image,
-	Input,
-	SettingContent,
-	SettingContentSeperator,
-	Spinner,
-	Theme,
-	Units,
-} from "@mekstuff-rbxts/vivid-ui";
-import { SettingsContext } from "Contexts/SettingsContexts";
-import { Constants } from "Core/Constants/Constants";
+import { Button, Input, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+import { DefaultSettingsContext, SettingsContext } from "Contexts/SettingsContexts";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 import { ResetPluginToDefault } from "Core/Functions/ResetPlugin";
 import { BindedSettingContextToggleSwitch } from "UI/Components/BindedSettingContextToggleSwitch";
@@ -47,14 +37,6 @@ export function SettingsScreen() {
 					PaddingBottom={new UDim(0, 4)}
 				/>
 
-				<Image
-					loading={() => <Spinner enabled />}
-					Image={Constants.PluginDisplayIcon}
-					Size={() => UDim2.fromOffset(Units().BaseOffsetHeight, Units().BaseOffsetHeight)}
-					BackgroundTransparency={1}
-				>
-					<uiaspectratioconstraint />
-				</Image>
 				<frame Size={new UDim2(1, 0, 0, 6)} BackgroundTransparency={1} />
 
 				{/* Hovering */}
@@ -203,7 +185,7 @@ export function SettingsScreen() {
 					Dependencies={["HoverDetectionEnabled"]}
 					UnavailableFeature={GetIsNonPluginEnv()}
 				/>
-				<SettingContent titleText={"Studio Theme"} scaleDistribution={0.5}>
+				<SettingContent titleText={"Studio Theme"} scaleDistribution={0.75}>
 					<ThemeToggleButton />
 				</SettingContent>
 				<BindedSettingContextToggleSwitch
@@ -211,7 +193,7 @@ export function SettingsScreen() {
 					TargetSettingContext="DisableToolTips"
 					ToolTip="Disables this."
 				/>
-				<SettingContent titleText={"Reset To Default"} scaleDistribution={0.5}>
+				<SettingContent titleText={"Reset To Default"} scaleDistribution={0.75}>
 					<Button
 						Size={UDim2.fromScale(1, 0)}
 						Text={"Reset"}

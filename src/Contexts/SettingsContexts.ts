@@ -11,6 +11,7 @@ export type Settings = {
 	PluginEnabled: boolean;
 
 	HoverDetectionEnabled: boolean;
+	HoverDetectionAccuracy: number;
 	ShowDimensionsOnHover: boolean;
 	ShowAbsoluteSizeOnHover: boolean;
 	ShowAbsolutePositionOnHover: boolean;
@@ -38,7 +39,7 @@ export type Settings = {
 	RightClickForContextMenu: boolean;
 	DisableToolTips: boolean;
 };
-type SettingState<T> = {
+export type SettingState<T> = {
 	set: VividSetState<T>;
 	get: VividState<T>;
 };
@@ -55,6 +56,7 @@ export const DefaultSettingsContext: { [k in keyof Settings]: Settings[k] } = {
 	PluginEnabled: true,
 
 	HoverDetectionEnabled: true,
+	HoverDetectionAccuracy: 0.1,
 	MultiHoverDetectionEnabled: false,
 	ShowDimensionsOnHover: true,
 	ShowAbsoluteSizeOnHover: true,
@@ -87,8 +89,8 @@ export const SettingsContext: { [k in keyof Settings]: SettingState<Settings[k]>
 
 export function SetSettingsContextDefault() {
 	for (const [SettingKey, SettingValue] of pairs(DefaultSettingsContext)) {
-		SettingsContext[SettingKey] = SettingsContext[SettingKey] ?? CreateSettingState(SettingValue);
-		SettingsContext[SettingKey].set(SettingValue);
+		SettingsContext[SettingKey] = (SettingsContext[SettingKey] ?? CreateSettingState(SettingValue)) as never;
+		(SettingsContext[SettingKey] as SettingState<unknown>).set(SettingValue);
 	}
 }
 SetSettingsContextDefault();

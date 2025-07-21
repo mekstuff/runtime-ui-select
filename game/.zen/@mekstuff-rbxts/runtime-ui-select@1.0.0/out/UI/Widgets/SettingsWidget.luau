@@ -8,6 +8,8 @@ local TS = _G[script]
 ]]
 local _vivid = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "vivid").out)
 local Vivid = _vivid.default
+local createEffect = _vivid.createEffect
+local createScope = _vivid.createScope
 local Suspense = _vivid.Suspense
 local use = _vivid.use
 local Constants = TS.import(script, script.Parent.Parent.Parent, "Core", "Constants", "Constants").Constants
@@ -19,13 +21,21 @@ local function SettingsWidget(props)
 	return Vivid.createElement(Suspense, nil, function()
 		local Widget = GetPlugin():CreateDockWidgetPluginGui(`{Constants.PluginWidgetIdentifierPrefix}_{math.random()}`, DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 300, 450, 300, 450))
 		Widget.Title = `{Constants.PluginDisplayName}{if GetIsRunningSession() then " - Client" else ""}`
+		Widget.Enabled = true
 		if GetPlugin():GetSetting(Constants.PluginSharedSettingsKey) == nil then
 			-- FTUE
 			Widget.Enabled = true
 		end
 		local SettingsWidgetButton = use(function()
 			return props.Toolbar
-		end):CreateButton(Constants.PluginDisplayName, "Select GUI During Runtime.", Constants.PluginDisplayIcon)
+		end):CreateButton(Constants.PluginDisplayName, "Select GUI During Runtime.", use(function()
+			return Constants.Dynamic_PluginDisplayIcon()
+		end))
+		local DynamicIconScope = createScope()
+		createEffect(function()
+			SettingsWidgetButton.Icon = Constants.Dynamic_PluginDisplayIcon()
+		end)
+		DynamicIconScope.Close()
 		SettingsWidgetButton.Click:Connect(function()
 			Widget.Enabled = not Widget.Enabled
 		end)

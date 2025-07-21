@@ -67,7 +67,7 @@ createEffect(() => {
 					}
 					DismissToast(Id);
 				},
-				icon: Constants.PluginDisplayIcon,
+				icon: Constants.Dynamic_PluginDisplayIcon(),
 			});
 		});
 
@@ -91,7 +91,7 @@ createEffect(() => {
 					}
 					DismissToast(Id);
 				},
-				icon: Constants.PluginDisplayIcon,
+				icon: Constants.Dynamic_PluginDisplayIcon(),
 			});
 		});
 
