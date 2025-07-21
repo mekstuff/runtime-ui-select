@@ -82,7 +82,7 @@ jobs:
               uses: yeslayla/butler-publish-itchio-action@master
               env:
                   BUTLER_CREDENTIALS: ${{ secrets.BUTLER_API_KEY }}
-                  CHANNEL: windows
+                  CHANNEL: other
                   ITCH_GAME: ${{ env.ITCH_GAME_ID }}
                   ITCH_USER: ${{ env.ITCH_USERNAME }}
                   PACKAGE: out/rutus_plugin.rbxm
