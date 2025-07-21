@@ -79,13 +79,14 @@ jobs:
 
             # Deploy plugin file to Itch.io
             - name: Delpoy to Itch
-              uses: Ayowel/butler-to-itch@v1
+              uses: Oval-Tutu/publish-to-itch-with-butler@v1
               with:
-                  butler_key: ${{ secrets.BUTLER_API_KEY }}
+                  api-key: ${{ secrets.BUTLER_API_KEY }}
                   itch_user: ${{ env.ITCH_USERNAME }}
                   itch_game: ${{ env.ITCH_GAME_ID }}
-                  version: ${{ needs.get-next-version.outputs.new-release-version }}
+                  channel: windows
                   files: out/rutus_plugin.rbxm
+                  version: ${{ needs.get-next-version.outputs.new-release-version }}
 
             - name: Release
               run: npx semantic-release
