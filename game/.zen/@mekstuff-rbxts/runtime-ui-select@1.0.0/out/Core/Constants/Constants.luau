@@ -9,17 +9,23 @@ local TS = _G[script]
 local _vivid = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "vivid").out)
 local createScope = _vivid.createScope
 local createState = _vivid.createState
+local GetIsNonPluginEnv = TS.import(script, script.Parent.Parent, "Functions", "GetUsageContext").GetIsNonPluginEnv
 local ConstantsScope = createScope()
 local PluginDisplayIcon = "rbxassetid://134897990664604"
 local PluginDisplayIconDark = "rbxassetid://106856596627232"
 local function GetDynamicPluginDisplayIcon()
+	if GetIsNonPluginEnv() == true then
+		return PluginDisplayIcon
+	end
 	return if (settings().Studio).Theme.Name == "Dark" then PluginDisplayIcon else PluginDisplayIconDark
 end
 local Dynamic_PluginDisplayIcon, setDynamic_PluginDisplayIcon = createState(GetDynamicPluginDisplayIcon())
-local ThemeChangedListener = settings().Studio.ThemeChanged:Connect(function()
-	setDynamic_PluginDisplayIcon(GetDynamicPluginDisplayIcon())
-end)
-ConstantsScope.Servant:Keep(ThemeChangedListener)
+if GetIsNonPluginEnv() ~= true then
+	local ThemeChangedListener = settings().Studio.ThemeChanged:Connect(function()
+		setDynamic_PluginDisplayIcon(GetDynamicPluginDisplayIcon())
+	end)
+	ConstantsScope.Servant:Keep(ThemeChangedListener)
+end
 local PluginDisplayName = "Runtime UI Select"
 local Constants = {
 	PluginDisplayName = PluginDisplayName,
