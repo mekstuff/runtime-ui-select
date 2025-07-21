@@ -8,6 +8,9 @@
 	],
 	"types": "out/index.d.ts",
 	"license": "MIT",
+	"simple-git-hooks": {
+		"pre-commit": "yarn run sync-game"
+	},
 	"scripts": {
 		"build": "rbxtsc && rojo build -o out/rutus_plugin.rbxm",
 		"watch": "rbxtsc -w",
