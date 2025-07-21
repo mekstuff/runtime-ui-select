@@ -8,6 +8,9 @@
 	],
 	"types": "out/index.d.ts",
 	"license": "MIT",
+	"simple-git-hooks": {
+		"pre-commit": "yarn run sync-game"
+	},
 	"scripts": {
 		"build": "rbxtsc && rojo build -o out/rutus_plugin.rbxm",
 		"watch": "rbxtsc -w",
@@ -16,7 +19,7 @@
 		"build-game": "cd game && yarn run build && cd ../",
 		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
 		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
-		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
+		"sync-game": "yarn zen-publish && yarn run zen-pull-game && git add game",
 		"prepack": "yarn run build"
 	},
 	"devDependencies": {
@@ -37,6 +40,7 @@
 		"roblox-ts": "^3.0.0",
 		"semantic-release": "^24.2.7",
 		"semantic-release-export-data": "^1.1.1",
+		"simple-git-hooks": "^2.13.0",
 		"typescript": "^5.8.3"
 	},
 	".zen": {

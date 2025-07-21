@@ -41,10 +41,17 @@ createEffect(function()
 			});
 			
 	]]
+	local HoverDetectionAccuracy = SettingsContext.HoverDetectionAccuracy.get()
 	local MultiHoverDetectionEnabled = SettingsContext.MultiHoverDetectionEnabled.get()
 	local IgnoreTransparentGUIObjects = SettingsContext.IgnoreTransparentGUIObjects.get()
 	local UseHoverDetectionActivationKeybind = SettingsContext.UseHoverDetectionActivationKeybind.get()
-	local Update = RunService.Heartbeat:Connect(function()
+	local LastUpdateTick = tick() + HoverDetectionAccuracy
+	local Update = RunService.Heartbeat:Connect(function(dt)
+		local TickNow = tick()
+		if TickNow - LastUpdateTick - dt < HoverDetectionAccuracy then
+			return nil
+		end
+		LastUpdateTick = TickNow
 		if UseHoverDetectionActivationKeybind == true then
 			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) == false then
 				setCurrentlyHoveringItems(function(old)

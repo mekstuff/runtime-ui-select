@@ -2,6 +2,7 @@ import { VividSetState, VividState } from "@mekstuff-rbxts/vivid";
 export type Settings = {
     PluginEnabled: boolean;
     HoverDetectionEnabled: boolean;
+    HoverDetectionAccuracy: number;
     ShowDimensionsOnHover: boolean;
     ShowAbsoluteSizeOnHover: boolean;
     ShowAbsolutePositionOnHover: boolean;
@@ -26,7 +27,7 @@ export type Settings = {
     RightClickForContextMenu: boolean;
     DisableToolTips: boolean;
 };
-type SettingState<T> = {
+export type SettingState<T> = {
     set: VividSetState<T>;
     get: VividState<T>;
 };
@@ -37,4 +38,3 @@ export declare const SettingsContext: {
     [k in keyof Settings]: SettingState<Settings[k]>;
 };
 export declare function SetSettingsContextDefault(): void;
-export {};

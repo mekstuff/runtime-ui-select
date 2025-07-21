@@ -19,7 +19,7 @@
 		"build-game": "cd game && yarn run build && cd ../",
 		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
 		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
-		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
+		"sync-game": "yarn zen-publish && yarn run zen-pull-game && git add game",
 		"prepack": "yarn run build"
 	},
 	"devDependencies": {

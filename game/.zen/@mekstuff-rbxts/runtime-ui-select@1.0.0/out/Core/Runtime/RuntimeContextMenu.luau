@@ -66,7 +66,7 @@ createEffect(function()
 					end
 					DismissToast(Id)
 				end,
-				icon = Constants.PluginDisplayIcon,
+				icon = Constants.Dynamic_PluginDisplayIcon(),
 			})
 		end)
 		local DisableCurrentGuiPluginAction = ContextMenu:AddNewAction(tostring(math.random()), `Ignore {HoveringItems[1].Name}`)
@@ -85,7 +85,7 @@ createEffect(function()
 					end
 					DismissToast(Id)
 				end,
-				icon = Constants.PluginDisplayIcon,
+				icon = Constants.Dynamic_PluginDisplayIcon(),
 			})
 		end)
 		local SelectCurrentGuiRootScreenGui = ContextMenu:AddNewAction(tostring(math.random()), `Select Root ScreenGui For {HoveringItems[1].Name}`, Icons.fromName("fluency", "outline", "media-screen-share-broadcast"))

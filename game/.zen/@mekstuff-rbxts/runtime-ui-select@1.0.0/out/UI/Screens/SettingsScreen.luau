@@ -12,14 +12,11 @@ local createEffect = _vivid.createEffect
 local Slot = _vivid.Slot
 local _vivid_ui = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "vivid-ui").out)
 local Button = _vivid_ui.Button
-local Image = _vivid_ui.Image
 local SettingContent = _vivid_ui.SettingContent
 local SettingContentSeperator = _vivid_ui.SettingContentSeperator
-local Spinner = _vivid_ui.Spinner
 local Theme = _vivid_ui.Theme
 local Units = _vivid_ui.Units
 local SettingsContext = TS.import(script, script.Parent.Parent.Parent, "Contexts", "SettingsContexts").SettingsContext
-local Constants = TS.import(script, script.Parent.Parent.Parent, "Core", "Constants", "Constants").Constants
 local GetIsNonPluginEnv = TS.import(script, script.Parent.Parent.Parent, "Core", "Functions", "GetUsageContext").GetIsNonPluginEnv
 local ResetPluginToDefault = TS.import(script, script.Parent.Parent.Parent, "Core", "Functions", "ResetPlugin").ResetPluginToDefault
 local BindedSettingContextToggleSwitch = TS.import(script, script.Parent.Parent, "Components", "BindedSettingContextToggleSwitch").BindedSettingContextToggleSwitch
@@ -50,18 +47,7 @@ local function SettingsScreen()
 		PaddingTop = UDim.new(0, 4),
 		PaddingRight = UDim.new(0, 4),
 		PaddingBottom = UDim.new(0, 4),
-	}), Vivid.createElement(Image, {
-		loading = function()
-			return Vivid.createElement(Spinner, {
-				enabled = true,
-			})
-		end,
-		Image = Constants.PluginDisplayIcon,
-		Size = function()
-			return UDim2.fromOffset(Units().BaseOffsetHeight, Units().BaseOffsetHeight)
-		end,
-		BackgroundTransparency = 1,
-	}, Vivid.createElement("uiaspectratioconstraint")), Vivid.createElement("frame", {
+	}), Vivid.createElement("frame", {
 		Size = UDim2.new(1, 0, 0, 6),
 		BackgroundTransparency = 1,
 	}), Vivid.createElement(SettingContentSeperator, {
@@ -163,14 +149,14 @@ local function SettingsScreen()
 		UnavailableFeature = GetIsNonPluginEnv(),
 	}), Vivid.createElement(SettingContent, {
 		titleText = "Studio Theme",
-		scaleDistribution = 0.5,
+		scaleDistribution = 0.75,
 	}, Vivid.createElement(ThemeToggleButton)), Vivid.createElement(BindedSettingContextToggleSwitch, {
 		Text = "Disable Tooltips",
 		TargetSettingContext = "DisableToolTips",
 		ToolTip = "Disables this.",
 	}), Vivid.createElement(SettingContent, {
 		titleText = "Reset To Default",
-		scaleDistribution = 0.5,
+		scaleDistribution = 0.75,
 	}, Vivid.createElement(Button, {
 		Size = UDim2.fromScale(1, 0),
 		Text = "Reset",
