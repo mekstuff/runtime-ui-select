@@ -1,5 +1,5 @@
 {
-	"name": "runtime-ui-select",
+	"name": "@mekstuff-rbxts/runtime-ui-select",
 	"private": "true",
 	"version": "1.0.0",
 	"main": "out/init.luau",
@@ -9,7 +9,7 @@
 	"types": "out/index.d.ts",
 	"license": "MIT",
 	"simple-git-hooks": {
-		"pre-commit": "yarn run sync-game"
+		"pre-push": "yarn run pre-git-push"
 	},
 	"scripts": {
 		"build": "rbxtsc && rojo build -o out/rutus_plugin.rbxm",
@@ -19,7 +19,8 @@
 		"build-game": "cd game && yarn run build && cd ../",
 		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
 		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
-		"sync-game": "yarn zen-publish && yarn run zen-pull-game && git add game",
+		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
+		"pre-git-push": "yarn run sync-game && git add game && git commit -m \"chore: synced game\"",
 		"prepack": "yarn run build"
 	},
 	"devDependencies": {
