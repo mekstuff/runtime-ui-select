@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.2...v1.1.3) (2025-07-21)
+
+
+### Bug Fixes
+
+* included rutus_plugin.rbxm and rutus_game.rbxl to be included in git ([e3cd92d](https://github.com/mekstuff/runtime-ui-select/commit/e3cd92de57f9ae4139038ca83e4686ecae26378d))
+
 ## [1.1.2](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.1...v1.1.2) (2025-07-20)
 
 
