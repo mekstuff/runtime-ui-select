@@ -1,5 +1,5 @@
 {
-	"name": "@mekstuff-rbxts/runtime-ui-select",
+	"name": "runtime-ui-select",
 	"private": "true",
 	"version": "1.0.0",
 	"main": "out/init.luau",
@@ -17,7 +17,7 @@
 		"dev": "concurrently \"yarn watch\" \"rojo serve serve.project.json\"",
 		"dev-game": "cd game && yarn run dev && cd ../",
 		"build-game": "cd game && yarn run build && cd ../",
-		"zen-pull-game": "cd game && zen pull && zen install && cd ../",
+		"zen-pull-game": "cd game && zen pull && zen install yarn && cd ../",
 		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
 		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
 		"pre-git-push": "yarn run sync-game && git add game && git commit -m \"chore: synced game\"",
