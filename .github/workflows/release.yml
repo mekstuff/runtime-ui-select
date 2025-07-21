@@ -75,7 +75,7 @@ jobs:
                   PID: ${{ env.ROBLOX_PLACE_ID }} # Place ID
                   API_KEY: ${{ secrets.ROBLOX_GAME }}
                   FILE: game/out/rutus_game.rbxl # Roblox place file (e.g. might have a step before this to build the file with Rojo)
-              run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -p "$PID" -t published -f "$FILE"
+              run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -i "$PID" -t published -f "$FILE"
 
             # Deploy plugin file to Itch.io
             - name: Delpoy to Itch
