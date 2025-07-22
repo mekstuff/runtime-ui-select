@@ -1,6 +1,6 @@
 {
 	"name": "runtime-ui-select-plugin",
-	"globIgnorePaths": ["**/tsconfig.json"],
+	"globIgnorePaths": ["**/tsconfig.json", "out/rutus_plugin.rbxm"],
 	"tree": {
 		"$path": "out",
 		"include": {
