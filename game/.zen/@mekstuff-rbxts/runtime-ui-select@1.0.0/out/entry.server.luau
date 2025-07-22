@@ -13,7 +13,6 @@ local setPluginContexts = TS.import(script, script.Parent, "Contexts", "PluginCo
 local _GetUsageContext = TS.import(script, script.Parent, "Core", "Functions", "GetUsageContext")
 local GetIsRunningSession = _GetUsageContext.GetIsRunningSession
 local GetIsRunningSessionServer = _GetUsageContext.GetIsRunningSessionServer
-local Toasts = TS.import(script, script.Parent, "UI", "Screens", "Toasts").Toasts
 -- Setting plugin context
 setPluginContexts({
 	plugin = plugin,
@@ -55,7 +54,7 @@ local function RuntimeRoot()
 	local BorderDistanceBoxes = TS.Promise.new(function(resolve)
 		resolve(TS.import(script, script.Parent, "UI", "Screens", "BorderDistanceBoxes"))
 	end):expect().BorderDistanceBoxes
-	return Vivid.createElement(Vivid.createFragment, nil, Vivid.createElement(HoverDimensionBoxes), Vivid.createElement(SelectedDimensionBoxes), Vivid.createElement(BorderDistanceBoxes), Vivid.createElement(Toasts))
+	return Vivid.createElement(Vivid.createFragment, nil, Vivid.createElement(BorderDistanceBoxes))
 end
 local function EntrySource()
 	if GetIsRunningSessionServer() == true then

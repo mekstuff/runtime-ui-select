@@ -49,6 +49,14 @@ local function createSwitch(Condition, Truthy, Falsy)
 	end
 	local UpdateSwitch = function(_val)
 		local _RESOLVED_ = false
+		if _internalState:IsDestroyed() == true then
+			-- The ActiveSwitch object was Destroyed before the UpdateSwitch function was called
+			return nil
+		end
+		if SwitchElementNode._dead == true then
+			-- The SwitchElementNode object was Destroyed before the UpdateSwitch function was called
+			return nil
+		end
 		for key, value in pairs(_entries) do
 			if type(key) == "function" then
 				local res = key(_val)
