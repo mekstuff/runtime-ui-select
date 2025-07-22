@@ -17,10 +17,11 @@ local function CreateSettingState(defaultValue)
 		set = setState,
 	}
 end
+local HoverDetectionAccuracyNumberRange = NumberRange.new(0, 0.5)
 local DefaultSettingsContext = {
 	PluginEnabled = true,
 	HoverDetectionEnabled = true,
-	HoverDetectionAccuracy = 0.1,
+	HoverDetectionAccuracy = 0.05,
 	MultiHoverDetectionEnabled = false,
 	ShowDimensionsOnHover = true,
 	ShowAbsoluteSizeOnHover = true,
@@ -56,6 +57,7 @@ SetSettingsContextDefault()
 SettingsContextScope.Close()
 return {
 	SetSettingsContextDefault = SetSettingsContextDefault,
+	HoverDetectionAccuracyNumberRange = HoverDetectionAccuracyNumberRange,
 	DefaultSettingsContext = DefaultSettingsContext,
 	SettingsContext = SettingsContext,
 }

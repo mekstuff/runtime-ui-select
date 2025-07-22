@@ -21,7 +21,6 @@ local function SettingsWidget(props)
 	return Vivid.createElement(Suspense, nil, function()
 		local Widget = GetPlugin():CreateDockWidgetPluginGui(`{Constants.PluginWidgetIdentifierPrefix}_{math.random()}`, DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 300, 450, 300, 450))
 		Widget.Title = `{Constants.PluginDisplayName}{if GetIsRunningSession() then " - Client" else ""}`
-		Widget.Enabled = true
 		if GetPlugin():GetSetting(Constants.PluginSharedSettingsKey) == nil then
 			-- FTUE
 			Widget.Enabled = true

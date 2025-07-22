@@ -52,11 +52,13 @@ function CreateSettingState<T>(defaultValue: T): SettingState<T> {
 	};
 }
 
+export const HoverDetectionAccuracyNumberRange = new NumberRange(0, 0.5);
+
 export const DefaultSettingsContext: { [k in keyof Settings]: Settings[k] } = {
 	PluginEnabled: true,
 
 	HoverDetectionEnabled: true,
-	HoverDetectionAccuracy: 0.1,
+	HoverDetectionAccuracy: 0.05,
 	MultiHoverDetectionEnabled: false,
 	ShowDimensionsOnHover: true,
 	ShowAbsoluteSizeOnHover: true,

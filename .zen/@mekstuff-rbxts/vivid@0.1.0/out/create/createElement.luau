@@ -1064,6 +1064,10 @@ local function createElement(Element, targetProps, _children_defined, ...)
 			_result_1 = _result_1.servant
 			if _result_1 ~= nil then
 				_result_1:Keep(CreatedInstance.Destroying:Connect(function()
+					if ParentCreateElementNode.servant:IsDestroyed() == true then
+						return nil
+					end
+					ParentCreateElementNode.servant:Free(CreatedInstance)
 					ParentCreateElementNode.servant:Destroy()
 				end))
 			end
@@ -1075,6 +1079,10 @@ local function createElement(Element, targetProps, _children_defined, ...)
 				_result_2:Keep(CreatedInstance.AncestryChanged:Connect(function(_, parent)
 					-- very unorthodox way for checking for destroyed.
 					if parent == nil then
+						if ParentCreateElementNode.servant:IsDestroyed() == true then
+							return nil
+						end
+						ParentCreateElementNode.servant:Free(CreatedInstance)
 						ParentCreateElementNode.servant:Destroy()
 					end
 				end))
