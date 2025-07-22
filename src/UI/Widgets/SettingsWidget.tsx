@@ -20,7 +20,6 @@ export function SettingsWidget(props: { Toolbar: PluginToolbar }) {
 				) as DockWidgetPluginGui & { Title: string };
 				Widget.Title = `${Constants.PluginDisplayName}${GetIsRunningSession() ? " - Client" : ""}`;
 
-				Widget.Enabled = true;
 				if (GetPlugin().GetSetting(Constants.PluginSharedSettingsKey) === undefined) {
 					// FTUE
 					Widget.Enabled = true;
