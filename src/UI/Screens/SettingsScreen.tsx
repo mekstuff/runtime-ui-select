@@ -4,12 +4,15 @@
 */
 
 import Vivid, { createEffect, Slot } from "@mekstuff-rbxts/vivid";
-import { Button, Input, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
-import { DefaultSettingsContext, SettingsContext } from "Contexts/SettingsContexts";
+import { Button, Icons, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+import { SettingsContext } from "Contexts/SettingsContexts";
+import { Constants } from "Core/Constants/Constants";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 import { ResetPluginToDefault } from "Core/Functions/ResetPlugin";
 import { BindedSettingContextToggleSwitch } from "UI/Components/BindedSettingContextToggleSwitch";
+import { HoverAccuracyInput } from "UI/Components/HoverAccuracyInput";
 import { ThemeToggleButton } from "UI/Components/ThemeToggleButton";
+import { PromptTextOption } from "UI/Prompts/PromptTextOption";
 
 export function SettingsScreen() {
 	const ToggleButtonOffset = 10;
@@ -47,6 +50,9 @@ export function SettingsScreen() {
 					ToolTip="Enables the ability for the plugin to detect what items are being hovered during runtime."
 					Dependencies={["PluginEnabled"]}
 				/>
+				<SettingContent titleText={"Hover Detection Accuracy"} scaleDistribution={0.85}>
+					<HoverAccuracyInput />
+				</SettingContent>
 				<BindedSettingContextToggleSwitch
 					Text="Allow Multi-Hover Detection"
 					TargetSettingContext="MultiHoverDetectionEnabled"
@@ -199,6 +205,25 @@ export function SettingsScreen() {
 						Text={"Reset"}
 						Activated={() => {
 							ResetPluginToDefault();
+						}}
+					/>
+				</SettingContent>
+				<SettingContent titleText={"Help"} scaleDistribution={0.75}>
+					<Button
+						variant="ghost"
+						icon={Icons.fromName("fluency", "outline", "circled-question")}
+						tags={[Constants.MainWidgetToolTipCollectionId]}
+						attributes={{
+							[Constants.MainWidgetToolTipCollectionId]: "Get help",
+						}}
+						Size={UDim2.fromScale(1, 0)}
+						Text={""}
+						Activated={() => {
+							PromptTextOption({
+								title: "Get help",
+								body: "https://devforum.roblox.com/t/",
+								onOption: () => {},
+							});
 						}}
 					/>
 				</SettingContent>
