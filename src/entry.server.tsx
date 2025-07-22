@@ -46,10 +46,10 @@ function RuntimeRoot() {
 
 	return (
 		<>
-			{/* <HoverDimensionBoxes /> */}
-			{/* <SelectedDimensionBoxes /> */}
+			<HoverDimensionBoxes />
+			<SelectedDimensionBoxes />
 			<BorderDistanceBoxes />
-			{/* <Toasts /> */}
+			<Toasts />
 		</>
 	);
 }
@@ -58,14 +58,13 @@ function EntrySource() {
 	if (GetIsRunningSessionServer() === true) {
 		return;
 	}
-	// Shared
 
+	// Shared
 	<SharedRoot />;
 
 	if (GetIsRunningSession() === true) {
 		// Studio Runtime (Client)
 		<RuntimeRoot />;
-
 		return;
 	}
 
