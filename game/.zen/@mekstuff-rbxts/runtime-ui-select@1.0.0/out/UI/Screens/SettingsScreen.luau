@@ -12,15 +12,19 @@ local createEffect = _vivid.createEffect
 local Slot = _vivid.Slot
 local _vivid_ui = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "vivid-ui").out)
 local Button = _vivid_ui.Button
+local Icons = _vivid_ui.Icons
 local SettingContent = _vivid_ui.SettingContent
 local SettingContentSeperator = _vivid_ui.SettingContentSeperator
 local Theme = _vivid_ui.Theme
 local Units = _vivid_ui.Units
 local SettingsContext = TS.import(script, script.Parent.Parent.Parent, "Contexts", "SettingsContexts").SettingsContext
+local Constants = TS.import(script, script.Parent.Parent.Parent, "Core", "Constants", "Constants").Constants
 local GetIsNonPluginEnv = TS.import(script, script.Parent.Parent.Parent, "Core", "Functions", "GetUsageContext").GetIsNonPluginEnv
 local ResetPluginToDefault = TS.import(script, script.Parent.Parent.Parent, "Core", "Functions", "ResetPlugin").ResetPluginToDefault
 local BindedSettingContextToggleSwitch = TS.import(script, script.Parent.Parent, "Components", "BindedSettingContextToggleSwitch").BindedSettingContextToggleSwitch
+local HoverAccuracyInput = TS.import(script, script.Parent.Parent, "Components", "HoverAccuracyInput").HoverAccuracyInput
 local ThemeToggleButton = TS.import(script, script.Parent.Parent, "Components", "ThemeToggleButton").ThemeToggleButton
+local PromptTextOption = TS.import(script, script.Parent.Parent, "Prompts", "PromptTextOption").PromptTextOption
 local function SettingsScreen()
 	local ToggleButtonOffset = 10
 	return Vivid.createElement("frame", {
@@ -57,7 +61,10 @@ local function SettingsScreen()
 		TargetSettingContext = "HoverDetectionEnabled",
 		ToolTip = "Enables the ability for the plugin to detect what items are being hovered during runtime.",
 		Dependencies = { "PluginEnabled" },
-	}), Vivid.createElement(BindedSettingContextToggleSwitch, {
+	}), Vivid.createElement(SettingContent, {
+		titleText = "Hover Detection Accuracy",
+		scaleDistribution = 0.85,
+	}, Vivid.createElement(HoverAccuracyInput)), Vivid.createElement(BindedSettingContextToggleSwitch, {
 		Text = "Allow Multi-Hover Detection",
 		TargetSettingContext = "MultiHoverDetectionEnabled",
 		ToolTip = "Enables the ability for the plugin to detect multiple items being hovered during runtime, This may not be ideal for compacted GUI.",
@@ -162,6 +169,25 @@ local function SettingsScreen()
 		Text = "Reset",
 		Activated = function()
 			ResetPluginToDefault()
+		end,
+	})), Vivid.createElement(SettingContent, {
+		titleText = "Help",
+		scaleDistribution = 0.75,
+	}, Vivid.createElement(Button, {
+		variant = "ghost",
+		icon = Icons.fromName("fluency", "outline", "circled-question"),
+		tags = { Constants.MainWidgetToolTipCollectionId },
+		attributes = {
+			[Constants.MainWidgetToolTipCollectionId] = "Get help",
+		},
+		Size = UDim2.fromScale(1, 0),
+		Text = "",
+		Activated = function()
+			PromptTextOption({
+				title = "Get help",
+				body = "https://devforum.roblox.com/t/",
+				onOption = function() end,
+			})
 		end,
 	}))), Vivid.createElement(Button, {
 		color = createEffect(function()

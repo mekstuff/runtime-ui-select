@@ -31,6 +31,7 @@ export type SettingState<T> = {
     set: VividSetState<T>;
     get: VividState<T>;
 };
+export declare const HoverDetectionAccuracyNumberRange: NumberRange;
 export declare const DefaultSettingsContext: {
     [k in keyof Settings]: Settings[k];
 };
