@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/mekstuff/runtime-ui-select/compare/v1.3.1...v1.3.2) (2025-07-23)
+
+
+### Bug Fixes
+
+* fixed error when adornee is nil and borderdistanceboxes attempt to update the state ([9210524](https://github.com/mekstuff/runtime-ui-select/commit/9210524f3e5c1585dd461b16f60c8cfdf9c09bda))
+
 ## [1.3.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.3.0...v1.3.1) (2025-07-23)
 
 

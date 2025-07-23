@@ -1,7 +1,7 @@
 {
 	"name": "runtime-ui-select",
 	"private": "true",
-	"version": "1.3.1",
+	"version": "1.3.2",
 	"main": "out/init.luau",
 	"files": [
 		"out"
