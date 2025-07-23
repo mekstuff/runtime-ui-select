@@ -1,7 +1,7 @@
 {
 	"name": "@mekstuff-rbxts/runtime-ui-select",
 	"private": "true",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"main": "out/init.luau",
 	"files": [
 		"out"
@@ -23,6 +23,7 @@
 		"@rbxts/compiler-types": "^3.0.0-types.0",
 		"@rbxts/types": "^1.0.861",
 		"@semantic-release/changelog": "^6.0.3",
+		"@semantic-release/exec": "^7.1.0",
 		"@semantic-release/git": "^10.0.1",
 		"@semantic-release/github": "^11.0.3",
 		"@typescript-eslint/eslint-plugin": "^8.35.1",
@@ -36,7 +37,6 @@
 		"prettier": "^3.6.2",
 		"roblox-ts": "^3.0.0",
 		"semantic-release": "^24.2.7",
-		"semantic-release-export-data": "^1.1.1",
 		"typescript": "^5.8.3"
 	},
 	".zen": {
