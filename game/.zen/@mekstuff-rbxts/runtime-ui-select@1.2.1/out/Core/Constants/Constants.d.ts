@@ -8,6 +8,7 @@ export declare const Constants: {
     PluginWidgetIdentifierPrefix: string;
     PluginSharedSettingsKey: string;
     PluginSharedSettingTokenListener: string;
-    MainWidgetToolTipCollectionId: string;
     ScreenGuiDisplayOrderLimit: number;
+    MainWidgetToolTipCollectionId: string;
+    SearchFilterMatchAttribute: string;
 };

@@ -38,8 +38,9 @@ local Constants = {
 	PluginWidgetIdentifierPrefix = "runtime-ui-select",
 	PluginSharedSettingsKey = "PluginSharedSettings",
 	PluginSharedSettingTokenListener = `{PluginDisplayName}-PluginSharedSettingTokenListener`,
-	MainWidgetToolTipCollectionId = "MainWidgetToolTipCollectionId",
 	ScreenGuiDisplayOrderLimit = 2147483647,
+	MainWidgetToolTipCollectionId = "MainWidgetToolTipCollectionId",
+	SearchFilterMatchAttribute = "SearchFilterMatchAttribute",
 }
 ConstantsScope.Close()
 return {

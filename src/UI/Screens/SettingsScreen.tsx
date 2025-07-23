@@ -3,8 +3,17 @@
     02/07/2025 22:17:46
 */
 
-import Vivid, { createEffect, Slot } from "@mekstuff-rbxts/vivid";
-import { Button, Icons, Label, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+import Vivid, { createCleanup, createEffect, createRef, createState, onMount, Slot } from "@mekstuff-rbxts/vivid";
+import {
+	Button,
+	Icons,
+	Input,
+	Label,
+	SettingContent,
+	SettingContentSeperator,
+	Theme,
+	Units,
+} from "@mekstuff-rbxts/vivid-ui";
 import { SettingsContext } from "Contexts/SettingsContexts";
 import { Constants } from "Core/Constants/Constants";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
@@ -12,14 +21,80 @@ import { ResetPluginToDefault } from "Core/Functions/ResetPlugin";
 import { BindedSettingContextToggleSwitch } from "UI/Components/BindedSettingContextToggleSwitch";
 import { HoverAccuracyInput } from "UI/Components/HoverAccuracyInput";
 import { ThemeToggleButton } from "UI/Components/ThemeToggleButton";
-import { PromptTextOption } from "UI/Prompts/PromptTextOption";
 
 export function SettingsScreen() {
 	const ToggleButtonOffset = 10;
+
+	const SearchRef = createRef<TextBox>();
+	const ScrollingFrameRef = createRef<ScrollingFrame>();
+
+	const [SearchFilterText, setSearchFilterText] = createState("");
+	const [SearchBoxFocused, setSearchBoxFocused] = createState(false);
+	const [TotalSearchResults, setTotalSearchResults] = createState(0);
+	const [SettingContentSeperatorsVisible, setSettingContentSeperatorsVisible] = createState(false);
+
+	createEffect(() => {
+		const SearchTextBox = SearchRef();
+		if (SearchTextBox === undefined) {
+			return;
+		}
+		const TextChangedListener = SearchTextBox.GetPropertyChangedSignal("Text").Connect(() => {
+			setSearchFilterText(SearchTextBox.Text);
+		});
+		createCleanup(() => {
+			TextChangedListener.Disconnect();
+		});
+	});
+
+	createEffect(() => {
+		setSettingContentSeperatorsVisible(SearchFilterText() === "");
+	});
+
+	onMount(() => {
+		createEffect(() => {
+			const ScrollingFrame = ScrollingFrameRef();
+			if (ScrollingFrame === undefined) {
+				return;
+			}
+			const SearchFilter = SearchFilterText();
+			setTotalSearchResults(0);
+			let TotalSearchResults = 0;
+			ScrollingFrame.GetChildren().forEach((Child) => {
+				if (Child.IsA("GuiObject") !== true) {
+					return;
+				}
+				const SearchFilterMatchAttribute = Child.GetAttribute(Constants.SearchFilterMatchAttribute);
+				if (typeIs(SearchFilterMatchAttribute, "string") !== true) {
+					return;
+				}
+				const Match = SearchFilterMatchAttribute.lower().match(SearchFilter.lower())[0];
+				Child.Visible = Match !== undefined;
+				if (Child.Visible === true) {
+					TotalSearchResults += 1;
+				}
+			});
+			setTotalSearchResults(TotalSearchResults);
+		});
+	});
+
 	return (
 		<frame Size={UDim2.fromScale(1, 1)} BackgroundColor3={Theme().MainBackground}>
 			<Slot slotId="#root"></Slot>
+			<Label
+				Size={UDim2.fromScale(1, 1)}
+				BackgroundTransparency={1}
+				TextWrapped={true}
+				Text={createEffect(() => {
+					return `No results for "${SearchFilterText()}"`;
+				})()}
+				TextColor3={Theme().DimmedText}
+				Visible={createEffect(() => {
+					return TotalSearchResults() === 0;
+				})}
+				ZIndex={2}
+			/>
 			<scrollingframe
+				ref={ScrollingFrameRef}
 				Size={createEffect(() => new UDim2(1, 0, 1, -(Units().BaseOffsetHeight + ToggleButtonOffset * 2)))()}
 				BackgroundColor3={Theme().ScrollBarBackground}
 				CanvasSize={new UDim2()}
@@ -40,19 +115,44 @@ export function SettingsScreen() {
 					PaddingBottom={new UDim(0, 4)}
 				/>
 
-				<frame Size={new UDim2(1, 0, 0, 6)} BackgroundTransparency={1} />
+				<frame Size={new UDim2(1, 0, 0, 4)} BackgroundTransparency={1} />
+				<Input
+					ref={SearchRef}
+					props={{
+						UIStroke: {
+							Color: createEffect(() =>
+								SearchBoxFocused() ? Theme().MainButton : Theme().InputFieldBorder,
+							),
+						},
+					}}
+					Focused={() => setSearchBoxFocused(true)}
+					FocusLost={() => setSearchBoxFocused(false)}
+					Text={SearchFilterText()}
+					PlaceholderText={"Filter..."}
+					Size={createEffect(() => new UDim2(1, 0, 0, Units().BaseOffsetHeight * 0.9))()}
+					AutomaticSize={Enum.AutomaticSize.None}
+				/>
+				<frame Size={new UDim2(1, 0, 0, 8)} BackgroundTransparency={1} />
 
 				{/* Hovering */}
-				<SettingContentSeperator seperatorText={"Hovering"} />
+				<SettingContentSeperator seperatorText={"Hovering"} Visible={SettingContentSeperatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Hover Detection Enabled"
 					TargetSettingContext="HoverDetectionEnabled"
 					ToolTip="Enables the ability for the plugin to detect what items are being hovered during runtime."
 					Dependencies={["PluginEnabled"]}
 				/>
-				<SettingContent titleText={"Hover Detection Accuracy"} scaleDistribution={0.85}>
-					<HoverAccuracyInput />
-				</SettingContent>
+				<frame
+					attributes={{
+						[Constants.SearchFilterMatchAttribute]: "Hover Detection Accuracy",
+					}}
+					AutomaticSize={Enum.AutomaticSize.XY}
+					BackgroundTransparency={1}
+				>
+					<SettingContent titleText={"Hover Detection Accuracy"} scaleDistribution={0.85}>
+						<HoverAccuracyInput />
+					</SettingContent>
+				</frame>
 				<BindedSettingContextToggleSwitch
 					Text="Allow Multi-Hover Detection"
 					TargetSettingContext="MultiHoverDetectionEnabled"
@@ -72,7 +172,10 @@ export function SettingsScreen() {
 					Dependencies={["HoverDetectionEnabled"]}
 				/>
 				{/* Hover Dimensions */}
-				<SettingContentSeperator seperatorText={"Hover Dimensions"} />
+				<SettingContentSeperator
+					seperatorText={"Hover Dimensions"}
+					Visible={SettingContentSeperatorsVisible()}
+				/>
 				<BindedSettingContextToggleSwitch
 					Text="Show Dimensions On Hover"
 					TargetSettingContext="ShowDimensionsOnHover"
@@ -93,7 +196,7 @@ export function SettingsScreen() {
 				/>
 
 				{/* Selecting */}
-				{/* <SettingContentSeperator seperatorText={"Selecting"} />
+				{/* <SettingContentSeperator seperatorText={"Selecting"} Visible={SettingContentSeperatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Selected Detection Enabled"
 					TargetSettingContext="SelectedDetectionEnabled"
@@ -121,7 +224,10 @@ export function SettingsScreen() {
 				/> */}
 
 				{/* BorderBoxes / Distance Indicators */}
-				<SettingContentSeperator seperatorText={"Distance Indicators"} />
+				<SettingContentSeperator
+					seperatorText={"Distance Indicators"}
+					Visible={SettingContentSeperatorsVisible()}
+				/>
 				<BindedSettingContextToggleSwitch
 					Text="Show Distance Indicators On Hover"
 					TargetSettingContext="ShowBorderBoxesOnHover"
@@ -156,7 +262,7 @@ export function SettingsScreen() {
 				/>
 
 				{/* Behavior */}
-				<SettingContentSeperator seperatorText={"Behavior"} />
+				<SettingContentSeperator seperatorText={"Behavior"} Visible={SettingContentSeperatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Left Click To Select GUI"
 					TargetSettingContext="AllowUserRuntimeUISelection"
@@ -185,7 +291,7 @@ export function SettingsScreen() {
 				/>
 
 				{/* Plugin */}
-				<SettingContentSeperator seperatorText={"Plugin"} />
+				<SettingContentSeperator seperatorText={"Plugin"} Visible={SettingContentSeperatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Detect Runtime Settings Changes"
 					TargetSettingContext="DetectRuntimeSettingsChanges"
@@ -193,26 +299,50 @@ export function SettingsScreen() {
 					Dependencies={["PluginEnabled"]}
 					UnavailableFeature={GetIsNonPluginEnv()}
 				/>
-				<SettingContent titleText={"Studio Theme"} scaleDistribution={0.75}>
-					<ThemeToggleButton />
-				</SettingContent>
+				<frame
+					attributes={{
+						[Constants.SearchFilterMatchAttribute]: "Studio Theme",
+					}}
+					AutomaticSize={Enum.AutomaticSize.XY}
+					BackgroundTransparency={1}
+				>
+					<SettingContent titleText={"Studio Theme"} scaleDistribution={0.75}>
+						<ThemeToggleButton />
+					</SettingContent>
+				</frame>
 				<BindedSettingContextToggleSwitch
 					Text="Disable Tooltips"
 					TargetSettingContext="DisableToolTips"
 					ToolTip="Disables this."
 				/>
-				<SettingContent titleText={"Reset To Default"} scaleDistribution={0.75}>
-					<Button
-						Size={UDim2.fromScale(1, 0)}
-						Text={"Reset"}
-						Activated={() => {
-							ResetPluginToDefault();
-						}}
-					/>
-				</SettingContent>
-				<SettingContent titleText={"Version"} scaleDistribution={0.8}>
-					<Label TextColor3={Theme().DimmedText} Text={Constants.PluginVersion} />
-				</SettingContent>
+				<frame
+					attributes={{
+						[Constants.SearchFilterMatchAttribute]: "Reset To Default",
+					}}
+					AutomaticSize={Enum.AutomaticSize.XY}
+					BackgroundTransparency={1}
+				>
+					<SettingContent titleText={"Reset To Default"} scaleDistribution={0.75}>
+						<Button
+							Size={UDim2.fromScale(1, 0)}
+							Text={"Reset"}
+							Activated={() => {
+								ResetPluginToDefault();
+							}}
+						/>
+					</SettingContent>
+				</frame>
+				<frame
+					attributes={{
+						[Constants.SearchFilterMatchAttribute]: "Version",
+					}}
+					AutomaticSize={Enum.AutomaticSize.XY}
+					BackgroundTransparency={1}
+				>
+					<SettingContent titleText={"Version"} scaleDistribution={0.8}>
+						<Label TextColor3={Theme().DimmedText} Text={Constants.PluginVersion} />
+					</SettingContent>
+				</frame>
 			</scrollingframe>
 			<Button
 				color={createEffect(() => (SettingsContext.PluginEnabled.get() === false ? "primary" : "default"))()}

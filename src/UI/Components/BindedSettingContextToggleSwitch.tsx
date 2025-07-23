@@ -47,6 +47,7 @@ export function BindedSettingContextToggleSwitch(props: {
 
 					return props.ToolTip + `\n\n${DependenciesString}`;
 				})(),
+				[Constants.SearchFilterMatchAttribute]: props.Text,
 			}}
 			AutomaticSize={Enum.AutomaticSize.XY}
 			BackgroundTransparency={1}
