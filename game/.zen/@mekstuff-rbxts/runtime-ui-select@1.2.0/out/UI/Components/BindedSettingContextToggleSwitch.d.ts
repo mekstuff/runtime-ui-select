@@ -6,4 +6,5 @@ export declare function BindedSettingContextToggleSwitch(props: {
     InverseDependencies?: (keyof typeof SettingsContext)[];
     UnavailableFeature?: boolean;
     ToolTip?: string;
+    hideSplitter?: boolean;
 }): Instance;

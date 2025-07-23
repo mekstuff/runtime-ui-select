@@ -20,7 +20,7 @@ local ToolTip = TS.import(script, script.Parent.Parent, "Screens", "ToolTip").To
 local function SettingsWidget(props)
 	return Vivid.createElement(Suspense, nil, function()
 		local Widget = GetPlugin():CreateDockWidgetPluginGui(`{Constants.PluginWidgetIdentifierPrefix}_{math.random()}`, DockWidgetPluginGuiInfo.new(Enum.InitialDockState.Float, false, false, 300, 450, 300, 450))
-		Widget.Title = `{Constants.PluginDisplayName}{if GetIsRunningSession() then " - Client" else ""}`
+		Widget.Title = `{Constants.PluginAcroName}{if GetIsRunningSession() then " - Client" else ""}`
 		if GetPlugin():GetSetting(Constants.PluginSharedSettingsKey) == nil then
 			-- FTUE
 			Widget.Enabled = true
