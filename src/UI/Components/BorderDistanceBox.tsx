@@ -153,6 +153,9 @@ export function BorderDistanceBox(props: BorderDistanceBoxProps) {
 	createEffect(() => {
 		const AbsolutePositionChangedListener = props.Adornee.GetPropertyChangedSignal("AbsolutePosition").Connect(
 			() => {
+				if (props.Adornee === undefined) {
+					return;
+				}
 				setAdorneeAbsolutePosition(props.Adornee.AbsolutePosition);
 			},
 		);
@@ -162,6 +165,9 @@ export function BorderDistanceBox(props: BorderDistanceBoxProps) {
 	});
 	createEffect(() => {
 		const AbsoluteSizeChangedListener = props.Adornee.GetPropertyChangedSignal("AbsoluteSize").Connect(() => {
+			if (props.Adornee === undefined) {
+				return;
+			}
 			setAdorneeAbsoluteSize(props.Adornee.AbsoluteSize);
 		});
 		createCleanup(() => {
