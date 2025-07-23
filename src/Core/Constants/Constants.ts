@@ -6,7 +6,11 @@
 import { createScope, createState } from "@mekstuff-rbxts/vivid";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 
-const PackageJSON = require(script.Parent!.Parent!.Parent!.WaitForChild("package.json") as ModuleScript) as {
+const PackageJSON = (
+	GetIsNonPluginEnv()
+		? require(script.Parent!.Parent!.Parent!.Parent!.WaitForChild("package.json") as ModuleScript)
+		: require(script.Parent!.Parent!.Parent!.WaitForChild("package.json") as ModuleScript)
+) as {
 	version: string;
 };
 const ConstantsScope = createScope();
