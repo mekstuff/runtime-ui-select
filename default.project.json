@@ -15,7 +15,7 @@
 				}
 			}
 		},
-		"package.json": {
+		"package": {
 			"$path": "package.json"
 		}
 	}

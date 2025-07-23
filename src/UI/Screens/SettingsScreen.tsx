@@ -4,7 +4,7 @@
 */
 
 import Vivid, { createEffect, Slot } from "@mekstuff-rbxts/vivid";
-import { Button, Icons, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+import { Button, Icons, Label, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
 import { SettingsContext } from "Contexts/SettingsContexts";
 import { Constants } from "Core/Constants/Constants";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
@@ -210,24 +210,8 @@ export function SettingsScreen() {
 						}}
 					/>
 				</SettingContent>
-				<SettingContent titleText={"Help"} scaleDistribution={0.75}>
-					<Button
-						variant="ghost"
-						icon={Icons.fromName("fluency", "outline", "circled-question")}
-						tags={[Constants.MainWidgetToolTipCollectionId]}
-						attributes={{
-							[Constants.MainWidgetToolTipCollectionId]: "Get help",
-						}}
-						Size={UDim2.fromScale(1, 0)}
-						Text={""}
-						Activated={() => {
-							PromptTextOption({
-								title: "Get help",
-								body: "https://devforum.roblox.com/t/",
-								onOption: () => {},
-							});
-						}}
-					/>
+				<SettingContent titleText={"Version"} scaleDistribution={0.8}>
+					<Label TextColor3={Theme().DimmedText} Text={Constants.PluginVersion} />
 				</SettingContent>
 			</scrollingframe>
 			<Button
