@@ -61,23 +61,23 @@ jobs:
             - name: Install aftman packages
               run: aftman install
 
+            # Pre set package version... As of 7/23/2025 - release.config.js (@semantic-release/npm -> @semantic-release/git should also bump this version, but we manually set it here using the installed `npm` package since we need it to be updated for the build files)
+            - name: Pre Setting package.json Version from get-next-version
+              run: yarn npm pkg set version=${{ needs.get-next-version.outputs.new-release-version }} && echo Manually updated package.json version to ${{ needs.get-next-version.outputs.new-release-version }}
+
             - name: Building
               run: yarn run build
 
             - name: Building Game
               run: yarn run build-game
 
-            # Deploy Experience/Game .rbxl file to Roblox
-            - name: Deploy Roblox Demo Place
-              shell: bash
+            # Semantic release
+            - name: Release
+              run: npx semantic-release
               env:
-                  UID: ${{ env.ROBLOX_UNIVERSE_ID }} # Universe ID
-                  PID: ${{ env.ROBLOX_PLACE_ID }} # Place ID
-                  API_KEY: ${{ secrets.ROBLOX_GAME }}
-                  FILE: game/out/rutus_game.rbxl # Roblox place file (e.g. might have a step before this to build the file with Rojo)
-              run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -i "$PID" -t published -f "$FILE"
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            # Deploy plugin file to Itch.io
+            # Deploy Plugin file to Itch.io
             - name: Delpoy to Itch
               uses: yeslayla/butler-publish-itchio-action@master
               env:
@@ -88,7 +88,12 @@ jobs:
                   PACKAGE: out/rutus_plugin.rbxm
                   VERSION: ${{ needs.get-next-version.outputs.new-release-version }}
 
-            - name: Release
-              run: npx semantic-release
+            # Deploy Experience/Game .rbxl file to Roblox
+            - name: Deploy Roblox Demo Place
+              shell: bash
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  UID: ${{ env.ROBLOX_UNIVERSE_ID }} # Universe ID
+                  PID: ${{ env.ROBLOX_PLACE_ID }} # Place ID
+                  API_KEY: ${{ secrets.ROBLOX_GAME }}
+                  FILE: game/out/rutus_game.rbxl # Roblox place file (e.g. might have a step before this to build the file with Rojo)
+              run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -i "$PID" -t published -f "$FILE"
