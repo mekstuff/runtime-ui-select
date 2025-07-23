@@ -16,6 +16,7 @@ export function BindedSettingContextToggleSwitch(props: {
 	InverseDependencies?: (keyof typeof SettingsContext)[];
 	UnavailableFeature?: boolean;
 	ToolTip?: string;
+	hideSplitter?: boolean;
 }) {
 	const SettingContextObject = SettingsContext[use(() => props.TargetSettingContext)] as SettingState<boolean>;
 
@@ -50,7 +51,7 @@ export function BindedSettingContextToggleSwitch(props: {
 			AutomaticSize={Enum.AutomaticSize.XY}
 			BackgroundTransparency={1}
 		>
-			<SettingContent titleText={props.Text} scaleDistribution={0.8}>
+			<SettingContent titleText={props.Text} scaleDistribution={0.8} hideSplitter={props.hideSplitter}>
 				<Switch conditional={createEffect(() => props.UnavailableFeature === true)()}>
 					<Case condition={true}>{() => <UnavailableFeature />}</Case>
 					<Case condition={false}>
