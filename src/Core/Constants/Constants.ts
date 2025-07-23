@@ -8,8 +8,8 @@ import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 
 const PackageJSON = (
 	GetIsNonPluginEnv()
-		? require(script.Parent!.Parent!.Parent!.Parent!.WaitForChild("package.json") as ModuleScript)
-		: require(script.Parent!.Parent!.Parent!.WaitForChild("package.json") as ModuleScript)
+		? require(script.Parent!.Parent!.Parent!.Parent!.WaitForChild("package") as ModuleScript)
+		: require(script.Parent!.Parent!.Parent!.WaitForChild("package") as ModuleScript)
 ) as {
 	version: string;
 };
