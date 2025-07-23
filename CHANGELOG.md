@@ -1,3 +1,12 @@
+## [1.2.2](https://github.com/mekstuff/runtime-ui-select/compare/v1.2.1...v1.2.2) (2025-07-23)
+
+
+### Bug Fixes
+
+* fixed next version extraction...? ([6b0a723](https://github.com/mekstuff/runtime-ui-select/commit/6b0a7231876cb561454ccc8f46ddaa1f91d7d490))
+* PackageJSON runtime query is based on the usage environment ([aaceb6f](https://github.com/mekstuff/runtime-ui-select/commit/aaceb6fb7182c6c384b413d78b0546015bb69285))
+* removed help setting button, added version text to settings screen and fixed package query from package.json -> package ([6c5e7bc](https://github.com/mekstuff/runtime-ui-select/commit/6c5e7bc191589bfa9e0b4e5fcda31094d34b56cc))
+
 ## [1.2.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.2.0...v1.2.1) (2025-07-23)
 
 
