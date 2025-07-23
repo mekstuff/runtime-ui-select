@@ -13,7 +13,7 @@ const config = {
 		[
 			"@semantic-release/git",
 			{
-				assets: ["out/rutus_plugin.rbxm", "game/out/rutus_game.rbxl", "CHANGELOG.md"],
+				assets: ["out/rutus_plugin.rbxm", "game/out/rutus_game.rbxl", "CHANGELOG.md", "package.json"],
 				message: "chore(release): ${nextRelease.version} [skip ci] --no-verify \n\n${nextRelease.notes}",
 			},
 		],
