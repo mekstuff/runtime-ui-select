@@ -5,6 +5,12 @@ const config = {
 		"@semantic-release/release-notes-generator",
 		["@semantic-release/changelog", { changelogFile: "CHANGELOG.md" }],
 		[
+			"@semantic-release/exec",
+			{
+				verifyReleaseCmd: 'echo "next-version=${nextRelease.version}" >> $GITHUB_OUTPUT',
+			},
+		],
+		[
 			"@semantic-release/npm",
 			{
 				npmPublish: false,
