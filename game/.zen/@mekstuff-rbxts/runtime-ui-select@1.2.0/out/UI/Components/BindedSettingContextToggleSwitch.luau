@@ -82,6 +82,7 @@ local function BindedSettingContextToggleSwitch(props)
 	}, Vivid.createElement(SettingContent, {
 		titleText = props.Text,
 		scaleDistribution = 0.8,
+		hideSplitter = props.hideSplitter,
 	}, Vivid.createElement(Switch, {
 		conditional = createEffect(function()
 			return props.UnavailableFeature == true
