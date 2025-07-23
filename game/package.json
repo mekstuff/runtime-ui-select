@@ -24,6 +24,6 @@
 		}
 	},
 	"dependencies": {
-		"@mekstuff-rbxts/runtime-ui-select": "file:.zen\\@mekstuff-rbxts\\runtime-ui-select@1.2.2"
+		"@mekstuff-rbxts/runtime-ui-select": "file:.zen\\@mekstuff-rbxts\\runtime-ui-select@1.3.0"
 	}
 }

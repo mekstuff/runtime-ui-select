@@ -124,6 +124,9 @@ local function BorderDistanceBox(props)
 	end)
 	createEffect(function()
 		local AbsolutePositionChangedListener = props.Adornee:GetPropertyChangedSignal("AbsolutePosition"):Connect(function()
+			if props.Adornee == nil then
+				return nil
+			end
 			setAdorneeAbsolutePosition(props.Adornee.AbsolutePosition)
 		end)
 		createCleanup(function()
@@ -132,6 +135,9 @@ local function BorderDistanceBox(props)
 	end)
 	createEffect(function()
 		local AbsoluteSizeChangedListener = props.Adornee:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+			if props.Adornee == nil then
+				return nil
+			end
 			setAdorneeAbsoluteSize(props.Adornee.AbsoluteSize)
 		end)
 		createCleanup(function()

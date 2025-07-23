@@ -33,6 +33,9 @@ export function DimensionBox(props: DimensionBoxProps) {
 	createEffect(() => {
 		const AbsolutePositionChangedListener = props.Adornee.GetPropertyChangedSignal("AbsolutePosition").Connect(
 			() => {
+				if (props.Adornee === undefined) {
+					return;
+				}
 				setAdorneeAbsolutePosition(props.Adornee.AbsolutePosition);
 			},
 		);
@@ -42,6 +45,9 @@ export function DimensionBox(props: DimensionBoxProps) {
 	});
 	createEffect(() => {
 		const AbsoluteSizeChangedListener = props.Adornee.GetPropertyChangedSignal("AbsoluteSize").Connect(() => {
+			if (props.Adornee === undefined) {
+				return;
+			}
 			setAdorneeAbsoluteSize(props.Adornee.AbsoluteSize);
 		});
 		createCleanup(() => {
@@ -115,8 +121,11 @@ export function DimensionBox(props: DimensionBoxProps) {
 					<DimensionBoxTextInfo
 						truthy={createEffect(() => props.ShowInstanceName)()}
 						Text={createEffect(() => {
+							if (props.Adornee === undefined) {
+								return "";
+							}
 							return `${props.Adornee.Name}`;
-						})}
+						})()}
 						TextColor3={Theme().MainButton}
 					/>,
 				]}
