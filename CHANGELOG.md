@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/mekstuff/runtime-ui-select/compare/v1.2.2...v1.3.0) (2025-07-23)
+
+
+### Features
+
+* added search filter to plugin settings widget ([9de7e46](https://github.com/mekstuff/runtime-ui-select/commit/9de7e46eec1748161c08b5a2403838f2b45ccfdc))
+
 ## [1.2.2](https://github.com/mekstuff/runtime-ui-select/compare/v1.2.1...v1.2.2) (2025-07-23)
 
 
