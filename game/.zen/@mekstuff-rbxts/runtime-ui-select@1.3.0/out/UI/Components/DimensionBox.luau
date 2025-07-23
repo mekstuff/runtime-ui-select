@@ -31,6 +31,9 @@ local function DimensionBox(props)
 	end))
 	createEffect(function()
 		local AbsolutePositionChangedListener = props.Adornee:GetPropertyChangedSignal("AbsolutePosition"):Connect(function()
+			if props.Adornee == nil then
+				return nil
+			end
 			setAdorneeAbsolutePosition(props.Adornee.AbsolutePosition)
 		end)
 		createCleanup(function()
@@ -39,6 +42,9 @@ local function DimensionBox(props)
 	end)
 	createEffect(function()
 		local AbsoluteSizeChangedListener = props.Adornee:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+			if props.Adornee == nil then
+				return nil
+			end
 			setAdorneeAbsoluteSize(props.Adornee.AbsoluteSize)
 		end)
 		createCleanup(function()
@@ -102,8 +108,11 @@ local function DimensionBox(props)
 				return props.ShowInstanceName
 			end)(),
 			Text = createEffect(function()
+				if props.Adornee == nil then
+					return ""
+				end
 				return `{props.Adornee.Name}`
-			end),
+			end)(),
 			TextColor3 = Theme().MainButton,
 		}) },
 	}))
