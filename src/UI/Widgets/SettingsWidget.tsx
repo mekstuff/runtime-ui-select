@@ -18,9 +18,8 @@ export function SettingsWidget(props: { Toolbar: PluginToolbar }) {
 					`${Constants.PluginWidgetIdentifierPrefix}_${math.random()}`,
 					new DockWidgetPluginGuiInfo(Enum.InitialDockState.Float, false, false, 300, 450, 300, 450),
 				) as DockWidgetPluginGui & { Title: string };
-				Widget.Title = `${Constants.PluginDisplayName}${GetIsRunningSession() ? " - Client" : ""}`;
+				Widget.Title = `${Constants.PluginAcroName}${GetIsRunningSession() ? " - Client" : ""}`;
 
-				Widget.Enabled = true;
 				if (GetPlugin().GetSetting(Constants.PluginSharedSettingsKey) === undefined) {
 					// FTUE
 					Widget.Enabled = true;

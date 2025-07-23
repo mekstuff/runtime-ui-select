@@ -82,6 +82,10 @@ local function createEffect(Callback, DefaultValue, AccurateDependencyExecution)
 				error(`[createEffect() Yield] Do you have yielding code within your createEffect function? task.wait, WaitForChild, etc. cannot be used within a createEffect function unless within a safe thread.\n\ntraceback:\n\n{NoShallowErrorTraceback}`)
 			end
 		end)
+		if ElementNode._dead == true then
+			CallbackExecuted = true
+			return nil
+		end
 		local Results = Callback(CreateEffectCallbackParam)
 		CallbackExecuted = true
 		if Results == nil and createEffectState == nil then

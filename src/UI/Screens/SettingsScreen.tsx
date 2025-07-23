@@ -4,12 +4,15 @@
 */
 
 import Vivid, { createEffect, Slot } from "@mekstuff-rbxts/vivid";
-import { Button, Input, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
-import { DefaultSettingsContext, SettingsContext } from "Contexts/SettingsContexts";
+import { Button, Icons, SettingContent, SettingContentSeperator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+import { SettingsContext } from "Contexts/SettingsContexts";
+import { Constants } from "Core/Constants/Constants";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 import { ResetPluginToDefault } from "Core/Functions/ResetPlugin";
 import { BindedSettingContextToggleSwitch } from "UI/Components/BindedSettingContextToggleSwitch";
+import { HoverAccuracyInput } from "UI/Components/HoverAccuracyInput";
 import { ThemeToggleButton } from "UI/Components/ThemeToggleButton";
+import { PromptTextOption } from "UI/Prompts/PromptTextOption";
 
 export function SettingsScreen() {
 	const ToggleButtonOffset = 10;
@@ -47,12 +50,29 @@ export function SettingsScreen() {
 					ToolTip="Enables the ability for the plugin to detect what items are being hovered during runtime."
 					Dependencies={["PluginEnabled"]}
 				/>
+				<SettingContent titleText={"Hover Detection Accuracy"} scaleDistribution={0.85}>
+					<HoverAccuracyInput />
+				</SettingContent>
 				<BindedSettingContextToggleSwitch
 					Text="Allow Multi-Hover Detection"
 					TargetSettingContext="MultiHoverDetectionEnabled"
 					ToolTip="Enables the ability for the plugin to detect multiple items being hovered during runtime, This may not be ideal for compacted GUI."
 					Dependencies={["HoverDetectionEnabled"]}
 				/>
+				<BindedSettingContextToggleSwitch
+					Text="Show Instance Name On Hover"
+					TargetSettingContext="ShowInstanceNameOnHover"
+					ToolTip="Will show the Name property of the hovered items."
+					Dependencies={["HoverDetectionEnabled"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Ctrl/Cmd Key Required For Hover Detection"
+					TargetSettingContext="UseHoverDetectionActivationKeybind"
+					ToolTip="Requires the CTRL/CMD key to be pressed for hover detection to be enabled."
+					Dependencies={["HoverDetectionEnabled"]}
+				/>
+				{/* Hover Dimensions */}
+				<SettingContentSeperator seperatorText={"Hover Dimensions"} />
 				<BindedSettingContextToggleSwitch
 					Text="Show Dimensions On Hover"
 					TargetSettingContext="ShowDimensionsOnHover"
@@ -70,18 +90,6 @@ export function SettingsScreen() {
 					TargetSettingContext="ShowAbsolutePositionOnHover"
 					ToolTip="Will show the AbsolutePosition property of the hovered items."
 					Dependencies={["ShowDimensionsOnHover"]}
-				/>
-				<BindedSettingContextToggleSwitch
-					Text="Show Instance Name On Hover"
-					TargetSettingContext="ShowInstanceNameOnHover"
-					ToolTip="Will show the Name property of the hovered items."
-					Dependencies={["HoverDetectionEnabled"]}
-				/>
-				<BindedSettingContextToggleSwitch
-					Text="Ctrl/Cmd Key Required For Hover Detection"
-					TargetSettingContext="UseHoverDetectionActivationKeybind"
-					ToolTip="Requires the CTRL/CMD key to be pressed for hover detection to be enabled."
-					Dependencies={["PluginEnabled"]}
 				/>
 
 				{/* Selecting */}
@@ -111,28 +119,6 @@ export function SettingsScreen() {
 					TargetSettingContext="ShowAbsolutePositionOnSelected"
 					Dependencies={["ShowDimensionsOnSelected"]}
 				/> */}
-
-				{/* Behavior */}
-				<SettingContentSeperator seperatorText={"Behavior"} />
-				<BindedSettingContextToggleSwitch
-					Text="Allow Runtime GUI Selection"
-					TargetSettingContext="AllowUserRuntimeUISelection"
-					ToolTip="Enables the ability for the plugin to allow the user to select hovered UI during runtime."
-					Dependencies={["HoverDetectionEnabled"]}
-					UnavailableFeature={GetIsNonPluginEnv()}
-				/>
-				<BindedSettingContextToggleSwitch
-					Text="Ignore Transparent GUI Objects"
-					TargetSettingContext="IgnoreTransparentGUIObjects"
-					ToolTip="Will ignore GUI Objects that are transparent."
-					Dependencies={["PluginEnabled"]}
-				/>
-				<BindedSettingContextToggleSwitch
-					Text="Block Input Activations"
-					TargetSettingContext="BlockButtonActivations"
-					ToolTip="Will block any input activations, allowing you to select buttons/textboxes during runtime without firing any events."
-					Dependencies={["PluginEnabled", "UseHoverDetectionActivationKeybind"]}
-				/>
 
 				{/* BorderBoxes / Distance Indicators */}
 				<SettingContentSeperator seperatorText={"Distance Indicators"} />
@@ -169,13 +155,13 @@ export function SettingsScreen() {
 					Dependencies={["ShowBorderBoxesOnHover"]}
 				/>
 
-				{/* Plugin */}
-				<SettingContentSeperator seperatorText={"Plugin"} />
+				{/* Behavior */}
+				<SettingContentSeperator seperatorText={"Behavior"} />
 				<BindedSettingContextToggleSwitch
-					Text="Detect Runtime Settings Changes"
-					TargetSettingContext="DetectRuntimeSettingsChanges"
-					ToolTip="Whenever you make a plugin setting change during runtime, You will be prompted to save the changes when you exit the session.\n\nOnce enabled, whenever you make a setting change and leave the game, Roblox will prompt you that you've made some script changes, You must select yes at this step.\n\nNOTE: You may experience a flicker whenever the first setting is changed during runtime."
-					Dependencies={["PluginEnabled"]}
+					Text="Left Click To Select GUI"
+					TargetSettingContext="AllowUserRuntimeUISelection"
+					ToolTip="Enables the ability for the plugin to allow the user to select hovered UI during runtime."
+					Dependencies={["HoverDetectionEnabled"]}
 					UnavailableFeature={GetIsNonPluginEnv()}
 				/>
 				<BindedSettingContextToggleSwitch
@@ -183,6 +169,28 @@ export function SettingsScreen() {
 					TargetSettingContext="RightClickForContextMenu"
 					ToolTip="Right click during runtime for a context menu.\n\nIf you have a hover detect activation keybind, You will need to be holding the key."
 					Dependencies={["HoverDetectionEnabled"]}
+					UnavailableFeature={GetIsNonPluginEnv()}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Block Input Activations"
+					TargetSettingContext="BlockButtonActivations"
+					ToolTip="Will block any input activations, allowing you to select buttons/textboxes during runtime without firing any events."
+					Dependencies={["PluginEnabled", "UseHoverDetectionActivationKeybind"]}
+				/>
+				<BindedSettingContextToggleSwitch
+					Text="Ignore Transparent GUI Objects"
+					TargetSettingContext="IgnoreTransparentGUIObjects"
+					ToolTip="Will ignore GUI Objects that are transparent."
+					Dependencies={["PluginEnabled"]}
+				/>
+
+				{/* Plugin */}
+				<SettingContentSeperator seperatorText={"Plugin"} />
+				<BindedSettingContextToggleSwitch
+					Text="Detect Runtime Settings Changes"
+					TargetSettingContext="DetectRuntimeSettingsChanges"
+					ToolTip="Whenever you make a plugin setting change during runtime, You will be prompted to save the changes when you exit the session.\n\nOnce enabled, whenever you make a setting change and leave the game, Roblox will prompt you that you've made some script changes, You must select yes at this step.\n\nNOTE: You may experience a flicker whenever the first setting is changed during runtime."
+					Dependencies={["PluginEnabled"]}
 					UnavailableFeature={GetIsNonPluginEnv()}
 				/>
 				<SettingContent titleText={"Studio Theme"} scaleDistribution={0.75}>
@@ -199,6 +207,25 @@ export function SettingsScreen() {
 						Text={"Reset"}
 						Activated={() => {
 							ResetPluginToDefault();
+						}}
+					/>
+				</SettingContent>
+				<SettingContent titleText={"Help"} scaleDistribution={0.75}>
+					<Button
+						variant="ghost"
+						icon={Icons.fromName("fluency", "outline", "circled-question")}
+						tags={[Constants.MainWidgetToolTipCollectionId]}
+						attributes={{
+							[Constants.MainWidgetToolTipCollectionId]: "Get help",
+						}}
+						Size={UDim2.fromScale(1, 0)}
+						Text={""}
+						Activated={() => {
+							PromptTextOption({
+								title: "Get help",
+								body: "https://devforum.roblox.com/t/",
+								onOption: () => {},
+							});
 						}}
 					/>
 				</SettingContent>

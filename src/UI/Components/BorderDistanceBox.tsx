@@ -23,7 +23,11 @@ function RenderBorderDistanceLine(props: BorderDistanceLineProps & { truthy: boo
 	delete Properties.truthy;
 
 	return (
-		<Switch conditional={createEffect(() => props.truthy === true)()}>
+		<Switch
+			conditional={createEffect(() => {
+				return props.truthy === true;
+			})()}
+		>
 			<Case condition={true}>
 				{() => <BorderDistanceLine {...(Properties as Required<typeof Properties>)} />}
 			</Case>

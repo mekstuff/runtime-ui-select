@@ -1,6 +1,6 @@
 {
 	"name": "runtime-ui-select-plugin",
-	"globIgnorePaths": ["**/tsconfig.json"],
+	"globIgnorePaths": ["**/tsconfig.json", "out/rutus_plugin.rbxm"],
 	"tree": {
 		"$path": "out",
 		"include": {
@@ -14,6 +14,9 @@
 					"$path": "node_modules/@mekstuff-rbxts"
 				}
 			}
+		},
+		"package.json": {
+			"$path": "package.json"
 		}
 	}
 }

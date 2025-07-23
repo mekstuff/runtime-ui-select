@@ -1,6 +1,6 @@
 {
 	"name": "roblox-ts-game",
-	"globIgnorePaths": ["**/package.json", "**/tsconfig.json"],
+	"globIgnorePaths": ["**/tsconfig.json", "out/rutus_game.rbxl"],
 	"tree": {
 		"$className": "DataModel",
 		"ServerScriptService": {

@@ -7,7 +7,6 @@
 		"out"
 	],
 	"types": "out/index.d.ts",
-	"license": "MIT",
 	"scripts": {
 		"build": "rbxtsc && rojo build -o out/rutus_plugin.rbxm",
 		"watch": "rbxtsc -w",
@@ -15,9 +14,9 @@
 		"dev-game": "cd game && yarn run dev && cd ../",
 		"build-game": "cd game && yarn run build && cd ../",
 		"zen-pull-game": "cd game && zen pull && zen install yarn && cd ../",
-		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select",
-		"sync-game": "yarn zen-publish && yarn run zen-pull-game",
-		"git-push": "yarn run sync-game && git add game && git commit -m=\"chore: synced game\" && git push",
+		"zen-publish": "yarn npm pkg set name=@mekstuff-rbxts/runtime-ui-select && zen publish && yarn npm pkg set name=runtime-ui-select && yarn build",
+		"sync-game": "yarn zen-publish && yarn run zen-pull-game && yarn run build-game",
+		"git-push": "yarn run sync-game && git add game && git commit -m \"chore: synced game\" && git push",
 		"prepack": "yarn run build"
 	},
 	"devDependencies": {
