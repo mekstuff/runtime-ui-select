@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.3.0...v1.3.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* PowerHorseEngine only creates container folders when required ([a58f21e](https://github.com/mekstuff/runtime-ui-select/commit/a58f21e16ceab30e97ff10ecfab85340f2832a57))
+
 # [1.3.0](https://github.com/mekstuff/runtime-ui-select/compare/v1.2.2...v1.3.0) (2025-07-23)
 
 
