@@ -1,3 +1,19 @@
+# [1.2.0](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.4...v1.2.0) (2025-07-23)
+
+
+### Bug Fixes
+
+* compiling plugin and game correctly by adding output builds to globIgnore ([fd7c473](https://github.com/mekstuff/runtime-ui-select/commit/fd7c473485969cac09e101cb989b55b2a66730d9))
+* fixed runtime vivid element destroy warnings ([fcb570a](https://github.com/mekstuff/runtime-ui-select/commit/fcb570afadd4ee9fd3766e3b59fe47cb9f5d6de2))
+* fixed sync-game command ([2440be7](https://github.com/mekstuff/runtime-ui-select/commit/2440be7a0f0c77cd37d138e0803486e81ae6790d))
+* fixed vivid switch and createEffect execution errors ([be4ef9b](https://github.com/mekstuff/runtime-ui-select/commit/be4ef9b43c361ac227239f6fc2235e4ea12fe7a6))
+* sorted settings screen correctly and added command line free script ([83a30bb](https://github.com/mekstuff/runtime-ui-select/commit/83a30bb6a340e8fadb5bb13cdf329ba3301f86e4))
+
+
+### Features
+
+* added hover accuracy setting and help button ([02899bc](https://github.com/mekstuff/runtime-ui-select/commit/02899bc96964f1b85c52f7b2670ce4f797e94af1))
+
 ## [1.1.4](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.3...v1.1.4) (2025-07-21)
 
 
