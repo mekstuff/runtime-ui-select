@@ -5,6 +5,7 @@
 
 import Vivid, { clearScopes } from "@mekstuff-rbxts/vivid";
 import { setPluginContexts } from "Contexts/PluginContexts";
+import { Constants } from "Core/Constants/Constants";
 import { GetIsRunningSession, GetIsRunningSessionServer } from "Core/Functions/GetUsageContext";
 import { Toasts } from "UI/Screens/Toasts";
 
@@ -22,7 +23,7 @@ function SharedRoot() {
 		clearScopes();
 	});
 
-	const Toolbar = plugin.CreateToolbar("Rutus");
+	const Toolbar = plugin.CreateToolbar(`${Constants.PluginAcroName} ${Constants.PluginVersion}`);
 
 	const SettingsWidget = import("UI/Widgets/SettingsWidget").expect().SettingsWidget;
 

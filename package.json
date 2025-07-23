@@ -7,7 +7,6 @@
 		"out"
 	],
 	"types": "out/index.d.ts",
-	"license": "MIT",
 	"scripts": {
 		"build": "rbxtsc && rojo build -o out/rutus_plugin.rbxm",
 		"watch": "rbxtsc -w",

@@ -6,6 +6,9 @@
 import { createScope, createState } from "@mekstuff-rbxts/vivid";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 
+const PackageJSON = require(script.Parent!.Parent!.Parent!.WaitForChild("package.json") as ModuleScript) as {
+	version: string;
+};
 const ConstantsScope = createScope();
 
 const PluginDisplayIcon = "rbxassetid://134897990664604"; // Icons.fromName("fluency", "outline", "mouse-cursor-click"); // "rbxassetid://139503145506932" as const;
@@ -36,6 +39,9 @@ export const Constants = {
 	PluginDisplayIcon,
 	PluginDisplayIconDark,
 	Dynamic_PluginDisplayIcon,
+
+	PluginAcroName: "Rutus",
+	PluginVersion: PackageJSON.version,
 
 	PluginWidgetIdentifierPrefix: "runtime-ui-select",
 	PluginSharedSettingsKey: "PluginSharedSettings",
