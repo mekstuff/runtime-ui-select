@@ -12,7 +12,7 @@ local createEffect = _vivid.createEffect
 local Slot = _vivid.Slot
 local _vivid_ui = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "vivid-ui").out)
 local Button = _vivid_ui.Button
-local Icons = _vivid_ui.Icons
+local Label = _vivid_ui.Label
 local SettingContent = _vivid_ui.SettingContent
 local SettingContentSeperator = _vivid_ui.SettingContentSeperator
 local Theme = _vivid_ui.Theme
@@ -24,7 +24,6 @@ local ResetPluginToDefault = TS.import(script, script.Parent.Parent.Parent, "Cor
 local BindedSettingContextToggleSwitch = TS.import(script, script.Parent.Parent, "Components", "BindedSettingContextToggleSwitch").BindedSettingContextToggleSwitch
 local HoverAccuracyInput = TS.import(script, script.Parent.Parent, "Components", "HoverAccuracyInput").HoverAccuracyInput
 local ThemeToggleButton = TS.import(script, script.Parent.Parent, "Components", "ThemeToggleButton").ThemeToggleButton
-local PromptTextOption = TS.import(script, script.Parent.Parent, "Prompts", "PromptTextOption").PromptTextOption
 local function SettingsScreen()
 	local ToggleButtonOffset = 10
 	return Vivid.createElement("frame", {
@@ -173,24 +172,11 @@ local function SettingsScreen()
 			ResetPluginToDefault()
 		end,
 	})), Vivid.createElement(SettingContent, {
-		titleText = "Help",
-		scaleDistribution = 0.75,
-	}, Vivid.createElement(Button, {
-		variant = "ghost",
-		icon = Icons.fromName("fluency", "outline", "circled-question"),
-		tags = { Constants.MainWidgetToolTipCollectionId },
-		attributes = {
-			[Constants.MainWidgetToolTipCollectionId] = "Get help",
-		},
-		Size = UDim2.fromScale(1, 0),
-		Text = "",
-		Activated = function()
-			PromptTextOption({
-				title = "Get help",
-				body = "https://devforum.roblox.com/t/",
-				onOption = function() end,
-			})
-		end,
+		titleText = "Version",
+		scaleDistribution = 0.8,
+	}, Vivid.createElement(Label, {
+		TextColor3 = Theme().DimmedText,
+		Text = Constants.PluginVersion,
 	}))), Vivid.createElement(Button, {
 		color = createEffect(function()
 			return if SettingsContext.PluginEnabled.get() == false then "primary" else "default"
