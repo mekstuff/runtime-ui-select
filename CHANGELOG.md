@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.2.0...v1.2.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* manually bumped version feature for release ([3dab762](https://github.com/mekstuff/runtime-ui-select/commit/3dab7621299dbb24a5238e7baa453c365f8ad29a))
+
 # [1.2.0](https://github.com/mekstuff/runtime-ui-select/compare/v1.1.4...v1.2.0) (2025-07-23)
 
 
