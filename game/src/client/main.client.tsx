@@ -155,7 +155,7 @@ function DisplayScreen(props: { children?: unknown }) {
 										}}
 										BackgroundTransparency={1}
 										TextEditable={false}
-										Text={"https://devforum.roblox.com/t/"}
+										Text={"https://devforum.roblox.com/t/3836243"}
 										TextColor3={Theme().DimmedText}
 										Size={new UDim2(1, 0, 0, 0)}
 									/>
