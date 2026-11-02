@@ -1,4 +1,4 @@
-import Vivid from "..";
+import Vivid from "../index";
 import { State } from "@mekstuff-rbxts/core";
 type AnimationParamProps = Record<string, unknown>;
 type CustomAnimationPropDef = {

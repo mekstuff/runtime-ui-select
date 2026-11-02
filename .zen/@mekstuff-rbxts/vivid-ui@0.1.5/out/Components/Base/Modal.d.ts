@@ -8,10 +8,10 @@ export type ModalProps = {
     closedPosition?: UDim2;
     backdropTransparency?: number;
     props?: Partial<{
-        Backdrop: Vivid.FC.Props<TextButton>;
-        Container: Vivid.FC.Props<CanvasGroup>;
-        UICorner: Vivid.FC.Props<UICorner>;
-        ZIndexLayer: Vivid.FC.Props<Frame>;
+        Backdrop: Vivid.FC.InstanceProperties<TextButton>;
+        Container: Vivid.FC.InstanceProperties<CanvasGroup>;
+        UICorner: Vivid.FC.InstanceProperties<UICorner>;
+        ZIndexLayer: Vivid.FC.InstanceProperties<Frame>;
     }>;
 };
 export declare const ModalZIndexLayerDefaultZIndex = 3;

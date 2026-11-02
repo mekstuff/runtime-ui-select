@@ -1,11 +1,9 @@
-import Syncer from "./class/Replication/Syncer";
 import Debouncer from "./class/Debounce/Debounce";
 import RecursiveTry from "./internal/functions/RecursiveTry";
 import BatchIterate from "./internal/functions/BatchIterate";
 import { Servant, ServantPromise, ServantTrackableItem } from "./class/Servant/Servant";
 import { Pseudo } from "./class/Pseudo/Pseudo";
 import { _typeIs } from "./internal/functions/typeIs";
-import { threader, isThreader } from "@mekstuff-rbxts/threader";
 import { Engine } from "./class/Engine/Engine";
 import { GetPseudoById } from "./internal/functions/GetPseudoById";
 import { PseudoClientReplicator } from "./class/Replication/PseudoClientReplicator";
@@ -16,12 +14,13 @@ import { Compatibility } from "./class/Compatibility/Compatibility";
 import { Observables } from "./class/Observables/Observables";
 import { InstanceMapper } from "./class/InstanceMapper/InstanceMapper";
 import { Spring } from "./class/Spring/Spring";
+import { Cache } from "./class/Cache/Cache";
+import Queue from "./class/Queue/Queue";
 import { ObserveCallback, ObserveDependency, ObserveDependencies, ObserveListener, usePropertyEffectCleanup } from "./class/Pseudo/Pseudo";
 import { GetPseudoFromObject } from "./internal/functions/GetPseudoByObject";
 import { tryUseEffectCleanup } from "./internal/functions/CalluseEffectServant";
-import Queue from "./class/Queue/Queue";
+import { Effect, EffectFunctionObject } from "./internal/functions/Effect/Effect";
 import RuntimeDebugger from "./class/RuntimeDebugger/RuntimeDebugger";
-import { Cache } from "./class/Cache/Cache";
 import { PowerHorse } from "./internal/PowerHorse";
 export interface PowerHorseEngineTypes {
     InternalPseudoTypes: {
@@ -31,9 +30,10 @@ export interface PowerHorseEngineTypes {
         ObserveDependencies: ObserveDependencies;
         ObserveListener: ObserveListener;
         usePropertyEffectCleanup: usePropertyEffectCleanup;
+        EffectFunctionObject: EffectFunctionObject;
     };
 }
-export { Signal, Pseudo, Servant, ServantTrackableItem, threader, PseudoClientReplicator, State, Spring, PHe, Queue, Cache, RuntimeDebugger, PowerHorse, Compatibility, Observables, InstanceMapper, Syncer, Debouncer, Engine, ServantPromise, _typeIs as typeIs, GetPseudoById, GetPseudoFromObject, tryUseEffectCleanup, isThreader, RecursiveTry, BatchIterate, };
+export { Signal, Pseudo, Servant, ServantTrackableItem, PseudoClientReplicator, State, Spring, PHe, Queue, Cache, RuntimeDebugger, PowerHorse, Compatibility, Observables, InstanceMapper, Debouncer, Engine, Effect, ServantPromise, _typeIs as typeIs, GetPseudoById, GetPseudoFromObject, tryUseEffectCleanup, RecursiveTry, BatchIterate, };
 declare global {
     namespace PHe {
         /** A list of pseudo classes*/
@@ -59,7 +59,6 @@ declare global {
             Pseudo: Pseudo;
             Servant: Servant;
             State: State;
-            threader: threader;
             PseudoClientReplicator: PseudoClientReplicator;
             PseudoReplicator: PseudoReplicator;
         }

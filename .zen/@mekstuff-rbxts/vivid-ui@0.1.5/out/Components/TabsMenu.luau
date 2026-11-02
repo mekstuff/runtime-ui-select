@@ -12,13 +12,14 @@ local createEffect = _vivid.createEffect
 local createSpring = _vivid.createSpring
 local createState = _vivid.createState
 local For = _vivid.For
+local Show = _vivid.Show
 local use = _vivid.use
 local withProps = _vivid.withProps
 local _Utils = TS.import(script, script.Parent.Parent, "Utils")
 local Theme = _Utils.Theme
 local Units = _Utils.Units
 local Label = TS.import(script, script.Parent, "Base").Label
-local function TabButton(props)
+local function TabMenuButton(props)
 	local Properties = withProps(props, true)
 	Properties.icon = nil
 	Properties.onClick = nil
@@ -96,7 +97,7 @@ local function TabsMenu(props)
 	}), Vivid.createElement(For, {
 		each = props.tabs,
 		children = function(tabProps, index)
-			return Vivid.createElement(TabButton, {
+			return Vivid.createElement(TabMenuButton, {
 				isSelected = createEffect(function()
 					return index() - 1 == ActiveTabIndex()
 				end)(),
@@ -106,8 +107,8 @@ local function TabsMenu(props)
 						return index()
 					end) - 1)
 				end,
-				icon = tabProps.Icon,
-				Text = tabProps.Title,
+				icon = tabProps.icon,
+				Text = tabProps.title,
 			})
 		end,
 	})), Vivid.createElement("frame", {
@@ -129,13 +130,12 @@ local function TabsMenu(props)
 	}, Vivid.createElement(For, {
 		each = props.tabs,
 		children = function(props, index)
-			return Vivid.createElement("frame", {
-				Visible = function()
+			return Vivid.createElement(Show, {
+				when = createEffect(function()
 					return index() - 1 == ActiveTabIndex()
-				end,
-				Size = UDim2.fromScale(1, 1),
-				BackgroundTransparency = 1,
-			}, props.Content)
+				end),
+				children = props.content,
+			})
 		end,
 	})))
 end

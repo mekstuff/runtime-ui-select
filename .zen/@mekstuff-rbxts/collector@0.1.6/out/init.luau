@@ -72,6 +72,14 @@ do
 				cleanups[__obj_1] = nil
 			end
 			local cleanupret = Callback(GetObject(_obj), BindServant)
+			if cleanupret == nil then
+				local __obj_1 = _obj
+				cleanups[__obj_1] = nil
+				return nil
+			end
+			if type(cleanupret) == "function" ~= true then
+				self:error(`YOU SHOULD NOT RETURN ANYTHING OTHER THAT A FUNCTION (FOR CLEANUP) TO A BIND FUNCTION. Returning a Servant for Example will siginificantly memory usage performance`)
+			end
 			local __obj_1 = _obj
 			cleanups[__obj_1] = cleanupret
 		end
@@ -98,7 +106,9 @@ do
 		end))
 		BindServant.Destroying:Connect(function()
 			-- ▼ ReadonlyMap.forEach ▼
-			local _callback_1 = function(cleanup)
+			local _callback_1 = function(cleanup, instance)
+				local _instance = instance
+				cleanups[_instance] = nil
 				tryUseEffectCleanup(cleanup, true)
 			end
 			for _k, _v in cleanups do

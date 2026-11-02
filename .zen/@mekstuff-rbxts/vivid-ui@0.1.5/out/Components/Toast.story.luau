@@ -12,6 +12,7 @@ local CreateStory = TS.import(script, script.Parent.Parent, "Utils", "CreateStor
 local Choose = TS.import(script, TS.getModule(script, "@rbxts", "ui-labs").src).Choose
 local Controls = {
 	id = game:GetService("HttpService"):GenerateGUID(),
+	lifetime = 10,
 	color = Choose({ "none", "info", "danger", "warning" }, 1),
 	Text = "Toast",
 	buttonHidden = false,

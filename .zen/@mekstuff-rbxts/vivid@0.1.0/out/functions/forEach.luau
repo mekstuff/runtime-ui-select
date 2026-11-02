@@ -1,6 +1,5 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
-local use = TS.import(script, script.Parent.Parent, "use", "use").use
 local _createState = TS.import(script, script.Parent.Parent, "create", "createState")
 local createState = _createState.createState
 local IsStatePropertyValue = _createState.IsStatePropertyValue
@@ -134,31 +133,45 @@ local function forEach(props)
 		setRenderListState(NewRenderList)
 		ExistingRenderedItems = NewExistingRenderedItems
 	end
-	local propsEach = use(function()
-		return props.each
-	end)
+	local propsEach = props.each
 	if IsStatePropertyValue(propsEach) == true then
 		local eachState = propsEach._state
 		local GetStateValue = function()
-			if propsEach._targetproperty ~= nil then
+			if propsEach._targetpropertychain ~= nil then
 				-- Added soley to support nested <For/> calls the uses props from parent that are reactive/(uniqueIdExtractor was defined).
-				return (eachState.State)[propsEach._targetproperty]
+				return (eachState.State)[propsEach._targetpropertychain[1]]
 			else
 				return eachState.State
 			end
 		end
-		RenderListStateObject._dev.insert(eachState:GetPropertyChangedSignal("State"):Connect(function()
+		local Queued = false
+		local UpdateStateQueue = function()
+			if Queued == true then
+				return nil
+			end
+			Queued = true
 			task.defer(function()
-				-- Defer to attempt to fix bugs where the forEach will attempt to run before effect nodes closed. (Patch: 4/30/2025)
-				-- This patch helps with InfiniteScrollingFrame logic since (at the time) "fetchId" is a string (expected to be reactive) that tells the InfiniteScrollingFrame...
-				-- ... to reset, and then that reset calls the fetchItemsFunction and renders the content which then throws an error on the "ObserveNext" of the fetchId, "Attempt to createScope() inside createEffect()".
+				Queued = false
 				UpdateState(GetStateValue())
 			end)
+		end
+		RenderListStateObject._dev.insert(eachState:GetPropertyChangedSignal("State"):Connect(function()
+			-- task.defer(() => {
+			-- 	// Defer to attempt to fix bugs where the forEach will attempt to run before effect nodes closed. (Patch: 4/30/2025)
+			-- 	// This patch helps with InfiniteScrollingFrame logic since (at the time) "fetchId" is a string (expected to be reactive) that tells the InfiniteScrollingFrame...
+			-- 	// ... to reset, and then that reset calls the fetchItemsFunction and renders the content which then throws an error on the "ObserveNext" of the fetchId, "Attempt to createScope() inside createEffect()".
+			-- 	UpdateState(GetStateValue() as object);
+			-- });
+			UpdateStateQueue()
 		end))
 		UpdateState(GetStateValue())
 	else
 		UpdateState(props.each)
 	end
+	RenderListStateObject.Destroying:Connect(function()
+		UpdateState({})
+		ForEachElementNode.servant:Destroy()
+	end)
 	return RenderListState
 end
 --[[

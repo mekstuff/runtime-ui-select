@@ -1,8 +1,8 @@
-import Vivid from "..";
+import Vivid from "../index";
 /**
  * A `Frame` with `UIPadding` and `UIListLayout` support.
  */
-export type BoxComponentProps = Vivid.FC.Props<Frame> & {
+export type BoxComponentProps = Vivid.FC.InstancePropertiesWithChildren<Frame> & {
     /**
      * Applied respectively to the `HorizontalAlignment` and `VerticalAlignment`, If the `alignment` provided exists on both Vertical and Horizontal axis, it will be applied to both. e.g. `Center`.
      */

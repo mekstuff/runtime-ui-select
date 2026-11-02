@@ -4,11 +4,10 @@ export declare class CompatibilityUsageClass extends Pseudo {
     constructor(Compat: CompatibilityClass, ...args: unknown[]);
 }
 export declare class CompatibilityClass extends Pseudo {
-    IsTouchDevice: boolean;
-    IsGamepadDevice: boolean;
+    TouchEnabled: boolean;
+    GamepadEnabled: boolean;
     IsTenFootInterface: boolean;
-    use(...args: Parameters<CompatibilityClass["useCompatibility"]>): ReturnType<CompatibilityClass["useCompatibility"]>;
-    useCompatibility(...args: unknown[]): any;
+    KeyboardEnabled: boolean;
     constructor();
 }
 declare const Compatibility: CompatibilityClass;

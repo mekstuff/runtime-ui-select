@@ -12,7 +12,7 @@ color3 = {
 		local _r = r
 		if typeof(_r) == "Color3" then
 			local _condition = g
-			if not (_condition ~= 0 and _condition == _condition and _condition) then
+			if _condition == nil then
 				_condition = 1
 			end
 			local _alpha = _condition
@@ -43,6 +43,19 @@ color3 = {
 			return useAlpha(c, alpha)
 		end
 		return c
+	end,
+	adjustHSV = function(inputColor, saturation, value)
+		local h, s, v = inputColor:ToHSV()
+		local _condition = saturation
+		if _condition == nil then
+			_condition = 0
+		end
+		local _exp = math.clamp(s + _condition, 0, 1)
+		local _condition_1 = value
+		if _condition_1 == nil then
+			_condition_1 = 0
+		end
+		return Color3.fromHSV(h, _exp, math.clamp(v + _condition_1, 0, 1))
 	end,
 }
 return color3

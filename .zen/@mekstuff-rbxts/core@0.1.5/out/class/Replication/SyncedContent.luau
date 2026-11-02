@@ -23,7 +23,7 @@ do
 		self.Value = nil
 		local ServerCoreSyncerRemote = Engine.FetchReplicatedStorage():WaitForChild(`CoreSync-{self._Syncer.ClassName}`)
 		self.Name = SyncId
-		self._dev._internal_syncerOCE = ServerCoreSyncerRemote.OnClientEvent:Connect(function(Arg0, ServerSentSyncId, content)
+		self._dev.set("_internal_syncerOCE", ServerCoreSyncerRemote.OnClientEvent:Connect(function(Arg0, ServerSentSyncId, content)
 			if ServerSentSyncId ~= SyncId then
 				return nil
 			end
@@ -39,7 +39,7 @@ do
 				self.Value = content
 				return nil
 			end
-		end)
+		end))
 		if _initialValueNoServerCheck ~= nil then
 			self.Value = _initialValueNoServerCheck
 			self:useAssignReadonlyProperty("Initialized", true)

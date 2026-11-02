@@ -29,7 +29,7 @@ do
 	function ObservablesClass:ObserveCharacter(Player, Callback)
 		local CharacterState = State.new(Player.Character or (Player.CharacterAdded:Wait()))
 		CharacterState._dev.insert(Player.CharacterAdded:Connect(function(Character)
-			CharacterState:setState(Character)
+			CharacterState:SetState(Character)
 		end))
 		if Callback then
 			CharacterState:Observe(function()
@@ -42,7 +42,7 @@ do
 		local HumanoidState = State.new((Player.Character or (Player.CharacterAdded:Wait())):WaitForChild("Humanoid"))
 		HumanoidState._dev.insert(self:ObserveCharacter(Player, function(Character)
 			task.spawn(function()
-				HumanoidState:setState(Character:WaitForChild("Humanoid"))
+				HumanoidState:SetState(Character:WaitForChild("Humanoid"))
 			end)
 		end))
 		if Callback then
@@ -56,7 +56,7 @@ do
 		local HumanoidRootPartState = State.new((Player.Character or (Player.CharacterAdded:Wait())):WaitForChild("HumanoidRootPart"))
 		HumanoidRootPartState._dev.insert(self:ObserveCharacter(Player, function(Character)
 			task.spawn(function()
-				HumanoidRootPartState:setState(Character:WaitForChild("HumanoidRootPart"))
+				HumanoidRootPartState:SetState(Character:WaitForChild("HumanoidRootPart"))
 			end)
 		end))
 		if Callback then

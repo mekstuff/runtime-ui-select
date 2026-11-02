@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 --[[
 	
 	    Typed with ❤️ @mekstuff
@@ -50,11 +50,48 @@ local function CreateElementNode(NodeServant)
 			if Node._dead == true then
 				return nil
 			end
+			if ev == "onWillDismount" then
+				local _condition = NodeServant._dev.nodeDismountPresences
+				if _condition == nil then
+					_condition = {}
+				end
+				local nodeDismountPresences = _condition
+				local _cb = cb
+				table.insert(nodeDismountPresences, _cb)
+				NodeServant._dev.nodeDismountPresences = nodeDismountPresences
+				return nil
+			end
 			Node.lifecycles = Node.lifecycles or {}
 			Node.lifecycles[ev] = Node.lifecycles[ev] or {}
 			local _exp = Node.lifecycles[ev]
 			local _cb = cb
 			table.insert(_exp, _cb)
+		end,
+		removeLifeCycleEvent = function(ev, cb)
+			if ev == "onWillDismount" then
+				local nodeDismountPresences = NodeServant._dev.nodeDismountPresences
+				if nodeDismountPresences == nil then
+					return nil
+				end
+				local _cb = cb
+				local _arg0 = (table.find(nodeDismountPresences, _cb) or 0) - 1
+				table.remove(nodeDismountPresences, _arg0 + 1)
+				if #nodeDismountPresences <= 0 then
+					NodeServant._dev.nodeDismountPresences = nil
+				end
+				return nil
+			end
+			if Node.lifecycles == nil or Node.lifecycles[ev] == nil then
+				return nil
+			end
+			local _exp = Node.lifecycles[ev]
+			local _exp_1 = Node.lifecycles[ev]
+			local _cb = cb
+			local _arg0 = (table.find(_exp_1, _cb) or 0) - 1
+			table.remove(_exp, _arg0 + 1)
+			if #Node.lifecycles[ev] <= 0 then
+				Node.lifecycles[ev] = nil
+			end
 		end,
 	}
 	AddActiveNode("ElementNode", Node)

@@ -1,450 +1,431 @@
 -- Compiled with roblox-ts v3.0.0
-local TS = _G[script]
---[[
-	
-	    Typed with ❤️ @mekstuff
-	    05/06/2025 13:52:40
-	
-]]
-local PseudoCollector = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "GetPseudoById").PseudoCollector
-local _typeIs = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "typeIs")._typeIs
-local Pseudo = TS.import(script, script.Parent.Parent, "Pseudo", "Pseudo").Pseudo
-local RuntimeDebuggerRoot = TS.import(script, script.Parent, "RuntimeDebuggerRoot").RuntimeDebuggerRoot
-local Players = game:GetService("Players")
-local ContextActionService = game:GetService("ContextActionService")
 local RuntimeDebugger
 do
-	local super = Pseudo
 	RuntimeDebugger = setmetatable({}, {
 		__tostring = function()
 			return "RuntimeDebugger"
 		end,
-		__index = super,
 	})
 	RuntimeDebugger.__index = RuntimeDebugger
 	function RuntimeDebugger.new(...)
 		local self = setmetatable({}, RuntimeDebugger)
 		return self:constructor(...) or self
 	end
-	function RuntimeDebugger:constructor(TargetClient)
-		super.constructor(self, "RuntimeDebugger")
-		self.MainWindowOpened = false
-		self.PseudoEntiresDebuggerOpened = false
-		self.ServerSectionCollapsed = false
-		self.ClientSharedPseudoCollectorServerFetched = {}
-		self["$server"] = function(_, PCR)
-			self._PCR = PCR
-			self.RuntimeDebuggerRoot = RuntimeDebuggerRoot.new(self)
-			self._dev.insert(self.RuntimeDebuggerRoot)
-			local GetRuntimeDebuggerSharedPseudoCollector = PCR:CreateRemote("GetRuntimeDebuggerSharedPseudoCollector")
-			GetRuntimeDebuggerSharedPseudoCollector.OnServerEvent:Connect(function()
-				if self.RuntimeDebuggerRoot:GetIsVerifiedUsageUser(TargetClient) == false then
-					return nil
-				end
-				GetRuntimeDebuggerSharedPseudoCollector:FireClient(TargetClient, self.RuntimeDebuggerRoot.SharedPseudoCollector or {})
-			end)
-			self.RuntimeDebuggerRoot:ObserveNext(function()
-				GetRuntimeDebuggerSharedPseudoCollector:FireClient(TargetClient, self.RuntimeDebuggerRoot.SharedPseudoCollector or {})
-			end, { "SharedPseudoCollector" })
-			PCR:InitializeClients(script, { TargetClient })
-		end
-		self["$client"] = function(_, PCR)
-			self._PCR = PCR
-			local IrisModule = TS.Promise.new(function(resolve)
-				resolve(TS.import(script, TS.getModule(script, "@rbxts", "iris").src))
-			end):expect()
-			local RuntimeDebuggerScreenGui = Instance.new("ScreenGui")
-			RuntimeDebuggerScreenGui.Name = `{self:GetIdAsync()}-ScreenGui`
-			RuntimeDebuggerScreenGui.IgnoreGuiInset = true
-			local Iris = IrisModule.Init(RuntimeDebuggerScreenGui)
-			self:PseudoEntriesModifierWindow(Iris)
-			self:PowerHorseEngineDebuggerWindow(Iris)
-			RuntimeDebuggerScreenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
-			local GetRuntimeDebuggerSharedPseudoCollector = PCR:GetRemote("GetRuntimeDebuggerSharedPseudoCollector")
-			GetRuntimeDebuggerSharedPseudoCollector.OnClientEvent:Connect(function(Data)
-				self.ClientSharedPseudoCollectorServerFetched = Data
-			end)
-			self:Observe(function()
-				if self.ServerSectionCollapsed == true then
-					return nil
-				end
-				self:addRuntimeDebuggerRootUsageServer():andThen(function()
-					return self:RunGetRuntimeDebuggerSharedPseudoCollector()
-				end)
-				return function()
-					self:removeRuntimeDebuggerRootUsageServer()
-				end
-			end, { "ServerSectionCollapsed" })
-			local ToggleOpenedActionId = `{self:GetIdAsync()}-ToggleOpened`
-			ContextActionService:BindActionAtPriority(ToggleOpenedActionId, function(_, State)
-				if State ~= Enum.UserInputState.Begin then
-					return nil
-				end
-				self.MainWindowOpened = not self.MainWindowOpened
-			end, false, 99, Enum.KeyCode.LeftShift)
-		end
-		self:EnableReplication({}, Enum.RaycastFilterType.Include)
-	end
-	function RuntimeDebugger:toNumberCommas(value)
-		local str = tostring(value)
-		local _exp = string.reverse(str)
-		local _arg2 = math.floor((#str - 1) / 3)
-		return string.reverse((string.gsub(_exp, "...", "%0,", _arg2)))
-	end
-	function RuntimeDebugger:RunGetRuntimeDebuggerSharedPseudoCollector()
-		local GetRuntimeDebuggerSharedPseudoCollector = self._PCR:GetRemote("GetRuntimeDebuggerSharedPseudoCollector")
-		GetRuntimeDebuggerSharedPseudoCollector:FireServer()
-	end
-	function RuntimeDebugger:addRuntimeDebuggerRootUsageServer(...)
-		local args = { ... }
-		return self.Replicator:Define(function(Player)
-			self.RuntimeDebuggerRoot:AddUserUsage(Player)
-		end, unpack(args))
-	end
-	function RuntimeDebugger:removeRuntimeDebuggerRootUsageServer(...)
-		local args = { ... }
-		return self.Replicator:Define(function(Player)
-			self.ClientSharedPseudoCollectorServerFetched = {}
-			self.RuntimeDebuggerRoot:RemoveUserUsage(Player)
-		end, unpack(args))
-	end
-	function RuntimeDebugger:PowerHorseEngineDebuggerWindow(Iris)
-		Iris:Connect(function()
-			local Window = Iris.Window({ "PowerHorse Engine", nil, nil, nil, true })
-			Window.state.isOpened:set(self.MainWindowOpened)
-			if Window.state.isOpened.value and Window.state.isUncollapsed.value then
-				do
-					Iris.SeparatorText({ "Debuggers" })
-					Iris.SameLine({})
-					do
-						Iris.Text({ "Pseudo Entries" })
-						if Iris.Button({ if self.PseudoEntiresDebuggerOpened == true then "Close" else "Open" }).clicked() == true then
-							self.PseudoEntiresDebuggerOpened = not self.PseudoEntiresDebuggerOpened
-						end
-					end
-					Iris.End()
-				end
-			end
-			Iris.End()
-		end)
-	end
-	function RuntimeDebugger:PseudoEntriesModifierWindow(Iris)
-		local BRICK_COLORS = {}
-		for a, b in pairs(BrickColor) do
-			if a == "new" or a == "palette" then
-				continue
-			end
-			table.insert(BRICK_COLORS, b)
-		end
-		local CreateModifierWindow = function(Info, PseudosList, Props)
-			local CollapsingHeader = Iris.CollapsingHeader({ `{Info.Name} ({Info.Id}) "{Info.DisplayName}"` })
-			local _result = Props
-			if _result ~= nil then
-				_result = _result.OnSectionCollapsed
-			end
-			if _result ~= nil then
-				if CollapsingHeader.collapsed() then
-					Props.OnSectionCollapsed()
-				end
-			end
-			local _result_1 = Props
-			if _result_1 ~= nil then
-				_result_1 = _result_1.OnSectionUnCollapsed
-			end
-			if _result_1 ~= nil then
-				if CollapsingHeader.uncollapsed() then
-					Props.OnSectionUnCollapsed()
-				end
-			end
-			local PseudoListArray = {}
-			for _, PseudoObject in pairs(PseudosList) do
-				table.insert(PseudoListArray, PseudoObject)
-			end
-			table.sort(PseudoListArray, function(a, b)
-				return string.lower(a.Name) < string.lower(b.Name)
-			end)
-			local SortedPseudoObjects = PseudoListArray
-			local TotalPseudos = #SortedPseudoObjects
-			do
-				Iris.Text({ `Total Pseudo's: ({self:toNumberCommas(TotalPseudos)})` })
-				-- Iris.Text([`Total Pseudo RBX Connections: (${this.toNumberCommas(TotalPseudoConnections)})`]);
-				-- let TotalPseudoConnectionsThisFrame = 0;
-				for _, PseudoObject in pairs(SortedPseudoObjects) do
-					local PseudoId = if PseudoObject._dev and PseudoObject._dev.get then PseudoObject._dev.get("_InternalID") else ""
-					local PseudoObjectMutatable = PseudoObject
-					local PropertiesEntries = {}
-					local PrivatePropertiesEntries = {}
-					local MethodEntries = {}
-					local PrivateMethodEntries = {}
-					local SignalEntries = {}
-					local PrivateSignalEntries = {}
-					local ConnectionEntries = {}
-					local _devEntries = {}
-					for _devProp, _devValue in pairs(PseudoObject._dev) do
-						local _arg0 = {
-							Key = tostring(_devProp),
-							Value = _devValue,
-						}
-						table.insert(_devEntries, _arg0)
-					end
-					local HandleInputEntries = function(Entries, EntriesName)
-						Iris.Tree({ `{EntriesName} ({self:toNumberCommas(#Entries)})` })
-						do
-							-- ▼ ReadonlyArray.forEach ▼
-							local _callback = function(EntryValue)
-								Iris.SeparatorText({ EntryValue.Key })
-								-- BrickColors
-								local _value = EntryValue.Value
-								if typeof(_value) == "BrickColor" then
-									local BrickColorState = Iris.State(EntryValue.Value)
-									local Combo = Iris.Combo({ "" }, {
-										index = BrickColorState,
-									})
-									do
-										-- ▼ ReadonlyArray.forEach ▼
-										local _callback_1 = function(BrickColorFunc)
-											local TargetBrickColor = BrickColorFunc()
-											Iris.Selectable({ TargetBrickColor.Name, TargetBrickColor.Name }, {
-												index = BrickColorState,
-											})
-										end
-										for _k, _v in BRICK_COLORS do
-											_callback_1(_v, _k - 1, BRICK_COLORS)
-										end
-										-- ▲ ReadonlyArray.forEach ▲
-									end
-									Iris.End()
-									if Combo.closed() == true then
-										PseudoObjectMutatable[EntryValue.Key] = BrickColor.new(Combo.state.index.value)
-									end
-									return nil
-								end
-								-- CFrame
-								local _value_1 = EntryValue.Value
-								if typeof(_value_1) == "CFrame" then
-									local CFPos = Iris.InputVector3({ "Position" }, {
-										number = EntryValue.Value.Position,
-									})
-									local RotationX, RotationY, RotationZ = EntryValue.Value:ToEulerAnglesXYZ()
-									local CFRot = Iris.InputVector3({ "Rotation" }, {
-										number = Vector3.new(RotationX, RotationY, RotationZ),
-									})
-									if CFPos.numberChanged() == true or CFRot.numberChanged() == true then
-										local Rot = CFRot.state.number.value
-										local _cFrame = CFrame.new(CFPos.state.number.value)
-										local _arg0 = CFrame.Angles(Rot.X, Rot.Y, Rot.Z)
-										local NewCF = _cFrame * _arg0
-										PseudoObjectMutatable[EntryValue.Key] = NewCF
-									end
-									return nil
-								end
-								-- Vector3
-								local _value_2 = EntryValue.Value
-								if typeof(_value_2) == "Vector3" then
-									local Position = Iris.InputVector3({ "" }, {
-										number = EntryValue.Value,
-									})
-									if Position.numberChanged() == true then
-										PseudoObjectMutatable[EntryValue.Key] = Position.state.number.value
-									end
-									return nil
-								end
-								-- Color3
-								local _value_3 = EntryValue.Value
-								if typeof(_value_3) == "Color3" then
-									local InputColor3 = Iris.InputColor3({ "" }, {
-										color = EntryValue.Value,
-									})
-									if InputColor3.numberChanged() then
-										PseudoObjectMutatable[EntryValue.Key] = InputColor3.state.color.value
-									end
-									return nil
-								end
-								-- Boolean
-								local _value_4 = EntryValue.Value
-								if type(_value_4) == "boolean" then
-									local Checkbox = Iris.Checkbox({ "" }, {
-										isChecked = EntryValue.Value,
-									})
-									if Checkbox.checked() or Checkbox.unchecked() then
-										PseudoObjectMutatable[EntryValue.Key] = Checkbox.state.isChecked.value
-									end
-									return nil
-								end
-								-- Number
-								local _value_5 = EntryValue.Value
-								if type(_value_5) == "number" then
-									local InputNum = Iris.InputNum({ "" }, {
-										number = EntryValue.Value,
-									})
-									if InputNum.numberChanged() then
-										PseudoObjectMutatable[EntryValue.Key] = InputNum.state.number.value
-									end
-									return nil
-								end
-								-- String
-								local _value_6 = EntryValue.Value
-								if type(_value_6) == "string" then
-									local InputText = Iris.InputText({ "" }, {
-										text = EntryValue.Value,
-									})
-									if InputText.textChanged() then
-										PseudoObjectMutatable[EntryValue.Key] = InputText.state.text.value
-									end
-									return nil
-								end
-								-- Function
-								local _value_7 = EntryValue.Value
-								if type(_value_7) == "function" then
-									Iris.SameLine({})
-									do
-										Iris.Text({ `{EntryValue.Key}` })
-										Iris.Button({ "Invoke Method" })
-										Iris.Button({ "Invoke Function" })
-									end
-									Iris.End()
-									return nil
-								end
-								-- Default
-								Iris.Text({ `{EntryValue.Key} = {EntryValue.Value}` })
-							end
-							for _k, _v in Entries do
-								_callback(_v, _k - 1, Entries)
-							end
-							-- ▲ ReadonlyArray.forEach ▲
-						end
-						Iris.End()
-					end
-					Iris.Tree({ `{PseudoObject.Name}` })
-					do
-						local _result_2 = Props
-						if _result_2 ~= nil then
-							_result_2 = _result_2.IsServerReplicatedContent
-						end
-						for _Key, _PseudoProp in pairs(if _result_2 then PseudoObject else (PseudoObject:_getCurrentProperties(nil, true, true, true))) do
-							local _result_3 = Props
-							if _result_3 ~= nil then
-								_result_3 = _result_3.IsServerReplicatedContent
-							end
-							local PseudoProp = (if _result_3 then _Key else _PseudoProp)
-							local _result_4 = Props
-							if _result_4 ~= nil then
-								_result_4 = _result_4.IsServerReplicatedContent
-							end
-							local TargetValue = (if _result_4 then _PseudoProp else PseudoObject[PseudoProp])
-							local IsPrivateProp = string.sub(PseudoProp, 0, 1) == "_"
-							if type(TargetValue) == "function" then
-								if IsPrivateProp == false then
-									local _arg0 = {
-										Key = PseudoProp,
-										Value = TargetValue,
-									}
-									table.insert(MethodEntries, _arg0)
-								else
-									local _arg0 = {
-										Key = PseudoProp,
-										Value = TargetValue,
-									}
-									table.insert(PrivateMethodEntries, _arg0)
-								end
-								continue
-							end
-							if typeof(TargetValue) == "RBXScriptConnection" then
-								table.insert(ConnectionEntries, TargetValue)
-								continue
-							end
-							if _typeIs(TargetValue, "Signal") then
-								if IsPrivateProp == false then
-									local _arg0 = {
-										Key = PseudoProp,
-										Value = TargetValue,
-									}
-									table.insert(SignalEntries, _arg0)
-								else
-									local _arg0 = {
-										Key = PseudoProp,
-										Value = TargetValue,
-									}
-									table.insert(PrivateSignalEntries, _arg0)
-								end
-								continue
-							end
-							if IsPrivateProp == false then
-								local _arg0 = {
-									Key = PseudoProp,
-									Value = TargetValue,
-								}
-								table.insert(PropertiesEntries, _arg0)
-							else
-								local _arg0 = {
-									Key = PseudoProp,
-									Value = TargetValue,
-								}
-								table.insert(PrivatePropertiesEntries, _arg0)
-							end
-						end
-						Iris.Tree({ "Debug" })
-						do
-							local _internal_runtime_debug_info = PseudoObject._dev._internal_runtime_debug_info
-							Iris.Text({ `UID: {PseudoId}` })
-							if _internal_runtime_debug_info ~= nil then
-								Iris.Text({ `Uptime: ({self:toNumberCommas(DateTime.now().UnixTimestamp - _internal_runtime_debug_info.creationTimestamp)}) seconds` })
-								Iris.Text({ `Created: {DateTime.fromUnixTimestamp(_internal_runtime_debug_info.creationTimestamp):FormatLocalTime("LLLL", "en-us")}` })
-							end
-						end
-						Iris.End()
-						HandleInputEntries(PropertiesEntries, "Properties")
-						HandleInputEntries(PrivatePropertiesEntries, "Hidden Properties")
-						HandleInputEntries(MethodEntries, "Methods")
-						HandleInputEntries(PrivateMethodEntries, "Hidden Methods")
-						HandleInputEntries(SignalEntries, "Signals")
-						HandleInputEntries(PrivateSignalEntries, "Hidden Signals")
-						HandleInputEntries(ConnectionEntries, "Connections")
-						HandleInputEntries(_devEntries, "_dev")
-					end
-					Iris.End()
-				end
-			end
-			Iris.End()
-		end
-		self.ServerSectionCollapsed = true
-		local OnServerSectionUnCollapsed = function()
-			if self.ServerSectionCollapsed == false then
-				return nil
-			end
-			self.ServerSectionCollapsed = false
-		end
-		local OnServerSectionCollapsed = function()
-			if self.ServerSectionCollapsed == true then
-				return nil
-			end
-			self.ServerSectionCollapsed = true
-		end
-		Iris:Connect(function()
-			local Window = Iris.Window({ "PowerHorse Engine Debugger - Pseudo Entries", nil, nil, nil, true })
-			Window.state.isOpened:set(self.PseudoEntiresDebuggerOpened)
-			if Window.state.isOpened.value and Window.state.isUncollapsed.value then
-				do
-					CreateModifierWindow({
-						Id = Players.LocalPlayer.UserId,
-						Name = Players.LocalPlayer.Name,
-						DisplayName = Players.LocalPlayer.DisplayName,
-					}, PseudoCollector)
-					CreateModifierWindow({
-						Id = game.GameId,
-						Name = `{game.Name}`,
-						DisplayName = `{game.PlaceId}`,
-					}, self.ClientSharedPseudoCollectorServerFetched, {
-						OnSectionCollapsed = OnServerSectionCollapsed,
-						OnSectionUnCollapsed = OnServerSectionUnCollapsed,
-						IsServerReplicatedContent = true,
-					})
-				end
-			end
-			Iris.End()
-		end)
+	function RuntimeDebugger:constructor()
 	end
 end
+-- /*
+--     Typed with ❤️ @mekstuff
+--     05/06/2025 13:52:40
+-- */
+-- import { PseudoCollector } from "../../internal/functions/GetPseudoById";
+-- import { _typeIs } from "../../internal/functions/typeIs";
+-- import { Pseudo } from "../Pseudo/Pseudo";
+-- import Iris_TypeDefImport from "@rbxts/iris";
+-- import { RuntimeDebuggerRoot } from "./RuntimeDebuggerRoot";
+-- import { PseudoClientReplicator } from "../Replication/PseudoClientReplicator";
+-- const Players = game.GetService("Players");
+-- const ContextActionService = game.GetService("ContextActionService");
+-- type Iris_TypeDef = typeof Iris_TypeDefImport;
+-- export default class RuntimeDebugger extends Pseudo {
+-- 	private _PCR!: PseudoClientReplicator;
+-- 	private RuntimeDebuggerRoot!: RuntimeDebuggerRoot;
+-- 	private MainWindowOpened: boolean = false;
+-- 	private PseudoEntiresDebuggerOpened: boolean = false;
+-- 	private ServerSectionCollapsed: boolean = false;
+-- 	public toNumberCommas(value: number): string {
+-- 		const str = tostring(value);
+-- 		return str
+-- 			.reverse()
+-- 			.gsub("...", "%0,", math.floor((str.size() - 1) / 3))[0]
+-- 			.reverse();
+-- 	}
+-- 	private ClientSharedPseudoCollectorServerFetched: typeof PseudoCollector = {};
+-- 	private RunGetRuntimeDebuggerSharedPseudoCollector() {
+-- 		const GetRuntimeDebuggerSharedPseudoCollector = this._PCR.GetRemote("GetRuntimeDebuggerSharedPseudoCollector");
+-- 		GetRuntimeDebuggerSharedPseudoCollector.FireServer();
+-- 	}
+-- 	public addRuntimeDebuggerRootUsageServer(...args: unknown[]) {
+-- 		return this.Replicator.Define(
+-- 			(Player: Player) => {
+-- 				this.RuntimeDebuggerRoot.AddUserUsage(Player);
+-- 			},
+-- 			...args,
+-- 		);
+-- 	}
+-- 	public removeRuntimeDebuggerRootUsageServer(...args: unknown[]) {
+-- 		return this.Replicator.Define(
+-- 			(Player: Player) => {
+-- 				this.ClientSharedPseudoCollectorServerFetched = {};
+-- 				this.RuntimeDebuggerRoot.RemoveUserUsage(Player);
+-- 			},
+-- 			...args,
+-- 		);
+-- 	}
+-- 	public PowerHorseEngineDebuggerWindow(Iris: Iris_TypeDef) {
+-- 		Iris.Connect(() => {
+-- 			const Window = Iris.Window(["PowerHorse Engine", undefined, undefined, undefined, true]);
+-- 			Window.state.isOpened.set(this.MainWindowOpened);
+-- 			if (Window.state.isOpened.value && Window.state.isUncollapsed.value) {
+-- 				{
+-- 					Iris.SeparatorText(["Debuggers"]);
+-- 					Iris.SameLine([]);
+-- 					{
+-- 						Iris.Text(["Pseudo Collector Entries"]);
+-- 						if (
+-- 							Iris.Button([this.PseudoEntiresDebuggerOpened === true ? "Close" : "Open"]).clicked() ===
+-- 							true
+-- 						) {
+-- 							this.PseudoEntiresDebuggerOpened = !this.PseudoEntiresDebuggerOpened;
+-- 						}
+-- 					}
+-- 					Iris.End();
+-- 				}
+-- 			}
+-- 			Iris.End();
+-- 		});
+-- 	}
+-- 	public PseudoEntriesModifierWindow(Iris: Iris_TypeDef) {
+-- 		const BRICK_COLORS: (() => BrickColor)[] = [];
+-- 		for (const [a, b] of pairs(BrickColor)) {
+-- 			if ((a as string) === "new" || (a as string) === "palette") {
+-- 				continue;
+-- 			}
+-- 			BRICK_COLORS.push(b as Callback);
+-- 		}
+-- 		const CreateModifierWindow = (
+-- 			Info: { Name: string; Id: number; DisplayName: string },
+-- 			PseudosList: typeof PseudoCollector,
+-- 			Props?: {
+-- 				OnSectionCollapsed?: Callback;
+-- 				OnSectionUnCollapsed?: Callback;
+-- 				IsServerReplicatedContent?: boolean;
+-- 			},
+-- 		) => {
+-- 			const CollapsingHeader = Iris.CollapsingHeader([`${Info.Name} (${Info.Id}) "${Info.DisplayName}"`]);
+-- 			if (Props?.OnSectionCollapsed !== undefined) {
+-- 				if (CollapsingHeader.collapsed()) {
+-- 					Props.OnSectionCollapsed();
+-- 				}
+-- 			}
+-- 			if (Props?.OnSectionUnCollapsed !== undefined) {
+-- 				if (CollapsingHeader.uncollapsed()) {
+-- 					Props.OnSectionUnCollapsed();
+-- 				}
+-- 			}
+-- 			const PseudoListArray: Pseudo[] = [];
+-- 			for (const [_, PseudoObject] of pairs(PseudosList)) {
+-- 				PseudoListArray.push(PseudoObject);
+-- 			}
+-- 			const SortedPseudoObjects = PseudoListArray.sort((a, b) => a.Name.lower() < b.Name.lower());
+-- 			const TotalPseudos = SortedPseudoObjects.size();
+-- 			{
+-- 				Iris.Text([`Total Pseudo's: (${this.toNumberCommas(TotalPseudos)})`]);
+-- 				// Iris.Text([`Total Pseudo RBX Connections: (${this.toNumberCommas(TotalPseudoConnections)})`]);
+-- 				// let TotalPseudoConnectionsThisFrame = 0;
+-- 				for (const [_, PseudoObject] of pairs(SortedPseudoObjects)) {
+-- 					const PseudoId =
+-- 						PseudoObject._dev && PseudoObject._dev.get ? PseudoObject._dev.get("_InternalID") : "";
+-- 					const PseudoObjectMutatable = PseudoObject as unknown as Record<string, unknown>;
+-- 					const PropertiesEntries: { Key: string; Value: unknown }[] = [];
+-- 					const PrivatePropertiesEntries: typeof PropertiesEntries = [];
+-- 					const MethodEntries: typeof PropertiesEntries = [];
+-- 					const PrivateMethodEntries: typeof PropertiesEntries = [];
+-- 					const SignalEntries: typeof PropertiesEntries = [];
+-- 					const PrivateSignalEntries: typeof PropertiesEntries = [];
+-- 					const ConnectionEntries: typeof PropertiesEntries = [];
+-- 					const _devEntries: typeof PropertiesEntries = [];
+-- 					for (const [_devProp, _devValue] of pairs(PseudoObject._dev)) {
+-- 						_devEntries.push({ Key: tostring(_devProp), Value: _devValue });
+-- 					}
+-- 					const HandleInputEntries = (Entries: typeof PropertiesEntries, EntriesName: string) => {
+-- 						Iris.Tree([`${EntriesName} (${this.toNumberCommas(Entries.size())})`]);
+-- 						{
+-- 							Entries.forEach((EntryValue) => {
+-- 								Iris.SeparatorText([EntryValue.Key]);
+-- 								// BrickColors
+-- 								if (typeIs(EntryValue.Value, "BrickColor")) {
+-- 									const BrickColorState = Iris.State(EntryValue.Value);
+-- 									const Combo = Iris.Combo([""], { index: BrickColorState });
+-- 									{
+-- 										BRICK_COLORS.forEach((BrickColorFunc) => {
+-- 											const TargetBrickColor = BrickColorFunc();
+-- 											Iris.Selectable([TargetBrickColor.Name, TargetBrickColor.Name], {
+-- 												index: BrickColorState,
+-- 											});
+-- 										});
+-- 									}
+-- 									Iris.End();
+-- 									if (Combo.closed() === true) {
+-- 										PseudoObjectMutatable[EntryValue.Key] = new BrickColor(
+-- 											Combo.state.index.value as never,
+-- 										);
+-- 									}
+-- 									return;
+-- 								}
+-- 								// CFrame
+-- 								if (typeIs(EntryValue.Value, "CFrame")) {
+-- 									const CFPos = Iris.InputVector3(["Position"], {
+-- 										number: EntryValue.Value.Position,
+-- 									});
+-- 									const [RotationX, RotationY, RotationZ] = EntryValue.Value.ToEulerAnglesXYZ();
+-- 									const CFRot = Iris.InputVector3(["Rotation"], {
+-- 										number: new Vector3(RotationX, RotationY, RotationZ),
+-- 									});
+-- 									if (CFPos.numberChanged() === true || CFRot.numberChanged() === true) {
+-- 										const Rot = CFRot.state.number.value;
+-- 										const NewCF = new CFrame(CFPos.state.number.value).mul(
+-- 											CFrame.Angles(Rot.X, Rot.Y, Rot.Z),
+-- 										);
+-- 										PseudoObjectMutatable[EntryValue.Key] = NewCF;
+-- 									}
+-- 									return;
+-- 								}
+-- 								// Vector3
+-- 								if (typeIs(EntryValue.Value, "Vector3")) {
+-- 									const Position = Iris.InputVector3([""], {
+-- 										number: EntryValue.Value,
+-- 									});
+-- 									if (Position.numberChanged() === true) {
+-- 										PseudoObjectMutatable[EntryValue.Key] = Position.state.number.value;
+-- 									}
+-- 									return;
+-- 								}
+-- 								// Color3
+-- 								if (typeIs(EntryValue.Value, "Color3")) {
+-- 									const InputColor3 = Iris.InputColor3([""], {
+-- 										color: EntryValue.Value,
+-- 									});
+-- 									if (InputColor3.numberChanged()) {
+-- 										PseudoObjectMutatable[EntryValue.Key] = InputColor3.state.color.value;
+-- 									}
+-- 									return;
+-- 								}
+-- 								// Boolean
+-- 								if (typeIs(EntryValue.Value, "boolean")) {
+-- 									const Checkbox = Iris.Checkbox([""], {
+-- 										isChecked: EntryValue.Value,
+-- 									});
+-- 									if (Checkbox.checked() || Checkbox.unchecked()) {
+-- 										PseudoObjectMutatable[EntryValue.Key] = Checkbox.state.isChecked.value;
+-- 									}
+-- 									return;
+-- 								}
+-- 								// Number
+-- 								if (typeIs(EntryValue.Value, "number")) {
+-- 									const InputNum = Iris.InputNum([""], { number: EntryValue.Value });
+-- 									if (InputNum.numberChanged()) {
+-- 										PseudoObjectMutatable[EntryValue.Key] = InputNum.state.number.value;
+-- 									}
+-- 									return;
+-- 								}
+-- 								// String
+-- 								if (typeIs(EntryValue.Value, "string")) {
+-- 									const InputText = Iris.InputText([""], { text: EntryValue.Value });
+-- 									if (InputText.textChanged()) {
+-- 										PseudoObjectMutatable[EntryValue.Key] = InputText.state.text.value;
+-- 									}
+-- 									return;
+-- 								}
+-- 								// Function
+-- 								if (typeIs(EntryValue.Value, "function")) {
+-- 									Iris.SameLine([]);
+-- 									{
+-- 										Iris.Text([`${EntryValue.Key}`]);
+-- 										Iris.Button(["Invoke Method"]);
+-- 										Iris.Button(["Invoke Function"]);
+-- 									}
+-- 									Iris.End();
+-- 									return;
+-- 								}
+-- 								// Default
+-- 								Iris.Text([`${EntryValue.Key} = ${EntryValue.Value}`]);
+-- 							});
+-- 						}
+-- 						Iris.End();
+-- 					};
+-- 					Iris.Tree([`${PseudoObject.Name}`]);
+-- 					{
+-- 						for (const [_Key, _PseudoProp] of pairs(
+-- 							Props?.IsServerReplicatedContent
+-- 								? PseudoObject
+-- 								: (PseudoObject._getCurrentProperties(undefined, true, true, true) as string[]),
+-- 						)) {
+-- 							const PseudoProp = (Props?.IsServerReplicatedContent ? _Key : _PseudoProp) as string;
+-- 							const TargetValue = (
+-- 								Props?.IsServerReplicatedContent ? _PseudoProp : PseudoObject[PseudoProp as never]
+-- 							) as never;
+-- 							const IsPrivateProp = PseudoProp.sub(0, 1) === "_";
+-- 							if (typeIs(TargetValue, "function")) {
+-- 								if (IsPrivateProp === false) {
+-- 									MethodEntries.push({ Key: PseudoProp, Value: TargetValue });
+-- 								} else {
+-- 									PrivateMethodEntries.push({ Key: PseudoProp, Value: TargetValue });
+-- 								}
+-- 								continue;
+-- 							}
+-- 							if (typeIs(TargetValue, "RBXScriptConnection")) {
+-- 								ConnectionEntries.push(TargetValue);
+-- 								continue;
+-- 							}
+-- 							if (_typeIs(TargetValue, "Signal")) {
+-- 								if (IsPrivateProp === false) {
+-- 									SignalEntries.push({ Key: PseudoProp, Value: TargetValue });
+-- 								} else {
+-- 									PrivateSignalEntries.push({ Key: PseudoProp, Value: TargetValue });
+-- 								}
+-- 								continue;
+-- 							}
+-- 							if (IsPrivateProp === false) {
+-- 								PropertiesEntries.push({ Key: PseudoProp, Value: TargetValue });
+-- 							} else {
+-- 								PrivatePropertiesEntries.push({ Key: PseudoProp, Value: TargetValue });
+-- 							}
+-- 						}
+-- 						Iris.Tree(["Debug"]);
+-- 						{
+-- 							const _internal_runtime_debug_info = PseudoObject._dev._internal_runtime_debug_info;
+-- 							Iris.Text([`UID: ${PseudoId}`]);
+-- 							if (_internal_runtime_debug_info !== undefined) {
+-- 								Iris.Text([
+-- 									`Uptime: (${this.toNumberCommas(DateTime.now().UnixTimestamp - _internal_runtime_debug_info.creationTimestamp)}) seconds`,
+-- 								]);
+-- 								Iris.Text([
+-- 									`Created: ${DateTime.fromUnixTimestamp(_internal_runtime_debug_info.creationTimestamp).FormatLocalTime("LLLL", "en-us")}`,
+-- 								]);
+-- 							}
+-- 						}
+-- 						Iris.End();
+-- 						HandleInputEntries(PropertiesEntries, "Properties");
+-- 						HandleInputEntries(PrivatePropertiesEntries, "Hidden Properties");
+-- 						HandleInputEntries(MethodEntries, "Methods");
+-- 						HandleInputEntries(PrivateMethodEntries, "Hidden Methods");
+-- 						HandleInputEntries(SignalEntries, "Signals");
+-- 						HandleInputEntries(PrivateSignalEntries, "Hidden Signals");
+-- 						HandleInputEntries(ConnectionEntries, "Connections");
+-- 						HandleInputEntries(_devEntries, "_dev");
+-- 					}
+-- 					Iris.End();
+-- 				}
+-- 			}
+-- 			Iris.End();
+-- 		};
+-- 		this.ServerSectionCollapsed = true;
+-- 		const OnServerSectionUnCollapsed = () => {
+-- 			if (this.ServerSectionCollapsed === false) {
+-- 				return;
+-- 			}
+-- 			this.ServerSectionCollapsed = false;
+-- 		};
+-- 		const OnServerSectionCollapsed = () => {
+-- 			if (this.ServerSectionCollapsed === true) {
+-- 				return;
+-- 			}
+-- 			this.ServerSectionCollapsed = true;
+-- 		};
+-- 		Iris.Connect(() => {
+-- 			const Window = Iris.Window([
+-- 				"PowerHorse Engine Debugger - Pseudo Collector Entries",
+-- 				undefined,
+-- 				undefined,
+-- 				undefined,
+-- 				true,
+-- 			]);
+-- 			Window.state.isOpened.set(this.PseudoEntiresDebuggerOpened);
+-- 			if (Window.state.isOpened.value && Window.state.isUncollapsed.value) {
+-- 				{
+-- 					CreateModifierWindow(
+-- 						{
+-- 							Id: Players.LocalPlayer.UserId,
+-- 							Name: Players.LocalPlayer.Name,
+-- 							DisplayName: Players.LocalPlayer.DisplayName,
+-- 						},
+-- 						PseudoCollector,
+-- 					);
+-- 					CreateModifierWindow(
+-- 						{
+-- 							Id: game.GameId,
+-- 							Name: `${game.Name}`,
+-- 							DisplayName: `${game.PlaceId}`,
+-- 						},
+-- 						this.ClientSharedPseudoCollectorServerFetched,
+-- 						{
+-- 							OnSectionCollapsed: OnServerSectionCollapsed,
+-- 							OnSectionUnCollapsed: OnServerSectionUnCollapsed,
+-- 							IsServerReplicatedContent: true,
+-- 						},
+-- 					);
+-- 				}
+-- 			}
+-- 			Iris.End();
+-- 		});
+-- 	}
+-- 	constructor(TargetClient: Player) {
+-- 		super("RuntimeDebugger");
+-- 		this.$server = (_, PCR) => {
+-- 			this._PCR = PCR;
+-- 			this.RuntimeDebuggerRoot = new RuntimeDebuggerRoot(this);
+-- 			this._dev.insert(this.RuntimeDebuggerRoot);
+-- 			const GetRuntimeDebuggerSharedPseudoCollector = PCR.CreateRemote("GetRuntimeDebuggerSharedPseudoCollector");
+-- 			GetRuntimeDebuggerSharedPseudoCollector.OnServerEvent.Connect(() => {
+-- 				if (this.RuntimeDebuggerRoot.GetIsVerifiedUsageUser(TargetClient) === false) {
+-- 					return;
+-- 				}
+-- 				GetRuntimeDebuggerSharedPseudoCollector.FireClient(
+-- 					TargetClient,
+-- 					this.RuntimeDebuggerRoot.SharedPseudoCollector ?? {},
+-- 				);
+-- 			});
+-- 			this.RuntimeDebuggerRoot.ObserveNext(() => {
+-- 				GetRuntimeDebuggerSharedPseudoCollector.FireClient(
+-- 					TargetClient,
+-- 					this.RuntimeDebuggerRoot.SharedPseudoCollector ?? {},
+-- 				);
+-- 			}, ["SharedPseudoCollector"]);
+-- 			PCR.InitializeClients(script, [TargetClient]);
+-- 		};
+-- 		this.$client = (_, PCR) => {
+-- 			this._PCR = PCR;
+-- 			const IrisModule = import("@rbxts/iris").expect();
+-- 			const RuntimeDebuggerScreenGui = new Instance("ScreenGui");
+-- 			RuntimeDebuggerScreenGui.Name = `${this.GetIdAsync()}-ScreenGui`;
+-- 			RuntimeDebuggerScreenGui.IgnoreGuiInset = true;
+-- 			const Iris = IrisModule.Init(RuntimeDebuggerScreenGui) as unknown as typeof IrisModule;
+-- 			this.PseudoEntriesModifierWindow(Iris);
+-- 			this.PowerHorseEngineDebuggerWindow(Iris);
+-- 			RuntimeDebuggerScreenGui.Parent = Players.LocalPlayer.WaitForChild("PlayerGui");
+-- 			const GetRuntimeDebuggerSharedPseudoCollector = PCR.GetRemote("GetRuntimeDebuggerSharedPseudoCollector");
+-- 			GetRuntimeDebuggerSharedPseudoCollector.OnClientEvent.Connect((Data) => {
+-- 				this.ClientSharedPseudoCollectorServerFetched = Data;
+-- 			});
+-- 			this.Observe(() => {
+-- 				if (this.ServerSectionCollapsed === true) {
+-- 					return;
+-- 				}
+-- 				this.addRuntimeDebuggerRootUsageServer().andThen(() =>
+-- 					this.RunGetRuntimeDebuggerSharedPseudoCollector(),
+-- 				);
+-- 				return () => {
+-- 					this.removeRuntimeDebuggerRootUsageServer();
+-- 				};
+-- 			}, ["ServerSectionCollapsed"]);
+-- 			const ToggleOpenedActionId = `${this.GetIdAsync()}-ToggleOpened`;
+-- 			ContextActionService.BindActionAtPriority(
+-- 				ToggleOpenedActionId,
+-- 				(_, State) => {
+-- 					if (State !== Enum.UserInputState.Begin) {
+-- 						return;
+-- 					}
+-- 					this.MainWindowOpened = !this.MainWindowOpened;
+-- 				},
+-- 				false,
+-- 				99,
+-- 				Enum.KeyCode.LeftShift,
+-- 			);
+-- 		};
+-- 		this.EnableReplication([], Enum.RaycastFilterType.Include);
+-- 	}
+-- }
 return {
 	default = RuntimeDebugger,
 }

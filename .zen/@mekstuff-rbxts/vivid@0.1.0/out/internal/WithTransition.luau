@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -39,7 +39,7 @@ end
 	 * @param Damping Defaults to `1`.
 	 
 ]]
-local function WithTransition(Value, DampingOrProps, Frequency, InitialValue, DefaultValue)
+local function WithTransition(Value, DampingOrProps, Frequency, InitialValue, DefaultValue, DismountValue)
 	local WithTransitionDef
 	local _dampingOrProps = DampingOrProps
 	if type(_dampingOrProps) == "number" then
@@ -56,6 +56,7 @@ local function WithTransition(Value, DampingOrProps, Frequency, InitialValue, De
 		end
 		_object[_left] = _condition
 		_object._frequency = Frequency
+		_object._dismountValue = DismountValue
 		WithTransitionDef = _object
 	else
 		local _object = {
@@ -90,6 +91,12 @@ local function WithTransition(Value, DampingOrProps, Frequency, InitialValue, De
 			_result_3 = _result_3.Frequency
 		end
 		_object[_left_3] = _result_3
+		local _left_4 = "_dismountValue"
+		local _result_4 = DampingOrProps
+		if _result_4 ~= nil then
+			_result_4 = _result_4.DismountValue
+		end
+		_object[_left_4] = _result_4
 		WithTransitionDef = _object
 	end
 	return WithTransitionDef

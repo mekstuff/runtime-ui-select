@@ -1,6 +1,5 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
-local createState = TS.import(script, script.Parent.Parent, "create", "createState").createState
 local createElement = TS.import(script, script.Parent.Parent, "create", "createElement").createElement
 local createSwitch = TS.import(script, script.Parent.Parent, "conditionals", "createSwitch").createSwitch
 local createSuspense = TS.import(script, script.Parent.Parent, "conditionals", "createSuspense").createSuspense
@@ -8,6 +7,7 @@ local forEach = TS.import(script, script.Parent.Parent, "functions", "forEach").
 local _FragmentIdentifier_ = TS.import(script, script.Parent.Parent, "internal", "Fragment")._FragmentIdentifier_
 local createSlot = TS.import(script, script.Parent.Parent, "create", "createSlot").createSlot
 local createPortal = TS.import(script, script.Parent.Parent, "create", "createPortal").createPortal
+local Show = TS.import(script, script.Parent.Parent, "components", "Show").Show
 --[[
 	
 	export function JSX_Animate(props: { children?: unknown } & { [key: string]: unknown }) {
@@ -40,32 +40,41 @@ local function JSX_Portal(props)
 	return createPortal(props)
 end
 local function JSX_Show(props)
-	local Condition, setCondition = createState(false)
-	-- const when = props.when;
-	-- if (typeIs(when, "function")) {
-	-- 	createEffect(() => {
-	-- 		const res = when();
-	-- 		assert(typeIs(res, "boolean"), "JSX_Show when() function didn't return a boolean");
-	-- 		setCondition(res);
-	-- 	});
-	-- }
-	local _ = createSwitch(props.when)
-	local _children = props.children
-	local Switch = _.Case(true, if type(_children) == "function" then (props.children) else (props.children)[1]).Case(false, _FragmentIdentifier_)
-	return Switch()
-	-- throw "JSX_Show not implemented.";
-	-- return undefined as never;
-	-- return createPromiseSuspense(
-	-- 	() => {
-	-- 		return new Promise((resolve) => {
-	-- 			return resolve(props.when());
-	-- 		});
-	-- 	},
-	-- 	(props.children as unknown as Record<number, Vivid.FC.Render>)[1],
-	-- 	props.loading,
-	-- 	props.fallback,
-	-- 	true,
-	-- )();
+	return Show({
+		condition = props.when,
+		children = props.children,
+	})()
+	-- const [Condition, setCondition] = createState<boolean>(false);
+	-- // const when = props.when;
+	-- // if (typeIs(when, "function")) {
+	-- // 	createEffect(() => {
+	-- // 		const res = when();
+	-- // 		assert(typeIs(res, "boolean"), "JSX_Show when() function didn't return a boolean");
+	-- // 		setCondition(res);
+	-- // 	});
+	-- // }
+	-- const Switch = createSwitch(props.when)
+	-- 	.Case(
+	-- 		true,
+	-- 		typeIs(props.children, "function")
+	-- 			? (props.children as unknown as Vivid.FC.Render) // since we can pass children={} directly as a prop
+	-- 			: (props.children as unknown as Record<number, Vivid.FC.Render>)[1],
+	-- 	)
+	-- 	.Case(false, _FragmentIdentifier_ as never);
+	-- return Switch();
+	-- // throw "JSX_Show not implemented.";
+	-- // return undefined as never;
+	-- // return createPromiseSuspense(
+	-- // 	() => {
+	-- // 		return new Promise((resolve) => {
+	-- // 			return resolve(props.when());
+	-- // 		});
+	-- // 	},
+	-- // 	(props.children as unknown as Record<number, Vivid.FC.Render>)[1],
+	-- // 	props.loading,
+	-- // 	props.fallback,
+	-- // 	true,
+	-- // )();
 end
 local function JSX_ForEach(props)
 	local _object = {

@@ -8,6 +8,9 @@ on:
 env:
     ITCH_USERNAME: mekstuff
     ITCH_GAME_ID: rutus
+
+    ROBLOX_PLUGIN_ID: 89804562140178
+
     ROBLOX_UNIVERSE_ID: 8203353679
     ROBLOX_PLACE_ID: 137885571653335
 
@@ -75,6 +78,15 @@ jobs:
               run: npx semantic-release
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            # Deploy Plugin file to Roblox
+            # - name: Deploy to Roblox
+            #   shell: bash
+            #   env:
+            #       PID: ${{ env.ROBLOX_PLUGIN_ID }} # Asset ID
+            #       API_KEY: ${{ secrets.ROBLOX_GAME }}
+            #       FILE: out/rutus_game.rbxm
+            #   run: rbxcloud assets update -a "$API_KEY" -i "$PID" -t model-fbx -f "$FILE"
 
             # Deploy Plugin file to Itch.io
             - name: Delpoy to Itch

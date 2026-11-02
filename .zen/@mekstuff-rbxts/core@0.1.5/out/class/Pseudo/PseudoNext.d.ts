@@ -85,6 +85,9 @@ interface PseudoNext<T extends object | unknown = unknown, _REF extends Instance
 	/**
 	 * A unique container where items about the pseudo should be stored. Anything within this container will be destroyed/cleaned up
 	 * whenever the pseudo is destroyed. (Good for storing Servants,Maids,etc.)
+	 *
+	 * It is recommended to use the `set`, `get` and `insert` functions of _dev rather than directly setting new values - There's optimizations implemented internally
+	 * and it will boost your game perfomance and lower memory usage significantly.
 	 */
 	_dev: PseudoDevDefs & T;
 
@@ -219,6 +222,15 @@ interface PseudoNext<T extends object | unknown = unknown, _REF extends Instance
 	useIndexAssignment(callback: (key: unknown, value: unknown) => unknown): void;
 	useNewIndexAssignment(key: unknown, value: unknown): void;
 	useAssignReadonlyProperty(Property: unknown, Value: unknown): void;
+
+	/**
+	 * @hidden
+	 * @private
+	 *
+	 * Will be called whenever the Pseudo object is called. e.g. PseudoNext()
+	 * @returns
+	 */
+	__metamethod_call?(...args: unknown[]): unknown;
 }
 
 export interface PseudoNextConstructor {

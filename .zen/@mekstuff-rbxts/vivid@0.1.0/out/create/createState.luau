@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -24,6 +24,34 @@ local function IsStatePropertyValue(Input)
 	end
 	return false
 end
+local function GetPropertyStateValueFromPropertyChain(InputObject, PropertyChain)
+	local CurrentValue = InputObject
+	local UpdateValue
+	UpdateValue = function(CurrentChainIndex)
+		local TargetPropertyChainKey = PropertyChain[CurrentChainIndex + 1]
+		local _arg0 = type(TargetPropertyChainKey) == "string"
+		local _arg1 = `Invalid PropertyChain Key on Index {CurrentChainIndex} "{TargetPropertyChainKey}"`
+		assert(_arg0, _arg1)
+		CurrentValue = CurrentValue[TargetPropertyChainKey]
+		if CurrentChainIndex == #PropertyChain - 1 then
+			return CurrentValue
+		end
+		local _currentValue = CurrentValue
+		local _exp = type(_currentValue) == "table"
+		local _exp_1 = CurrentChainIndex
+		local _currentValue_1 = CurrentValue
+		local _arg1_1 = `GetPropertyStateValueFromPropertyChain expected "{TargetPropertyChainKey}" (index = {_exp_1}) to be of type table, got {typeof(_currentValue_1)}`
+		assert(_exp, _arg1_1)
+		return UpdateValue(CurrentChainIndex + 1)
+	end
+	return UpdateValue(0)
+end
+--[[
+	*
+	 *
+	 * @param State - Is reused internally, the State isn't destroyed with the element - So be sure to cleanup your states where you initially created them!
+	 
+]]
 --[[
 	*
 	 * @param CallState Will immediately () Call the state within its scope, this should be used if you're passing the State as a prop to a Vivid Component but you're outside of an Element or Scope.
@@ -97,12 +125,12 @@ local function createStateFrom(From, CallState)
 	end
 	return CreatedVividState
 end
-function createState(defaultValue, _internal_spring)
+function createState(defaultValue, _internal_spring, _internal_usePseudoState)
 	local StateObj
 	if _internal_spring == nil then
-		StateObj = State.new(defaultValue)
+		StateObj = if _internal_usePseudoState then _internal_usePseudoState else State.new(defaultValue)
 	else
-		StateObj = Spring.new(defaultValue, _internal_spring.damping, _internal_spring.frequency)
+		StateObj = if _internal_usePseudoState then _internal_usePseudoState else Spring.new(defaultValue, _internal_spring.damping, _internal_spring.frequency)
 	end
 	local ElementNode = GetElementNode()
 	if ElementNode == nil then
@@ -119,13 +147,22 @@ function createState(defaultValue, _internal_spring)
 			_isstatepropval = true,
 			_state = StateObj,
 			_call = vState,
+			Destroy = function()
+				print("called?")
+				StateObj:Destroy()
+			end,
+			Destroying = StateObj.Destroying,
 		}
+		ElementNode.servant:Keep(function()
+			setmetatable(newSPV, nil)
+			table.clear(newSPV)
+		end)
 		return setmetatable(newSPV, {
 			__tostring = function()
 				return `vivid.state=({StateObj:GetIdAsync()})`
 			end,
 			__index = function(_, key)
-				if key == "_targetproperty" then
+				if key == "_targetpropertychain" then
 					return nil
 				end
 				if key == "_dev" then
@@ -136,7 +173,7 @@ function createState(defaultValue, _internal_spring)
 					-- used in forEach where uniqueId is defined and "props" become a state.
 					return (vState())[key]
 				end
-				-- using a sub property of the SPV. for e.g. Theme().Background
+				-- using a sub property of the SPV. for e.g. Theme().Background || 5/13/2026 - Supports unlimited nesting using "_targetpropertychain" Theme().Native.Something.Reactive.Component.Background.Color3Value is possible
 				local _state = StateObj.State
 				local _condition = not (type(_state) == "table")
 				if not _condition then
@@ -151,12 +188,29 @@ function createState(defaultValue, _internal_spring)
 					end
 					error(`Attempting to index a State or non table value of a State value. The State Value of the State must be a table to allow indexing. Attempted "{key}" on: {StateObj.State}`)
 				end
-				local subSPV = {
+				local rootSPV = {
 					_isstatepropval = true,
 					_state = StateObj,
 					_call = vState,
-					_targetproperty = key,
+					_targetpropertychain = { key },
+					Destroy = function()
+						print("??")
+						StateObj:Destroy()
+					end,
+					Destroying = StateObj.Destroying,
 				}
+				local subSPV
+				subSPV = setmetatable(rootSPV, {
+					__index = function(_, subKey)
+						rootSPV._targetpropertychain = rootSPV._targetpropertychain or {}
+						local _targetpropertychain = rootSPV._targetpropertychain
+						-- we chain the target properties together to allow multiple subSPV's without actually creating a bunch of metatables...
+						-- ...so cases like Background().SubProperty.SubProperty.SubProperty.Value is possible.
+						local _subKey = subKey
+						table.insert(_targetpropertychain, _subKey)
+						return subSPV
+					end,
+				})
 				return subSPV
 			end,
 		})
@@ -172,7 +226,7 @@ function createState(defaultValue, _internal_spring)
 			-- 	print("attached");
 			-- }
 			-- if it is called within a createEffect, add state as a dependency
-			EffectNode.add_dependency(StateObj)
+			EffectNode.add_dependency(StateObj, if _internal_usePseudoState then true else false)
 			return StateObj.State
 		end
 		local LifecycleNode = GetlifecycleNode()
@@ -189,12 +243,13 @@ function createState(defaultValue, _internal_spring)
 	end
 	local vSetState = function(arg0)
 		-- set the state
-		return StateObj:setState(arg0)
+		return StateObj:SetState(arg0)
 	end
 	return vState, vSetState, StateObj
 end
 return {
 	IsStatePropertyValue = IsStatePropertyValue,
+	GetPropertyStateValueFromPropertyChain = GetPropertyStateValueFromPropertyChain,
 	createStateFrom = createStateFrom,
 	createState = createState,
 }

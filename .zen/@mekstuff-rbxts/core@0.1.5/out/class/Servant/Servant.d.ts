@@ -1,11 +1,11 @@
-import { threader } from "@mekstuff-rbxts/threader";
+import { EffectFunctionObject } from "../../internal/functions/Effect/Effect";
 import { Pseudo } from "../Pseudo/Pseudo";
 import { ServantNext } from "./ServantNext";
-export type ServantTrackableItem = RBXScriptConnection | Pseudo<any> | Promise<any> | Instance | thread | threader | Callback;
+export type ServantTrackableItem = RBXScriptConnection | Pseudo<any> | Promise<any> | Instance | thread | Callback | EffectFunctionObject;
 type PROMISE_RESOLVE<T> = (value: T | Promise<T>) => void;
 type PROMISE_REJECT = (reason?: unknown) => void;
 type PROMISE_onCANCEL = (abortHandler?: () => void) => boolean;
-declare function ServantPromise<T>(callback: (resolve: PROMISE_RESOLVE<T>, reject: PROMISE_REJECT, onCancel: PROMISE_onCANCEL, servant: Servant, threader: threader) => void): (resolve: PROMISE_RESOLVE<T>, reject: PROMISE_REJECT, onCancel: PROMISE_onCANCEL) => void;
+declare function ServantPromise<T>(callback: (resolve: PROMISE_RESOLVE<T>, reject: PROMISE_REJECT, onCancel: PROMISE_onCANCEL, servant: Servant) => void): (resolve: PROMISE_RESOLVE<T>, reject: PROMISE_REJECT, onCancel: PROMISE_onCANCEL) => void;
 type Servant = ServantNext;
 declare const Servant: import("./ServantNext").ServantNextConstructor;
 export { Servant, ServantPromise };

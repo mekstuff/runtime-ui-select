@@ -7,43 +7,37 @@
 		"out"
 	],
 	"scripts": {
-		"zen-publish": "yarn build && zen publish && yarn run lua-bundle && cd lua-bundle && zen publish && cd ../",
-		"build": "yarn shx rm -rf out && yarn rbxtsc --type=package",
-		"build-old": "yarn shx rm -rf out && yarn rbxtsc --type=package && darklua process out out -c darklua-bundler.json5",
-		"watch": "yarn rbxtsc -w --type=game -p test -i ../../include",
-		"serve": "rojo serve test",
+		"zen-publish": "pnpm build && zen publish && pnpm run lua-bundle && cd lua-bundle && zen publish && cd ../",
+		"build": "pnpm shx rm -rf out && pnpm rbxtsc --type=package",
+		"build-old": "pnpm shx rm -rf out && pnpm rbxtsc --type=package && darklua process out out -c darklua-bundler.json5",
+		"watch": "pnpm rbxtsc -w --type=game -p test -i ../../include",
 		"serve-lua": "rojo serve lua-test",
-		"lua-bundle": "darklua process core-lua.lua lua-bundle/out/init.lua -c darklua-bundler.json5 && yarn shx cp package.json lua-bundle/package.json && cd lua-bundle && npm pkg set name=@mekstuff-rbxts/core-lua && npm pkg delete scripts dependencies peerDependencies devDependencies && cd ../",
-		"prepack": "yarn run build"
+		"lua-bundle": "darklua process core-lua.lua lua-bundle/out/init.lua -c darklua-bundler.json5 && pnpm shx cp package.json lua-bundle/package.json && cd lua-bundle && npm pkg set name=@mekstuff-rbxts/core-lua && npm pkg delete scripts dependencies peerDependencies devDependencies && cd ../",
+		"prepack": "pnpm run build"
 	},
 	"keywords": [],
 	"author": "Mekstuff <contact@mekstuff.com> (https://github.com/mekstuff)",
 	"types": "out/index.d.ts",
 	".zen": {
-		"dependencies": {
-			"@mekstuff-rbxts/threader": {
-				"version": "^0.1.0"
-			}
-		},
+		"dependencies": {},
 		"devDependencies": {}
 	},
-	"dependencies": {
-		"@mekstuff-rbxts/threader": "file:..\\..\\@mekstuff-rbxts\\threader@0.1.0",
-		"@rbxts/iris": "^2.3.1-ts.1"
-	},
-	"peerDependencies": {},
 	"devDependencies": {
 		"@rbxts/compiler-types": "^3.0.0-types.0",
-		"@rbxts/types": "^1.0.813",
-		"@typescript-eslint/eslint-plugin": "^8.11.0",
-		"@typescript-eslint/parser": "^8.11.0",
-		"eslint": "^9.13.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-prettier": "^5.2.1",
+		"@rbxts/types": "^1.0.841",
+		"@typescript-eslint/eslint-plugin": "^8.26.1",
+		"@typescript-eslint/parser": "^8.26.1",
+		"eslint": "^9.22.0",
+		"eslint-config-prettier": "^10.1.1",
+		"eslint-plugin-prettier": "^5.2.3",
 		"eslint-plugin-roblox-ts": "^0.0.36",
-		"prettier": "^3.3.3",
+		"prettier": "^3.5.3",
 		"roblox-ts": "^3.0.0",
 		"shx": "^0.3.4",
-		"typescript": "5.6.3"
+		"typescript": "^5.8.2"
+	},
+	"dependencies": {
+		"@rbxts/react": "17.3.7-ts.1",
+		"@rbxts/react-roblox": "17.3.7-ts.1"
 	}
 }

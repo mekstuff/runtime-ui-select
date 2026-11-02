@@ -30,7 +30,7 @@ do
 		self:Observe(function()
 			spr.updateTotalSprings(true)
 			return function()
-				spr.updateTotalSprings(false)
+				spr.updateTotalSprings(false, self)
 			end
 		end, {})
 		self._activeStateGoal = DefaultValue
@@ -55,25 +55,68 @@ do
 			local completedArgs = { ... }
 			self.Completed:Fire(unpack(completedArgs))
 		end)
-		return self:setState(unpack(args))
+		return self:SetState(unpack(args))
 	end
-	function Spring:Disrupt(Goal, Damping, Frequency)
-		if Damping == nil then
-			Damping = self.Damping
+	function Spring:Disrupt(Goal, props)
+		local DisruptionStateGoal = function()
+			local _exp = self
+			local _result = props
+			if _result ~= nil then
+				_result = _result.Damping
+			end
+			local _condition = _result
+			if _condition == nil then
+				_condition = self.Damping
+			end
+			local _result_1 = props
+			if _result_1 ~= nil then
+				_result_1 = _result_1.Frequency
+			end
+			local _condition_1 = _result_1
+			if _condition_1 == nil then
+				_condition_1 = self.Frequency
+			end
+			spr.target(_exp, _condition, _condition_1, {
+				State = Goal,
+			})
 		end
-		if Frequency == nil then
-			Frequency = self.Frequency
-		end
-		local _distruptionCompletedConnection
-		_distruptionCompletedConnection = self.Completed:Connect(function()
-			_distruptionCompletedConnection:Disconnect()
-			spr.target(self, Damping, Frequency, {
+		local resetToActiveStateGoal = function()
+			local _exp = self
+			local _result = props
+			if _result ~= nil then
+				_result = _result.Damping
+			end
+			local _condition = _result
+			if _condition == nil then
+				_condition = self.Damping
+			end
+			local _result_1 = props
+			if _result_1 ~= nil then
+				_result_1 = _result_1.Frequency
+			end
+			local _condition_1 = _result_1
+			if _condition_1 == nil then
+				_condition_1 = self.Frequency
+			end
+			spr.target(_exp, _condition, _condition_1, {
 				State = self._activeStateGoal,
 			})
-		end)
-		spr.target(self, Damping, Frequency, {
-			State = Goal,
-		})
+		end
+		local _result = props
+		if _result ~= nil then
+			_result = _result.Lifetime
+		end
+		if not (_result ~= 0 and _result == _result and _result) then
+			spr.completed(self, function()
+				resetToActiveStateGoal()
+			end)
+			DisruptionStateGoal()
+		else
+			DisruptionStateGoal()
+			task.delay(props.Lifetime, function()
+				resetToActiveStateGoal()
+			end)
+		end
 	end
 	function Spring:ResetGoal(Goal)
 		self._activeStateGoal = Goal

@@ -4,7 +4,7 @@ export type LabelEditTextProvider = {
     callbackAsync: () => string | undefined;
     onCallback?: (...args: Parameters<LabelEditTextProvider["callbackAsync"]>) => ReturnType<LabelEditTextProvider["callbackAsync"]>;
 };
-export type LabelProps = Vivid.FC.Props<TextButton> & {
+export type LabelProps = Vivid.FC.InstanceProperties<TextButton> & {
     editText?: LabelEditTextProvider;
     editTextInputProps?: InputProps;
 };

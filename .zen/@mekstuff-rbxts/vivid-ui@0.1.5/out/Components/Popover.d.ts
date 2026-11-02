@@ -1,4 +1,4 @@
-import { ModalProps } from "./Base";
+import { ModalProps } from "./Base/index";
 export type PopoverProps = {
     opened?: boolean;
     scale?: number;

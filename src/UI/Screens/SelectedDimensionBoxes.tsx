@@ -14,7 +14,6 @@ import { DimensionBox } from "UI/Components/DimensionBox";
 
 export function SelectedDimensionBoxes() {
 	const PlayerGui = Players.LocalPlayer.WaitForChild("PlayerGui");
-
 	const [CurrentCamera, setCurrentCamera] = createState<Camera | undefined>(game.Workspace.CurrentCamera);
 	const [ViewportSize, setViewportSize] = createState(new Vector2(1920, 1080));
 

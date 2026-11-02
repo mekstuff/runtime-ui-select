@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local _FragmentIdentifier_ = "__VIVID.FRAGMENT__"
 local function IsInternalFragment(Target)
 	local _target = Target
@@ -10,12 +10,12 @@ local function IsInternalFragment(Target)
 	end
 	return false
 end
-local function CreateInternalFragment(targetChildren)
+local function CreateInternalFragment()
 	local _is_destroyed = false
 	local destroying_callbacks = {}
 	local fragment = {
 		_is_fragment = true,
-		children = targetChildren,
+		children = nil,
 		Destroy = function()
 			if _is_destroyed == true then
 				return nil

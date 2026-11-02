@@ -147,12 +147,12 @@ local ExposedApiInterface: {
 ReplicatorScriptRemote.OnClientEvent:Connect(function(eventType: "initialize", ...)
 	local args = { ... }
 	if eventType == "initialize" then
-		local targetId = args[2] :: ModuleScript | table
+		local targetId = args[2] :: ModuleScript | {any}
 		if targetId and replicated[targetId] then
 			return --> Do not create a new item with the same target id (it was most likely a descendant, the "update" method will handle changes)
 		end
 		replicated[targetId] = true --> so any incoming requests will be dropped in between creating and setting up the replicated on the client. it will be overwritten to the class below.
-		local targetModule = args[1] :: ModuleScript | table
+		local targetModule = args[1] :: ModuleScript | {any}
 		local PseudoClientReplicator = args[3] :: Folder
 		if typeof(targetModule) == "Instance" and targetModule:IsA("ModuleScript") then
 			targetModule = LuaProvider.require(targetModule, nil, targetId)
@@ -250,7 +250,7 @@ ReplicatorScriptRemote.OnClientEvent:Connect(function(eventType: "initialize", .
 
 			servant:Keep(_localPseudoClientReplicator)
 
-			self._dev.__pseudoServantForReplicator = servant
+			self._dev.set("__pseudoServantForReplicator", servant)
 
 			local function HandleClientFunctions()
 				local _replicationClientFunctions = self._dev.OBJECT_PROXY._replicationClientFunctions
@@ -311,7 +311,7 @@ ReplicatorScriptRemote.OnClientEvent:Connect(function(eventType: "initialize", .
 	end
 
 	if eventType == "remove" then
-		local targetId = args[1] :: ModuleScript | table
+		local targetId = args[1] :: ModuleScript | {any}
 		if not replicated[targetId] then
 			return
 		end
@@ -419,10 +419,14 @@ for _, entry in CollectionService:GetTagged(ExternalModuleApiTag) do
 end
 
 --> Initialize replication.
-repeat
-	task.wait(0.1)
+while true do
+	if script.Parent == PHeClientRuntimeFolder then
+		break
+	end
 	script.Parent = PHeClientRuntimeFolder
-until script.Parent == PHeClientRuntimeFolder
+	task.wait(0.1)
+end
+
 ReplicatorScriptRemote:FireServer("initialize")
 
 local ConsoleDebugger =

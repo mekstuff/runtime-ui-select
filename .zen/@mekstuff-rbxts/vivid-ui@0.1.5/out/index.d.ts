@@ -1,3 +1,3 @@
-export * from "./Components";
-export * from "./Icons";
-export * from "./Utils";
+export * from "./Components/index";
+export * from "./Icons/index";
+export * from "./Utils/index";

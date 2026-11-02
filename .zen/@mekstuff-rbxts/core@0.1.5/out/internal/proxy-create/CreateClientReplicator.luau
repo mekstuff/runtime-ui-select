@@ -44,6 +44,10 @@ local function CreateClientReplicator(object)
 			local args = { ... }
 			return func(unpack(args))
 		end,
+		TransmitMessage = function(_, __, func, ...)
+			local args = { ... }
+			return func(unpack(args))
+		end,
 		WithDebounce = function(_, cb)
 			return cb
 		end,

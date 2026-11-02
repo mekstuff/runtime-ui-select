@@ -121,11 +121,11 @@ local function Image(props)
 		if props.loading ~= nil then
 			return props.loading
 		end
-		return Vivid.createElement(Vivid.createFragment)
+		return Vivid.createElement(Vivid.Fragment)
 	end), Vivid.createElement(Case, {
 		condition = false,
 	}, function()
-		return Vivid.createElement(Vivid.createFragment)
+		return Vivid.createElement(Vivid.Fragment)
 	end)), Vivid.createElement(Switch, {
 		conditional = createEffect(function()
 			return ImageLoaded() == false and ImageFailed() == true
@@ -136,11 +136,11 @@ local function Image(props)
 		if props.fallback ~= nil then
 			return props.fallback
 		end
-		return Vivid.createElement(Vivid.createFragment)
+		return Vivid.createElement(Vivid.Fragment)
 	end), Vivid.createElement(Case, {
 		condition = false,
 	}, function()
-		return Vivid.createElement(Vivid.createFragment)
+		return Vivid.createElement(Vivid.Fragment)
 	end)))
 end
 return {

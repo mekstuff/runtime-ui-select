@@ -7,6 +7,7 @@ local TS = _G[script]
 	
 ]]
 local warnp = TS.import(script, script.Parent.Parent, "debug", "warn").warnp
+local GetPseudoFromPointerStringRef = TS.import(script, script.Parent, "PseudoPointerStringRef").GetPseudoFromPointerStringRef
 local _typeIs = TS.import(script, script.Parent, "typeIs")._typeIs
 --[[
 	*
@@ -55,6 +56,14 @@ local function DestroyOnObject(f, maxTraverseDepth, warnName, totalTraverseDepth
 			end)()
 			continue
 		end
+		if type(v) == "string" then
+			-- PseudoPointerStringRef support
+			local PseudoFromPointer = GetPseudoFromPointerStringRef(v)
+			if PseudoFromPointer then
+				PseudoFromPointer:Destroy()
+				f[k] = nil
+			end
+		end
 		if type(v) ~= "userdata" and not (type(v) == "table") then
 			continue
 		end
@@ -62,8 +71,6 @@ local function DestroyOnObject(f, maxTraverseDepth, warnName, totalTraverseDepth
 			if v.Connected then
 				v:Disconnect()
 			end
-		elseif _typeIs(v, "threader") then
-			v:tryClose()
 		elseif type(v) == "thread" then
 			pcallwrap(function()
 				coroutine.close(v)

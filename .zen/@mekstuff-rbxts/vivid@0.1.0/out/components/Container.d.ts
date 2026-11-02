@@ -1,8 +1,8 @@
-import Vivid from "..";
+import Vivid from "../index";
 /**
  * A `Frame` with `UIPadding` and `UIGridLayout` support.
  */
-export type ContainerComponentProps = Vivid.FC.Props<Frame> & {
+export type ContainerComponentProps = Vivid.FC.InstancePropertiesWithChildren<Frame> & {
     /**
      * Padding applied to the created `UIPadding`, *NOT* the Padding of the `UIGridLayout`.
      *

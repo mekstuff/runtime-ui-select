@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -8,9 +8,7 @@ local TS = _G[script]
 ]]
 local createElement = TS.import(script, script.Parent, "createElement").createElement
 local function createRoot(Callback)
-	return createElement(function()
-		return createElement(Callback)
-	end, nil, nil)
+	return createElement(Callback, nil, nil)
 end
 return {
 	createRoot = createRoot,

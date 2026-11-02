@@ -158,7 +158,7 @@
 -- 			if (!_USE_STATE_SERVANT_ENTRIES) {
 -- 				_USE_STATE_SERVANT_ENTRIES = new Map();
 -- 				_this.Destroying.Connect(() => {
--- 					// clear all useState servants associated with the pseudo when it's destroyed.
+-- 					// clear all UseState servants associated with the pseudo when it's destroyed.
 -- 					_USE_STATE_SERVANT_ENTRIES?.forEach((servant) => {
 -- 						servant.Destroy();
 -- 					});

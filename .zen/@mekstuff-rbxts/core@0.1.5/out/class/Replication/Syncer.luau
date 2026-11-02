@@ -204,11 +204,10 @@ do
 		return useCatchServant
 	end
 end
-local Syncer = SyncerUsageClass.new()
-local default = Syncer
+-- const Syncer = new SyncerUsageClass();
+-- export { Syncer };
+-- export default Syncer;
 return {
 	SyncingMethod = SyncingMethod,
 	SyncerUsageClass = SyncerUsageClass,
-	Syncer = Syncer,
-	default = default,
 }

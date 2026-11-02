@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -92,7 +92,7 @@ local function createAnimationCall(props)
 							end
 							PropertiesAsStatesObserverEntries[Property] = InitialValue._state:Observe(function()
 								-- Map the changes of the external state to the internal state.
-								TargetAnimatorSpring:setState(InitialValue._state.State)
+								TargetAnimatorSpring:SetState(InitialValue._state.State)
 							end, { "State" })
 						end
 						TargetAnimatorSpring:Observe(function()
@@ -107,7 +107,7 @@ local function createAnimationCall(props)
 						end
 						PropertiesAsStatesObserverEntries[Property] = Value._state:Observe(function()
 							-- Map the changes of the external state to the internal state.
-							TargetAnimatorSpring:setState(Value._state.State)
+							TargetAnimatorSpring:SetState(Value._state.State)
 						end, { "State" })
 						return nil
 					end
@@ -119,7 +119,7 @@ local function createAnimationCall(props)
 							PropertiesAsStatesObserverEntries[Property] = nil
 						end
 					end
-					TargetAnimatorSpring:setState(Value)
+					TargetAnimatorSpring:SetState(Value)
 					return nil
 				end
 				RenderedItem[Property] = Value
@@ -193,11 +193,11 @@ local function createAnimationCall(props)
 							local _arg1_1 = `Your custom defined state was something other than a boolean: {state}, got {state.State}`
 							assert(_arg0, _arg1_1)
 							if state.State == true then
-								StatesConditionsMet:setState(function(old)
+								StatesConditionsMet:SetState(function(old)
 									return old + 1
 								end)
 								return function()
-									StatesConditionsMet:setState(function(old)
+									StatesConditionsMet:SetState(function(old)
 										return old - 1
 									end)
 								end

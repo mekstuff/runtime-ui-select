@@ -1,1 +1,1 @@
-export declare function onDismount(Callback: () => void): void;
+export declare function onDismount(Callback: (...args: unknown[]) => void): void;

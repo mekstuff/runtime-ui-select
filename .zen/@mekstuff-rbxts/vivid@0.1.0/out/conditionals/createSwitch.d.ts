@@ -1,4 +1,4 @@
-import Vivid from "..";
+import Vivid from "../index";
 export type SwitchStatement<T = Instance> = (Condition: Vivid.StatefulCallback<unknown>, Truthy?: Vivid.FC.Render, Falsy?: Vivid.FC.Render) => SwitchStatementReturn<T>;
 export type SwitchStatementReturn<T = Instance> = Vivid.StatefulCallback<T> & {
     Case: (Condition: unknown | (() => boolean), Truthy: Vivid.FC.Render) => SwitchStatementReturn<T>;

@@ -1,4 +1,4 @@
-import { CheckboxProps, LabelProps } from "./Base";
+import { CheckboxProps, LabelProps } from "./Base/index";
 export type LabelledCheckboxProps = {
     checkboxProps: CheckboxProps;
     labelProps?: LabelProps;

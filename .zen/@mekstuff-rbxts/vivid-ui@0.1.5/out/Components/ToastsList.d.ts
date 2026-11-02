@@ -41,11 +41,11 @@ export type ToastsListProviderProps = Omit<ToastsListProps, "toasts"> & {
  * NOTE: `lifetime` for Toasts default to `20` if value is `undefined`. setting value to `false` will disable auto dismissal after lifetime period.
  */
 export declare function ToastsListProvider(props: ToastsListProviderProps): Instance;
-export type ToastsListProps = Vivid.FC.Props<Frame> & {
+export type ToastsListProps = Vivid.FC.InstanceProperties<Frame> & {
     toasts: ToastProps[];
     props?: Partial<{
-        UIPadding: Vivid.FC.Props<UIPadding>;
-        UIListLayout: Vivid.FC.Props<UIListLayout>;
+        UIPadding: Vivid.FC.InstanceProperties<UIPadding>;
+        UIListLayout: Vivid.FC.InstanceProperties<UIListLayout>;
     }>;
 };
 export declare function ToastsList(props: ToastsListProps): Instance;

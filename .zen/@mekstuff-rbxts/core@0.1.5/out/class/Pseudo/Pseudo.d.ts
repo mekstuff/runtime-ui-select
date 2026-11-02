@@ -1,4 +1,4 @@
-import { Servant } from "../../class/Servant/Servant";
+import { Servant } from "../Servant/Servant";
 import { PseudoNext } from "./PseudoNext";
 declare global {
     type UnknownArray = {

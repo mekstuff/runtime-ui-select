@@ -1,7 +1,7 @@
-import Vivid from "..";
+import Vivid from "../index";
 import { forEachProps } from "../functions/forEach";
 type fetchItems<T> = (start: number, total: number) => T[];
-export type InfiniteScrollingFrameProps<T, UID> = Vivid.FC.Props<ScrollingFrame> & {
+export type InfiniteScrollingFrameProps<T, UID> = Vivid.FC.InstancePropertiesWithChildren<ScrollingFrame> & {
     /**
      * Function for fetching the items
      */

@@ -1,1 +1,14 @@
-export declare function onWillDismount(Callback: () => void): void;
+/**
+ *
+ * Passing an onWillDismount lifecycle changes an element - Instead of returning the raw roblox instance, you're given a proxy object. You can
+ * index and newindex the object like it's a normal roblox instance. This allows you to execute code when .Destroy is called on the "Instance", allowing features
+ * like animation presence (animating out the object before it is completely destroyed.) onWillDismount callbacks can yield, the actual Instance isn't destroyed until
+ * all callbacks are completed. It is recommended to return a Promise instead of yielding within your onWillDismount callback,
+ * With a `Promise`, the lifecycle will end whenever the Promise is resolved or rejected.
+ *
+ * @param Callback The callback function that will run.
+ *
+ * The "Component" provided as an argument in your callback will be the component that .Destroy was called on, not the current actual component. use onMount to store a ref of the component
+ * if you wish to use the actual component.
+ */
+export declare function onWillDismount(Callback: (...args: unknown[]) => void | Promise<unknown>): void;

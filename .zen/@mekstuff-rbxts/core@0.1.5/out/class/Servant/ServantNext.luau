@@ -8,16 +8,14 @@ local internal_functions = internal:FindFirstChild("functions") :: Instance
 
 local RequireTS = require(internal_functions:FindFirstChild("RequireTS")).RequireTS
 local PseudoNext = require(((script.Parent :: Instance).Parent :: Instance):WaitForChild("Pseudo"):WaitForChild("PseudoNext")).PseudoNext
--- local PseudoNext = require("../Pseudo/PseudoNext").PseudoNext
 
-local threader = RequireTS(internal.Parent.Parent.Parent:FindFirstChild("threader"):FindFirstChild("out")).threader
--- local threader = require("../../../../threader/out").threader
+-- local threader = RequireTS(internal.Parent.Parent.Parent:FindFirstChild("threader"):FindFirstChild("out")).threader
 
+local PseudoCollector = RequireTS(internal_functions:FindFirstChild("GetPseudoById")).PseudoCollector
 local DestroyOnObject = RequireTS(internal_functions:FindFirstChild("DestroyOnObject")).DestroyOnObject
--- local DestroyOnObject = require("../../internal/functions/DestroyOnObject").DestroyOnObject
+local PseudoPointerStringRef = RequireTS(internal_functions:FindFirstChild("PseudoPointerStringRef"))
 
 local debugModule = RequireTS(internal:FindFirstChild("debug"):FindFirstChild("debug"))
--- local debugModule = require("../../internal/debug/debug")
 local errorp, warnp = debugModule.errorp, debugModule.warnp
 
 -- Servant Next, Built in luau for better core optimization.
@@ -25,7 +23,7 @@ local errorp, warnp = debugModule.errorp, debugModule.warnp
 
 type ServantNext = {
 	_ServantDestroyed: boolean?,
-}
+} & any
 
 --> Servant Next.
 local ServantNext: ServantNext = {
@@ -40,14 +38,16 @@ ServantNext.__index = function(self, k: any)
 	if k == "Destroying" then
 		return PseudoNext.__index(self, "Destroying")
 	end
-	return ServantNext[k] or PseudoNext[k]
+	return (ServantNext :: any)[k] or PseudoNext[k]
 end
-ServantNext.__tostring = PseudoNext.__tostring
+-- ServantNext.__tostring = PseudoNext.__tostring
 
-function ServantNext:Execute(Func: (...any) -> any): typeof(threader)
-	local thread = threader.new(Func, nil, true)
-	thread.active = true
-	return self:Keep(thread)
+function ServantNext:Execute(Func: (...any) -> any): nil -- typeof(threader)
+	error("ServantNext:Execute is disabled as threader's are being removed.")
+	return nil
+	-- local thread = threader.new(Func, nil, true)
+	-- thread.active = true
+	-- return self:Keep(thread)
 end
 
 function ServantNext:Keep(TrackId: any, ...: any): { any } | any
@@ -127,11 +127,22 @@ function ServantNext:Destroy()
 	if HasDestroyingSignal then
 		HasDestroyingSignal:Fire()
 	end
+
+	if self:_HasInternalID() == true then
+		--> Remove from PseudoCollector, only if the ID was generated previously.
+		PseudoCollector[self:_GetInternalID()] = nil
+	end
+
 	self._ServantDestroyed = true
 	if self._dev ~= nil then
 		self._dev._destroyed = true
 		DestroyOnObject(self._dev, 3, "[ADD SERVANTNEXT WARN NAME]")
 	end
+	--[[
+	setmetatable(self, nil)
+	]]
+
+	table.freeze(self)
 end
 
 function ServantNext:_DestroyTrackedItem(Item: any)
@@ -139,7 +150,7 @@ function ServantNext:_DestroyTrackedItem(Item: any)
 		return
 	end
 	if typeof(Item) == "RBXScriptConnection" then
-		Item.Disconnect()
+		Item.Disconnect(Item)
 		return
 	end
 	if typeof(Item) == "Instance" then
@@ -151,7 +162,7 @@ function ServantNext:_DestroyTrackedItem(Item: any)
 		return
 	end
 	if Item.Disconnect then
-		Item.Disconnect()
+		Item.Disconnect(Item)
 		return
 	end
 end
@@ -169,7 +180,8 @@ function ServantNext:_AddTrackableItem(ItemToTrack: any, Id: string?)
 	if Id then
 		self._dev[Id] = Item
 	else
-		table.insert(self._dev, Item)
+		local PseudoPointerRef = PseudoPointerStringRef.CreatePseudoPointerStringRef(ItemToTrack)
+		table.insert(self._dev, PseudoPointerRef or Item)
 	end
 end
 

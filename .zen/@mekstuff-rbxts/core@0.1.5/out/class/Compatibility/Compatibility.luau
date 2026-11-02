@@ -105,22 +105,18 @@ do
 	end
 	function CompatibilityClass:constructor()
 		super.constructor(self, "Compatibility")
-		self.IsTouchDevice = false
-		self.IsGamepadDevice = false
-		self.IsTenFootInterface = false
+		self.TouchEnabled = UserInputService.TouchEnabled
+		self.GamepadEnabled = UserInputService.GamepadEnabled
+		self.IsTenFootInterface = GuiService:IsTenFootInterface()
+		self.KeyboardEnabled = UserInputService.KeyboardEnabled
 		if not RunService:IsClient() then
 			return nil
 		end
-		self.IsTenFootInterface = GuiService:IsTenFootInterface()
-		self.IsTouchDevice = UserInputService.TouchEnabled
-		self.IsGamepadDevice = UserInputService.GamepadEnabled
 		UserInputService.GamepadConnected:Connect(function()
-			self.IsTenFootInterface = GuiService:IsTenFootInterface()
-			self.IsGamepadDevice = true
+			self.GamepadEnabled = true
 		end)
 		UserInputService.GamepadDisconnected:Connect(function()
-			self.IsTenFootInterface = GuiService:IsTenFootInterface()
-			self.IsGamepadDevice = false
+			self.GamepadEnabled = false
 		end)
 		local Cam = game.Workspace.CurrentCamera
 		local _result = Cam
@@ -130,17 +126,6 @@ do
 			end)
 		end
 		self.Name = `{LocalPlayer.Name}-{self.ClassName}`
-	end
-	function CompatibilityClass:use(...)
-		local args = { ... }
-		return self:useCompatibility(unpack(args))
-	end
-	function CompatibilityClass:useCompatibility(...)
-		local args = { ... }
-		-- return new CompatibilityUsageClass(this, ...args).useState((state, updater) => {
-		--     return state;
-		-- });
-		return CompatibilityUsageClass.new(self, unpack(args))
 	end
 end
 local Compatibility = (if RunService:IsClient() and RunService:IsRunning() then CompatibilityClass.new() else nil)

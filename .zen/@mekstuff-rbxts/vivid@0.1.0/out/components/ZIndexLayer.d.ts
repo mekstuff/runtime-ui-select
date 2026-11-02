@@ -1,2 +1,2 @@
-import Vivid from "..";
-export declare function ZIndexLayer(props: Vivid.FC.Props<Frame>): Frame;
+import Vivid from "../index";
+export declare function ZIndexLayer(props: Vivid.FC.InstancePropertiesWithChildren<Frame>): Frame;

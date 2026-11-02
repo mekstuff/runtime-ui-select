@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -17,7 +17,9 @@ local RemoveElementNode = _Nodes.RemoveElementNode
 local GetElementNode = _Nodes.GetElementNode
 local ClearAllEffectNodes = _Nodes.ClearAllEffectNodes
 local GetEffectNode = _Nodes.GetEffectNode
-local IsStatePropertyValue = TS.import(script, script.Parent, "createState").IsStatePropertyValue
+local _createState = TS.import(script, script.Parent, "createState")
+local GetPropertyStateValueFromPropertyChain = _createState.GetPropertyStateValueFromPropertyChain
+local IsStatePropertyValue = _createState.IsStatePropertyValue
 local createEffect = TS.import(script, script.Parent, "createEffect").createEffect
 local createEffectBoundary = TS.import(script, script.Parent, "createEffectBoundary").createEffectBoundary
 local _Fragment = TS.import(script, script.Parent.Parent, "internal", "Fragment")
@@ -25,8 +27,16 @@ local _FragmentIdentifier_ = _Fragment._FragmentIdentifier_
 local CreateInternalFragment = _Fragment.CreateInternalFragment
 local IsInternalFragment = _Fragment.IsInternalFragment
 local IsWithTransitionDef = TS.import(script, script.Parent.Parent, "internal", "WithTransition").IsWithTransitionDef
+local IsWithSuspenseDef = TS.import(script, script.Parent.Parent, "internal", "WithSuspense").IsWithSuspenseDef
 local IsVividRefObject = TS.import(script, script.Parent, "createRef").IsVividRefObject
 local IsResponsiveObject = TS.import(script, script.Parent.Parent, "internal", "Responsive").IsResponsiveObject
+local _ProxyInstance = TS.import(script, script.Parent.Parent, "internal", "ProxyInstance")
+local CreateProxyInstance = _ProxyInstance.CreateProxyInstance
+local IsInternalProxyInstance = _ProxyInstance.IsInternalProxyInstance
+local createElement
+local CreateElementFragmentRenderFunction = function()
+	return createElement(_FragmentIdentifier_)
+end
 -- e.g.Support <item>Test</item>. "Test" will be passed as the "Text" property
 local InstanceClassesThatAcceptStringChildrenAsTextProp = { "TextLabel", "TextButton", "TextBox" }
 local _call_withProps__index
@@ -50,9 +60,12 @@ _call_withProps__index = function(_, key, targetValue)
 	--
 	if IsStatePropertyValue(targetValue) then
 		local _callresults = targetValue._call()
-		if targetValue._targetproperty ~= nil then
+		if targetValue._targetpropertychain ~= nil then
 			-- we are targeting a property within the state. e.g. props.Property = State().Property
-			local val = _callresults[targetValue._targetproperty]
+			-- const val = (_callresults as Record<string, unknown>)[targetValue._targetpropertychain[0]];
+			local val = GetPropertyStateValueFromPropertyChain(_callresults, targetValue._targetpropertychain)
+			-- const val = (_callresults as Record<string, unknown>)[
+			-- ];
 			if IsStatePropertyValue(val) then
 				return val
 			end
@@ -88,7 +101,7 @@ _call_withProps__index = function(_, key, targetValue)
 		local EffectNode = GetEffectNode()
 		if EffectNode then
 			-- If user attempts to use IsResponsiveObject value inside of a effect, we give them the actual value + add the state as a dependency of the effect
-			EffectNode.add_dependency(targetValue._group_state)
+			EffectNode.add_dependency(targetValue._group_state, false)
 			local ResponsiveValue = targetValue._responsive[targetValue._group_state.State]
 			return ResponsiveValue
 		end
@@ -160,15 +173,19 @@ local function withProps(props, toObject)
 	return if toObject then props.__get_raw__() else props
 end
 local ResolveChildren
-local function HandleChild(Key, Child, Parent, ParentCreateElementNode)
+local function HandleChild(Key, Child, Parent, ParentCreateElementNode, UseRootServant)
 	if Child == nil then
 		return nil
 	end
-	local _RootServant = ParentCreateElementNode
-	if _RootServant ~= nil then
-		_RootServant = _RootServant.servant
+	local _condition = UseRootServant
+	if _condition == nil then
+		local _result = ParentCreateElementNode
+		if _result ~= nil then
+			_result = _result.servant
+		end
+		_condition = _result
 	end
-	local RootServant = _RootServant
+	local RootServant = _condition
 	local _child = Child
 	if typeof(_child) == "Instance" then
 		if Child.Name == Child.ClassName then
@@ -206,22 +223,37 @@ local function HandleChild(Key, Child, Parent, ParentCreateElementNode)
 			error("Stateful children require RootServant.")
 		end
 		RootServant:Keep(Child._state:Observe(function()
+			if Child._state == nil then
+				return nil
+			end
 			local children = Child._state.State
 			if children == nil then
 				return nil
 			end
 			if IsStatePropertyValue(children) then
-				error("Attempted to set children State value as a State.")
+				-- Nested state children. e.g. -> conditional within conditional / state within state
+				local NestedStateRootServant = UseRootServant or Servant.new()
+				RootServant:Keep(NestedStateRootServant)
+				HandleChild(Key, children, Parent, ParentCreateElementNode, NestedStateRootServant)
+				-- return;
+				return function()
+					RootServant:Free(NestedStateRootServant)
+					NestedStateRootServant:Destroy()
+				end
+			end
+			if IsInternalProxyInstance(children) then
+				HandleChild(Key, children._getInstance(), Parent, ParentCreateElementNode, UseRootServant)
+				return nil
 			end
 			if IsInternalFragment(children) then
-				HandleChild(Key, children, Parent, ParentCreateElementNode)
+				HandleChild(Key, children, Parent, ParentCreateElementNode, UseRootServant)
 				return nil
 			end
 			if typeof(children) == "Instance" then
-				HandleChild(Key, children, Parent, ParentCreateElementNode)
+				HandleChild(Key, children, Parent, ParentCreateElementNode, UseRootServant)
 			else
 				for key, child in pairs(children) do
-					HandleChild(key, child, Parent, ParentCreateElementNode)
+					HandleChild(key, child, Parent, ParentCreateElementNode, UseRootServant)
 				end
 			end
 		end, { "State" }))
@@ -233,19 +265,19 @@ local function HandleChild(Key, Child, Parent, ParentCreateElementNode)
 				-- already mounted through other means, do not reparent to target.
 				return nil
 			end
-			ResolveChildren(Child.children, Parent, ParentCreateElementNode)
+			ResolveChildren(Child.children, Parent, ParentCreateElementNode, UseRootServant)
 		end
 		return nil
 	end
 	local _child_1 = Child
 	if type(_child_1) == "table" then
 		-- Passed an array of children within children (in cases mostly in jsx where <element> <anotherelement/> {props.children} </element>)
-		ResolveChildren(Child, Parent, ParentCreateElementNode)
+		ResolveChildren(Child, Parent, ParentCreateElementNode, UseRootServant)
 		return nil
 	end
 	local _child_2 = Child
 	if type(_child_2) == "string" then
-		-- Vivid supports passing string to a textlabel and other text property elements as a child, it will file the "Text" property field of the TextLabel with the content
+		-- Vivid supports passing string to a textlabel and other text property elements as a child, it will fill the "Text" property field of the TextLabel with the content
 		-- e.g.: <textlabel>This is Text</textlabel>
 		local IsSupportedTextInstance = false
 		for index = 0, #InstanceClassesThatAcceptStringChildrenAsTextProp - 1 do
@@ -266,9 +298,14 @@ local function HandleChild(Key, Child, Parent, ParentCreateElementNode)
 	end
 	local _exp = Key
 	local _child_3 = Child
-	error(`Unexpected child received for key "{_exp}". got {typeof(_child_3)} ({Child})`)
+	local _exp_1 = typeof(_child_3)
+	local _exp_2 = Child
+	local _child_4 = Child
+	error(`Unexpected child received for key "{_exp}". got {_exp_1} ({_exp_2}){if type(_child_4) == "function" then ` - Did you mean to call a state? example "{Key}()" instead of "{Key}", You may have accidentally passed the state as a child but didn't call the function.` else ""}`)
 end
-local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow_parent, _is_called_by_with_transition, _is_called_by_responsive)
+local function ApplyProperty(inputTarget, key, inputValue, ParentCreateElementNode, _allow_parent, _is_called_by_with_transition, _is_called_by_responsive, _is_called_by_with_suspense)
+	local Target = if IsStatePropertyValue(inputTarget) ~= true and IsInternalProxyInstance(inputTarget) then inputTarget._getInstance() else inputTarget
+	local value = if IsStatePropertyValue(inputValue) ~= true and IsInternalProxyInstance(inputValue) then inputValue._getInstance() else inputValue
 	if key == "children" then
 		return nil
 	end
@@ -290,11 +327,9 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		return nil
 	end
 	if key == "tags" then
-		local _value = value
-		local _exp = type(_value) == "table"
-		local _value_1 = value
-		local _arg1 = `createElement(..., tags=...) requires tags to be an array, got {typeof(_value_1)}`
-		assert(_exp, _arg1)
+		local _arg0 = type(value) == "table"
+		local _arg1 = `createElement(..., tags=...) requires tags to be an array, got {typeof(value)}`
+		assert(_arg0, _arg1)
 		-- ▼ ReadonlyArray.forEach ▼
 		local _callback = function(tagKey)
 			Target:AddTag(tagKey)
@@ -306,11 +341,9 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		return nil
 	end
 	if key == "attributes" then
-		local _value = value
-		local _exp = type(_value) == "table"
-		local _value_1 = value
-		local _arg1 = `createElement(..., tags=...) requires tags to be an object, got {typeof(_value_1)}`
-		assert(_exp, _arg1)
+		local _arg0 = type(value) == "table"
+		local _arg1 = `createElement(..., tags=...) requires tags to be an object, got {typeof(value)}`
+		assert(_arg0, _arg1)
 		for attrKey, attrValue in pairs(value) do
 			if IsStatePropertyValue(attrValue) then
 				if ParentCreateElementNode == nil then
@@ -326,8 +359,7 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		end
 		return nil
 	end
-	local _value = value
-	local _condition = type(_value) == "function"
+	local _condition = type(value) == "function"
 	if _condition then
 		local _arg0 = Target[key]
 		_condition = not (type(_arg0) == "function")
@@ -352,8 +384,8 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		end)(), ParentCreateElementNode, _allow_parent)
 	end
 	local function ApplyStateValue(Key, Value)
-		local _value_1 = Value
-		local _condition_1 = type(_value_1) == "function"
+		local _value = Value
+		local _condition_1 = type(_value) == "function"
 		if _condition_1 then
 			local _arg0 = Target[Key]
 			_condition_1 = not (type(_arg0) == "function")
@@ -377,13 +409,14 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 			TargetStateToObserve = value._state
 		else
 			-- it is a spring, use the created springs to animate
-			TargetStateToObserve = LiveSpringEntries[value._targetproperty]
+			TargetStateToObserve = GetPropertyStateValueFromPropertyChain(LiveSpringEntries, value._targetpropertychain)
+			-- TargetStateToObserve = LiveSpringEntries[value._targetpropertychain![0]];
 		end
 		ParentCreateElementNode.servant:Keep(TargetStateToObserve:Observe(function()
-			if value._targetproperty ~= nil and LiveSpringEntries == nil then
+			if value._targetpropertychain ~= nil and LiveSpringEntries == nil then
 				-- target property provided meaning it was used as a sub property. e.g. Theme().Background but `Theme` is the only State.
 				-- normal state, refer to the key value within the state table itself
-				ApplyStateValue(key, (TargetStateToObserve.State)[value._targetproperty])
+				ApplyStateValue(key, GetPropertyStateValueFromPropertyChain(TargetStateToObserve.State, value._targetpropertychain))
 			else
 				--[[
 					 REMOVED LOGIC TO USE A STATE AS A STATE, NEEDS MORE WORK IN TERMS OF CLEANING UP AND TOGGLING IF REIMPLEMENTED.
@@ -413,14 +446,10 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		local _arg0 = ElementNodeConv and ParentCreateElementNode
 		assert(_arg0, "ParentCreateElementNode is required to use Responsive()")
 		ElementNodeConv._responsiveObservers = ElementNodeConv._responsiveObservers or {}
-		local __responsiveObservers = ElementNodeConv._responsiveObservers
-		local _target = Target
-		local HasExistingInstance = __responsiveObservers[_target]
+		local HasExistingInstance = ElementNodeConv._responsiveObservers[Target]
 		if HasExistingInstance == nil then
 			local InstanceDefRecord = {}
-			local __responsiveObservers_1 = ElementNodeConv._responsiveObservers
-			local _target_1 = Target
-			__responsiveObservers_1[_target_1] = InstanceDefRecord
+			ElementNodeConv._responsiveObservers[Target] = InstanceDefRecord
 			HasExistingInstance = InstanceDefRecord
 		end
 		local HasExisting = HasExistingInstance[key]
@@ -461,9 +490,7 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		_condition_1 = _is_called_by_responsive ~= true
 	end
 	if _condition_1 then
-		local __responsiveObservers = ElementNodeConv._responsiveObservers
-		local _target = Target
-		local ExistingInstance = __responsiveObservers[_target]
+		local ExistingInstance = ElementNodeConv._responsiveObservers[Target]
 		local _Existing = ExistingInstance
 		if _Existing ~= nil then
 			_Existing = _Existing[key]
@@ -482,9 +509,7 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 				break
 			end
 			if HasContent ~= true then
-				local __responsiveObservers_1 = ElementNodeConv._responsiveObservers
-				local _target_1 = Target
-				__responsiveObservers_1[_target_1] = nil
+				ElementNodeConv._responsiveObservers[Target] = nil
 			end
 		end
 	end
@@ -493,17 +518,14 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		local _arg0 = ElementNodeConv and ParentCreateElementNode
 		assert(_arg0, "ParentCreateElementNode is required to use WithTransition()")
 		ElementNodeConv._withTransitionDefs = ElementNodeConv._withTransitionDefs or {}
-		local __withTransitionDefs = ElementNodeConv._withTransitionDefs
-		local _target = Target
-		local HasExistingInstance = __withTransitionDefs[_target]
+		local HasExistingInstance = ElementNodeConv._withTransitionDefs[Target]
 		if HasExistingInstance == nil then
 			local InstanceDefRecord = {}
-			local __withTransitionDefs_1 = ElementNodeConv._withTransitionDefs
-			local _target_1 = Target
-			__withTransitionDefs_1[_target_1] = InstanceDefRecord
+			ElementNodeConv._withTransitionDefs[Target] = InstanceDefRecord
 			HasExistingInstance = InstanceDefRecord
 		end
 		local HasExisting = HasExistingInstance[key]
+		local TargetSpringObject = HasExisting
 		if HasExisting then
 			local _condition_2 = value._damping
 			if _condition_2 == nil then
@@ -528,7 +550,20 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 					if ResponsiveValue == nil then
 						return nil
 					end
-					HasExisting:setState(ResponsiveValue)
+					local _value = ParentCreateElementNode.servant._dev._dismounting
+					if _value ~= 0 and _value == _value and _value ~= "" and _value then
+						-- While dismounting (servant), This value is added before any onWillDismount & onDismount lifecycles run
+						-- in this case we don't want to update anything here if it's in the process of dismounting and has a dismount transition.
+						if TargetSpringObject._dev._vivid_internal_onWillDismountCB ~= nil then
+							return nil
+						end
+					end
+					if value._defaultValue ~= nil then
+						-- Reset to default value if defined everytime before spring transitioning
+						Target[key] = value._defaultValue
+						HasExisting.State = value._defaultValue
+					end
+					HasExisting:SetState(ResponsiveValue)
 				end, { "State" })
 				ResponsiveObject._increment_usage_total();
 				(HasExisting._dev._responsive_observer).Destroying:Connect(function()
@@ -536,7 +571,7 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 				end)
 			else
 				-- Non Responsive value, Update per usual
-				HasExisting:setState(value._targetValue)
+				HasExisting:SetState(value._targetValue)
 			end
 		else
 			local _condition_2 = value._initialValue
@@ -547,6 +582,7 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 				end
 			end
 			local SpringObj = Spring.new(_condition_2)
+			Target[key] = SpringObj.State
 			local _condition_3 = value._damping
 			if _condition_3 == nil then
 				_condition_3 = SpringObj.Damping
@@ -557,6 +593,7 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 				_condition_4 = SpringObj.Frequency
 			end
 			SpringObj.Frequency = _condition_4
+			TargetSpringObject = SpringObj
 			if IsResponsiveObject(value._targetValue) then
 				-- Responsive value passed into the transition.
 				local ResponsiveObject = value._targetValue
@@ -569,12 +606,20 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 					if ResponsiveValue == nil then
 						return nil
 					end
+					local _value = ParentCreateElementNode.servant._dev._dismounting
+					if _value ~= 0 and _value == _value and _value ~= "" and _value then
+						-- While dismounting (servant), This value is added before any onWillDismount & onDismount lifecycles run
+						-- in this case we don't want to update anything here if it's in the process of dismounting and has a dismount transition.
+						if TargetSpringObject._dev._vivid_internal_onWillDismountCB ~= nil then
+							return nil
+						end
+					end
 					if value._defaultValue ~= nil then
 						-- Reset to default value if defined everytime before spring transitioning
 						Target[key] = value._defaultValue
 						SpringObj.State = value._defaultValue
 					end
-					SpringObj:setState(ResponsiveValue)
+					SpringObj:SetState(ResponsiveValue)
 				end, { "State" })
 				ResponsiveObject._increment_usage_total();
 				(SpringObj._dev._responsive_observer).Destroying:Connect(function()
@@ -587,16 +632,37 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 					Target[key] = value._defaultValue
 					SpringObj.State = value._defaultValue
 				end
-				SpringObj:setState(value._targetValue)
+				SpringObj:SetState(value._targetValue)
 			end
 			-- Apply property to target based on the spring.
 			SpringObj:Observe(function()
-				-- Can't call ApplyProperty since we check if there's an existing SpringObj. (5/19/2025: New argument added to support calling it)
+				-- Can't call ApplyProperty since we check if there's an existing SpringObj. (5/19/2025: New argument added to support calling it "_is_called_by_with_transition")
 				-- (Target as unknown as Record<string, unknown>)[key as string] = SpringObj.State;
-				ApplyProperty(Target, key, SpringObj.State, ParentCreateElementNode, _allow_parent, true, false)
+				ApplyProperty(Target, key, SpringObj.State, ParentCreateElementNode, _allow_parent, true, false, false)
 			end, { "State" })
 			ParentCreateElementNode.servant:Keep(SpringObj)
 			HasExistingInstance[key] = SpringObj
+		end
+		-- Dismount Value Updating
+		if value._dismountValue ~= nil then
+			if TargetSpringObject._dev._vivid_internal_onWillDismountCB == nil then
+				local _vivid_internal_onWillDismountCB = function()
+					return TS.Promise.new(function(resolve)
+						TargetSpringObject.Completed:Once(function()
+							TargetSpringObject._dev._vivid_internal_onWillDismountCB = nil
+							resolve()
+						end)
+						TargetSpringObject:SetGoal(value._dismountValue)
+					end)
+				end
+				TargetSpringObject._dev._vivid_internal_onWillDismountCB = _vivid_internal_onWillDismountCB
+				ParentCreateElementNode.addLifeCycleEvent("onWillDismount", _vivid_internal_onWillDismountCB)
+			end
+		else
+			-- No dismount value provided, remove the old lifecycle if any
+			if TargetSpringObject._dev._vivid_internal_onWillDismountCB ~= nil then
+				ParentCreateElementNode.removeLifeCycleEvent("onWillDismount", TargetSpringObject._dev._vivid_internal_onWillDismountCB)
+			end
 		end
 		return nil
 	end
@@ -610,9 +676,7 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		_condition_2 = _is_called_by_with_transition ~= true
 	end
 	if _condition_2 then
-		local __withTransitionDefs = ElementNodeConv._withTransitionDefs
-		local _target = Target
-		local ExistingInstance = __withTransitionDefs[_target]
+		local ExistingInstance = ElementNodeConv._withTransitionDefs[Target]
 		local _Existing = ExistingInstance
 		if _Existing ~= nil then
 			_Existing = _Existing[key]
@@ -621,8 +685,72 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 		if ExistingInstance ~= nil and Existing ~= nil then
 			if ParentCreateElementNode ~= nil then
 				ParentCreateElementNode.servant:Free(Existing)
+				-- Remove onWillDismountCB for DismountValue transition if any.
+				if Existing._dev._vivid_internal_onWillDismountCB ~= nil then
+					ParentCreateElementNode.removeLifeCycleEvent("onWillDismount", Existing._dev._vivid_internal_onWillDismountCB)
+				end
 			end
 			Existing:Destroy()
+			ExistingInstance[key] = nil
+			local HasContent = false
+			for _element, _element_1 in pairs(ExistingInstance) do
+				local _ = { _element, _element_1 }
+				HasContent = true
+				break
+			end
+			if HasContent ~= true then
+				ElementNodeConv._withTransitionDefs[Target] = nil
+			end
+		end
+	end
+	if IsWithSuspenseDef(value) then
+		-- Support for WithSuspense(...)
+		local _arg0 = ElementNodeConv and ParentCreateElementNode
+		assert(_arg0, "ParentCreateElementNode is required to use WithSuspense()")
+		ElementNodeConv._withSuspensePromises = ElementNodeConv._withSuspensePromises or {}
+		local HasExistingInstance = ElementNodeConv._withSuspensePromises[Target]
+		if HasExistingInstance == nil then
+			local InstanceDefRecord = {}
+			ElementNodeConv._withSuspensePromises[Target] = InstanceDefRecord
+			HasExistingInstance = InstanceDefRecord
+		end
+		local HasExisting = HasExistingInstance[key]
+		local _result_2 = HasExisting
+		if _result_2 ~= nil then
+			_result_2:cancel()
+		end
+		HasExistingInstance[key] = nil
+		ApplyProperty(Target, key, value._default_value, ParentCreateElementNode, _allow_parent, false, false, true)
+		value._exec_promise:andThen(function(execValue)
+			ApplyProperty(Target, key, execValue, ParentCreateElementNode, _allow_parent, false, false, true)
+		end):catch(function(err)
+			if value._error_value == nil then
+				warn(`No _error_value provided for WithSuspenseDef(...), Caught Promise Error: {err}`)
+				return nil
+			end
+			ApplyProperty(Target, key, value._error_value, ParentCreateElementNode, _allow_parent, false, false, true)
+		end)
+		HasExistingInstance[key] = value._exec_promise
+		return nil
+	end
+	-- Check if it previously had a WithSuspense() Promise, If it did, Cancel it!
+	local _result_2 = ElementNodeConv
+	if _result_2 ~= nil then
+		_result_2 = _result_2._withSuspensePromises
+	end
+	local _condition_3 = _result_2 ~= nil
+	if _condition_3 then
+		_condition_3 = _is_called_by_with_suspense ~= true
+	end
+	if _condition_3 then
+		local ExistingInstance = ElementNodeConv._withSuspensePromises[Target]
+		local _Existing = ExistingInstance
+		if _Existing ~= nil then
+			_Existing = _Existing[key]
+		end
+		local Existing = _Existing
+		if ExistingInstance ~= nil and Existing ~= nil then
+			Existing:cancel()
 			ExistingInstance[key] = nil
 			local HasContent = false
 			for _element, _element_1 in pairs(ExistingInstance) do
@@ -631,16 +759,10 @@ local function ApplyProperty(Target, key, value, ParentCreateElementNode, _allow
 				break
 			end
 			if HasContent ~= true then
-				local __withTransitionDefs_1 = ElementNodeConv._withTransitionDefs
-				local _target_1 = Target
-				__withTransitionDefs_1[_target_1] = nil
+				ElementNodeConv._withSuspensePromises[Target] = nil
 			end
 		end
 	end
-	--[[
-		
-			 
-	]]
 	if IsInternalFragment(value) then
 		value.children = Target
 		return nil
@@ -657,12 +779,13 @@ end
 	 * @param ParentCreateElementNode
 	 
 ]]
-function ResolveChildren(targetChildren, Target, ParentCreateElementNode)
+function ResolveChildren(targetChildren, inputTarget, ParentCreateElementNode, UseRootServant)
+	local Target = if IsInternalProxyInstance(inputTarget) then inputTarget._getInstance() else inputTarget
 	local children = targetChildren
 	local _children = children
 	local _condition = typeof(_children) == "Instance"
 	if not _condition then
-		_condition = IsStatePropertyValue(children) or IsInternalFragment(children)
+		_condition = IsStatePropertyValue(children) or IsInternalFragment(children) or IsInternalProxyInstance(children)
 	end
 	if _condition then
 		-- children will always be a table (if defined)
@@ -670,9 +793,90 @@ function ResolveChildren(targetChildren, Target, ParentCreateElementNode)
 	end
 	if children ~= nil then
 		for key, child in pairs(children) do
-			HandleChild(key, child, Target, ParentCreateElementNode)
+			HandleChild(key, if not IsStatePropertyValue(child) and IsInternalProxyInstance(child) then child._getInstance() else child, Target, ParentCreateElementNode, UseRootServant)
 		end
 	end
+end
+local function RunWillMountLifecycleEventsForNode(Component, Node)
+	if Node ~= nil then
+		local _result = Node.lifecycles
+		if _result ~= nil then
+			_result = _result.onWillMount
+			if _result ~= nil then
+				-- ▼ ReadonlyArray.forEach ▼
+				local _callback = function(cb)
+					return cb(Component)
+				end
+				for _k, _v in _result do
+					_callback(_v, _k - 1, _result)
+				end
+				-- ▲ ReadonlyArray.forEach ▲
+			end
+		end
+		local _result_1 = Node
+		if _result_1 ~= nil then
+			_result_1 = _result_1.lifecycles
+			if _result_1 ~= nil then
+				_result_1.onWillMount = nil
+			end
+		end
+	end
+end
+local function RunMountLifecycleEventsForNode(Component, Node)
+	if Node ~= nil then
+		local _result = Node.lifecycles
+		if _result ~= nil then
+			_result = _result.onMount
+			if _result ~= nil then
+				-- ▼ ReadonlyArray.forEach ▼
+				local _callback = function(cb)
+					return cb(Component)
+				end
+				for _k, _v in _result do
+					_callback(_v, _k - 1, _result)
+				end
+				-- ▲ ReadonlyArray.forEach ▲
+			end
+		end
+		local _result_1 = Node
+		if _result_1 ~= nil then
+			_result_1 = _result_1.lifecycles
+			if _result_1 ~= nil then
+				_result_1.onMount = nil
+			end
+		end
+	end
+end
+local function RunWillDismountLifecycleEventsForNode(Component, Node)
+	if Node ~= nil then
+		local nodeDismountPresences = Node.servant._dev.nodeDismountPresences
+		Node.servant._dev._dismounting = true
+		local promises = {}
+		local _result = nodeDismountPresences
+		if _result ~= nil then
+			-- ▼ ReadonlyArray.forEach ▼
+			local _callback = function(cb)
+				local _promises = promises
+				local _promise = TS.Promise.new(function(resolve)
+					local res = cb(Component)
+					if TS.Promise.is(res) then
+						res:finally(function()
+							resolve()
+						end)
+						return nil
+					end
+					resolve()
+				end)
+				table.insert(_promises, _promise)
+			end
+			for _k, _v in _result do
+				_callback(_v, _k - 1, _result)
+			end
+			-- ▲ ReadonlyArray.forEach ▲
+		end
+		return TS.Promise.all(promises)
+	end
+	return nil
 end
 local function RunDismountLifecycleEventsForNode(Component, Node)
 	if Node ~= nil then
@@ -682,7 +886,7 @@ local function RunDismountLifecycleEventsForNode(Component, Node)
 			_result = _result.onWillDismount
 		end
 		if _result ~= nil then
-			error("onWillDismount will not work as of now.")
+			error("onWillDismount entry caught after destroying!")
 		end
 		local _result_1 = Node.lifecycles
 		if _result_1 ~= nil then
@@ -702,19 +906,12 @@ local function RunDismountLifecycleEventsForNode(Component, Node)
 		if _result_2 ~= nil then
 			_result_2 = _result_2.lifecycles
 			if _result_2 ~= nil then
-				_result_2.onWillDismount = nil
-			end
-		end
-		local _result_3 = Node
-		if _result_3 ~= nil then
-			_result_3 = _result_3.lifecycles
-			if _result_3 ~= nil then
-				_result_3.onDismount = nil
+				_result_2.onDismount = nil
 			end
 		end
 	end
 end
-local function createElement(Element, targetProps, _children_defined, ...)
+function createElement(Element, targetProps, _children_defined, ...)
 	local jsx_children = { ... }
 	local ParentCreateElementNode = GetElementNode()
 	-- Resolve targetChildren
@@ -746,7 +943,7 @@ local function createElement(Element, targetProps, _children_defined, ...)
 			else
 				-- Is an array of children?
 				for key, value in pairs(_children_defined) do
-					targetChildren[key + 1] = value
+					targetChildren[key] = value
 				end
 			end
 		else
@@ -824,55 +1021,11 @@ local function createElement(Element, targetProps, _children_defined, ...)
 		end
 		Fragment.children = targetChildren
 		-- Fragments support onMount, onWillMount, onDismount, onWillDismount lifecycles, although the "will" lifecycles will not be accurate. (only supported through functions, not props)
-		local _result_1 = ParentCreateElementNode
-		if _result_1 ~= nil then
-			_result_1 = _result_1.lifecycles
-			if _result_1 ~= nil then
-				_result_1 = _result_1.onWillMount
-				if _result_1 ~= nil then
-					-- ▼ ReadonlyArray.forEach ▼
-					local _callback = function(cb)
-						return cb(Fragment)
-					end
-					for _k, _v in _result_1 do
-						_callback(_v, _k - 1, _result_1)
-					end
-					-- ▲ ReadonlyArray.forEach ▲
-				end
-			end
-		end
-		local _result_2 = ParentCreateElementNode
-		if _result_2 ~= nil then
-			_result_2 = _result_2.lifecycles
-			if _result_2 ~= nil then
-				_result_2 = _result_2.onMount
-				if _result_2 ~= nil then
-					-- ▼ ReadonlyArray.forEach ▼
-					local _callback = function(cb)
-						return cb(Fragment)
-					end
-					for _k, _v in _result_2 do
-						_callback(_v, _k - 1, _result_2)
-					end
-					-- ▲ ReadonlyArray.forEach ▲
-				end
-			end
-		end
-		local _result_3 = ParentCreateElementNode
-		if _result_3 ~= nil then
-			_result_3 = _result_3.lifecycles
-			if _result_3 ~= nil then
-				_result_3.onMount = nil
-			end
-		end
-		local _result_4 = ParentCreateElementNode
-		if _result_4 ~= nil then
-			_result_4 = _result_4.lifecycles
-			if _result_4 ~= nil then
-				_result_4.onWillMount = nil
-			end
-		end
+		RunWillMountLifecycleEventsForNode(Fragment, ParentCreateElementNode)
+		RunMountLifecycleEventsForNode(Fragment, ParentCreateElementNode)
 		Fragment.Destroying:Connect(function()
+			-- Fragments have their own ElementServant so we can Destroy it here without affecting the tree upwards.
+			ElementServant:Destroy()
 			RunDismountLifecycleEventsForNode(Fragment, ParentCreateElementNode)
 		end)
 		RemoveElementNode(ElementNode)
@@ -903,7 +1056,7 @@ local function createElement(Element, targetProps, _children_defined, ...)
 			-- We check for any yields within this functional createElement and throw an error if any.
 			-- Check if any Instance was created at the end of the frame.
 			if CreatedInstance == nil then
-				error(`[createElement() Yield] Do you have yielding code within your createElement function? task.wait, WaitForChild, etc. cannot be used within a createElement function unless within a safe thread.\n\ntraceback:\n\n{NoShallowErrorTraceback}`)
+				error(`[createElement() Yield] Did you not return an Instance/Fragment from your functional component? or do you have yielding code within your createElement function? task.wait, WaitForChild, etc. cannot be used within a createElement function unless within a safe thread.\n\ntraceback:\n\n{NoShallowErrorTraceback}`)
 			end
 		end)
 		-- passing targetChildren to props.children
@@ -949,49 +1102,70 @@ local function createElement(Element, targetProps, _children_defined, ...)
 		local FunctionElementNode = CreateElementNode(FunctionElementNodeServant)
 		CreatedInstance = Element(props)
 		-- "mount"/Parent the created instance
-		local _result_1 = FunctionElementNode
-		if _result_1 ~= nil then
-			_result_1 = _result_1.lifecycles
-			if _result_1 ~= nil then
-				_result_1 = _result_1.onWillMount
-				if _result_1 ~= nil then
-					-- ▼ ReadonlyArray.forEach ▼
-					local _callback = function(cb)
-						return cb(CreatedInstance)
-					end
-					for _k, _v in _result_1 do
-						_callback(_v, _k - 1, _result_1)
-					end
-					-- ▲ ReadonlyArray.forEach ▲
-				end
-			end
-		end
+		RunWillMountLifecycleEventsForNode(CreatedInstance, FunctionElementNode)
 		if FunctionElementNode._element_mount ~= nil then
 			ApplyProperty(CreatedInstance, "Parent", FunctionElementNode._element_mount, FunctionElementNode, true)
 		end
-		local _result_2 = FunctionElementNode
-		if _result_2 ~= nil then
-			_result_2 = _result_2.lifecycles
-			if _result_2 ~= nil then
-				_result_2 = _result_2.onMount
-				if _result_2 ~= nil then
-					-- ▼ ReadonlyArray.forEach ▼
-					local _callback = function(cb)
-						return cb(CreatedInstance)
-					end
-					for _k, _v in _result_2 do
-						_callback(_v, _k - 1, _result_2)
-					end
-					-- ▲ ReadonlyArray.forEach ▲
-				end
-			end
-		end
+		RunMountLifecycleEventsForNode(CreatedInstance, FunctionElementNode)
+		local proxyCreatedInstance = nil
 		if ParentCreateElementNode ~= nil then
-			FunctionElementNodeServant:Keep(FunctionElementNodeServant.Destroying:Connect(function()
+			-- const FunctionElementNodeServantRef = CreatedInstance as unknown as Record<string, unknown>;
+			-- const DefaultDestroyFunctionForFunctionElementNodeServant =
+			-- 	FunctionElementNodeServantRef.Destroy as Callback;
+			-- // Take over the Destroy function of the Servant so we can run onWillDismount functions (TODO: recommended we only do this once a onWillDismount lifecycle is added.)
+			-- FunctionElementNodeServantRef.Destroy = () => {
+			-- 	RunWillDismountLifecycleEventsForNode(CreatedInstance, ParentCreateElementNode);
+			-- 	print("overwritten destroy function");
+			-- };
+			-- // const FunctionElementNodeServant.Destroy
+			-- // FunctionElementNodeServant.Keep(
+			-- print("Created Instance: ", CreatedInstance, FunctionElementNodeServant._dev.nodeDismountPresences);
+			CreatedInstance.Destroying:Connect(function()
+				if proxyCreatedInstance ~= nil then
+					table.clear(proxyCreatedInstance)
+					setmetatable(proxyCreatedInstance, nil)
+					table.freeze(proxyCreatedInstance)
+					proxyCreatedInstance = nil
+				end
 				RunDismountLifecycleEventsForNode(CreatedInstance, ParentCreateElementNode)
-			end))
+			end)
+			-- );
 		end
 		RemoveElementNode(FunctionElementNode)
+		if FunctionElementNodeServant._dev.nodeDismountPresences ~= nil then
+			-- nodeDismountPresences exist / onWillDismount is being used within the tree
+			proxyCreatedInstance = CreateProxyInstance(CreatedInstance, function(_, k)
+				if k == "Destroy" then
+					return function()
+						local DismountPromise = RunWillDismountLifecycleEventsForNode(CreatedInstance, FunctionElementNode)
+						if DismountPromise ~= nil then
+							DismountPromise:finally(function()
+								return CreatedInstance:Destroy()
+							end)
+						else
+							CreatedInstance:Destroy()
+						end
+					end
+				end
+				local success, results = pcall(function()
+					return CreatedInstance[k]
+				end)
+				if success == true then
+					return results
+				end
+				local _k = k
+				local _condition_1 = type(_k) == "string"
+				if _condition_1 then
+					_condition_1 = { string.match(k, "^_") }
+				end
+				if _condition_1 then
+					-- ignore anything that starts with _ (more than likely an internal check from us since Roblox doesn't use _ on properties.)
+					return nil
+				end
+				error(`Proxy Instance For "{CreatedInstance:GetFullName()}" Index Error On {k}. {results}`)
+			end)
+			return proxyCreatedInstance
+		end
 		return CreatedInstance
 	end
 	local _element_2 = Element
@@ -1042,7 +1216,7 @@ local function createElement(Element, targetProps, _children_defined, ...)
 			ApplyProperty(CreatedInstance, property, value, ParentCreateElementNode)
 		end
 		-- children
-		ResolveChildren(targetChildren, CreatedInstance, ParentCreateElementNode)
+		ResolveChildren(targetChildren, CreatedInstance, ParentCreateElementNode, nil)
 		-- ResolveChildren(targetChildren ?? props.children, CreatedInstance, ParentCreateElementNode);
 		-- Parent Element
 		if ParentCreateElementNode == nil then
@@ -1373,4 +1547,5 @@ return {
 	withProps = withProps,
 	ResolveChildren = ResolveChildren,
 	createElement = createElement,
+	CreateElementFragmentRenderFunction = CreateElementFragmentRenderFunction,
 }

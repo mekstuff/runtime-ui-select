@@ -9,12 +9,11 @@ local TS = _G[script]
 local Vivid = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "vivid").out).default
 local Input = TS.import(script, script.Parent, "Input").Input
 local CreateStory = TS.import(script, script.Parent.Parent.Parent, "Utils", "CreateStory").CreateStory
-local Choose = TS.import(script, TS.getModule(script, "@rbxts", "ui-labs").src).Choose
+-- import { Choose } from "@rbxts/ui-labs";
 local Controls = {
 	Text = "Input",
 	roundness = 0,
 	padding = 0,
-	color = Choose({ "primary", "border", "default" }, 1),
 }
 return CreateStory(Controls, function(props)
 	local _attributes = table.clone(props)

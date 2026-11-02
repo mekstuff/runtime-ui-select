@@ -4,16 +4,8 @@
 */
 
 import Vivid, { createCleanup, createEffect, createRef, createState, onMount, Slot } from "@mekstuff-rbxts/vivid";
-import {
-	Button,
-	Icons,
-	Input,
-	Label,
-	SettingContent,
-	SettingContentSeperator,
-	Theme,
-	Units,
-} from "@mekstuff-rbxts/vivid-ui";
+import { Button, Input, Label, SettingContent, SettingContentSeparator, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+SettingContentSeparator;
 import { SettingsContext } from "Contexts/SettingsContexts";
 import { Constants } from "Core/Constants/Constants";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
@@ -31,7 +23,7 @@ export function SettingsScreen() {
 	const [SearchFilterText, setSearchFilterText] = createState("");
 	const [SearchBoxFocused, setSearchBoxFocused] = createState(false);
 	const [TotalSearchResults, setTotalSearchResults] = createState(0);
-	const [SettingContentSeperatorsVisible, setSettingContentSeperatorsVisible] = createState(false);
+	const [SettingContentSeparatorsVisible, setSettingContentSeparatorsVisible] = createState(false);
 
 	createEffect(() => {
 		const SearchTextBox = SearchRef();
@@ -47,7 +39,7 @@ export function SettingsScreen() {
 	});
 
 	createEffect(() => {
-		setSettingContentSeperatorsVisible(SearchFilterText() === "");
+		setSettingContentSeparatorsVisible(SearchFilterText() === "");
 	});
 
 	onMount(() => {
@@ -135,7 +127,7 @@ export function SettingsScreen() {
 				<frame Size={new UDim2(1, 0, 0, 8)} BackgroundTransparency={1} />
 
 				{/* Hovering */}
-				<SettingContentSeperator seperatorText={"Hovering"} Visible={SettingContentSeperatorsVisible()} />
+				<SettingContentSeparator separatorText={"Hovering"} Visible={SettingContentSeparatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Hover Detection Enabled"
 					TargetSettingContext="HoverDetectionEnabled"
@@ -172,9 +164,9 @@ export function SettingsScreen() {
 					Dependencies={["HoverDetectionEnabled"]}
 				/>
 				{/* Hover Dimensions */}
-				<SettingContentSeperator
-					seperatorText={"Hover Dimensions"}
-					Visible={SettingContentSeperatorsVisible()}
+				<SettingContentSeparator
+					separatorText={"Hover Dimensions"}
+					Visible={SettingContentSeparatorsVisible()}
 				/>
 				<BindedSettingContextToggleSwitch
 					Text="Show Dimensions On Hover"
@@ -196,7 +188,7 @@ export function SettingsScreen() {
 				/>
 
 				{/* Selecting */}
-				{/* <SettingContentSeperator seperatorText={"Selecting"} Visible={SettingContentSeperatorsVisible()} />
+				{/* <SettingContentSeparator separatorText={"Selecting"} Visible={SettingContentSeparatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Selected Detection Enabled"
 					TargetSettingContext="SelectedDetectionEnabled"
@@ -224,9 +216,9 @@ export function SettingsScreen() {
 				/> */}
 
 				{/* BorderBoxes / Distance Indicators */}
-				<SettingContentSeperator
-					seperatorText={"Distance Indicators"}
-					Visible={SettingContentSeperatorsVisible()}
+				<SettingContentSeparator
+					separatorText={"Distance Indicators"}
+					Visible={SettingContentSeparatorsVisible()}
 				/>
 				<BindedSettingContextToggleSwitch
 					Text="Show Distance Indicators On Hover"
@@ -261,8 +253,18 @@ export function SettingsScreen() {
 					Dependencies={["ShowBorderBoxesOnHover"]}
 				/>
 
+				{/* 3D */}
+				{/* <SettingContentSeparator separatorText={"3D"} Visible={SettingContentSeparatorsVisible()} />
+				<BindedSettingContextToggleSwitch
+					Text="Detect GuiObjects in World"
+					TargetSettingContext="DetectGuiObjectsIn3DWorld"
+					ToolTip="Detects GuiObjects within 3D world, For example, SurfaceGui's that aren't using Adornee and Decals."
+					Dependencies={["HoverDetectionEnabled"]}
+					UnavailableFeature={GetIsNonPluginEnv()}
+				/> */}
+
+				<SettingContentSeparator separatorText={"Behavior"} Visible={SettingContentSeparatorsVisible()} />
 				{/* Behavior */}
-				<SettingContentSeperator seperatorText={"Behavior"} Visible={SettingContentSeperatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Left Click To Select GUI"
 					TargetSettingContext="AllowUserRuntimeUISelection"
@@ -291,7 +293,7 @@ export function SettingsScreen() {
 				/>
 
 				{/* Plugin */}
-				<SettingContentSeperator seperatorText={"Plugin"} Visible={SettingContentSeperatorsVisible()} />
+				<SettingContentSeparator separatorText={"Plugin"} Visible={SettingContentSeparatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Detect Runtime Settings Changes"
 					TargetSettingContext="DetectRuntimeSettingsChanges"

@@ -1,4 +1,4 @@
-export declare const _FragmentIdentifier_ = "__VIVID.FRAGMENT__";
+export declare const _FragmentIdentifier_: "__VIVID.FRAGMENT__";
 export type _internal_fragment = {
     children: unknown;
     _is_fragment: boolean;
@@ -8,4 +8,4 @@ export type _internal_fragment = {
     _force_mounted?: boolean;
 };
 export declare function IsInternalFragment(Target: unknown): Target is _internal_fragment;
-export declare function CreateInternalFragment(targetChildren?: unknown): _internal_fragment;
+export declare function CreateInternalFragment(): _internal_fragment;

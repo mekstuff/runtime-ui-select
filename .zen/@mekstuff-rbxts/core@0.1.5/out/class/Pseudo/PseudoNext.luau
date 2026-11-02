@@ -1,5 +1,3 @@
--- !strict
-
 --[[
     Typed with ❤️ @mekstuff
     16/12/2024 17:58:59
@@ -9,22 +7,29 @@
 
 local RunService = game:GetService("RunService")
 
-local internal = script.Parent.Parent.Parent:FindFirstChild("internal")
+local internal = (script.Parent :: any).Parent.Parent:FindFirstChild("internal")
 local internal_functions = internal:FindFirstChild("functions")
 local internal_proxycreate = internal:FindFirstChild("proxy-create")
 
 local RequireTSModule = require(internal_functions:FindFirstChild("RequireTS"))
 local RequireTS = RequireTSModule.RequireTS
-local GetLuaProvider = RequireTSModule.GetLuaProvider
 
 --> Imports
-local Signal = RequireTS(script.Parent.Parent:FindFirstChild("Signal"):FindFirstChild("Signal")).Signal
+local Signal =
+	RequireTS((script.Parent :: any).Parent:FindFirstChild("Signal"):FindFirstChild("Signal") :: ModuleScript).Signal
 local typeIs = RequireTS(internal_functions:FindFirstChild("typeIs"))._typeIs
 local debugModule = RequireTS(internal:FindFirstChild("debug"):FindFirstChild("debug"))
 local PseudoCollector = RequireTS(internal_functions:FindFirstChild("GetPseudoById")).PseudoCollector
 
+local PseudoPointerStringRef = RequireTS(internal_functions:FindFirstChild("PseudoPointerStringRef"))
+
 local GetIsValidTransmitterFunctionName =
 	RequireTS(internal_functions:FindFirstChild("GetIsValidTransmitterFunctionName")).GetIsValidTransmitterFunctionName
+
+local GetAttributeStringValue =
+	RequireTS(internal_functions:FindFirstChild("GetAttributeStringValue")).GetAttributeStringValue
+local UpdateAttrValueForPseudoInstance =
+	RequireTS(internal_functions:FindFirstChild("UpdateAttrValueForPseudoInstance")).UpdateAttrValueForPseudoInstance
 
 local _PseudoIdentificationAttrServerName =
 	RequireTS(internal_functions:FindFirstChild("GetPseudoByObject"))._PseudoIdentificationAttrServerName
@@ -49,41 +54,14 @@ local assertp, errorp, logp, warnp = debugModule.assertp, debugModule.errorp, de
 
 local IsClient = RunService:IsClient()
 
-local function UpdateAttrValueForPseudoInstance(ObjectProxy: table, key: any, value: any)
-	if RunService:IsStudio() and ObjectProxy._ref ~= nil then
-		if key == "Name" or key == "Parent" then
-			return
-		end
-		if typeof(key) == "string" and key:match("^_") then
-			return --> _private members aren't displayed.
-		end
-		ObjectProxy._attr_set_data = ObjectProxy._attr_set_data or {}
-		if ObjectProxy._attr_set_data[key] ~= nil then
-			return
-		end
-		ObjectProxy._attr_set_data[key] = true
-		local s = pcall(function()
-			ObjectProxy._ref:SetAttribute(key, value) --> Display attributes ( only in studio )
-		end)
-		if s ~= true then
-			ObjectProxy._ref:SetAttribute(key, `** {typeof(value)}: {value} **`) --> Display attributes ( only in studio, cases where value is not a supported attribute type probably. )
-		end
-		task.defer(
-			function() --> defer so AttributeChanged signal can be fired (I think. Events are fired at the end of the frame?)
-				ObjectProxy._attr_set_data[key] = nil
-			end
-		)
-	end
-end
-
 local function GetObjectToParentToForPseudoParentProperty(Value: any): Instance | nil
-	if(Value == nil)then
+	if Value == nil then
 		return nil
 	end
-	if(typeof(Value) == "Instance")then
+	if typeof(Value) == "Instance" then
 		return Value
 	end
-	if(typeIs(Value, "Pseudo")) then
+	if typeIs(Value, "Pseudo") then
 		return Value:GetRef()
 	end
 	return nil
@@ -93,12 +71,12 @@ end
 type Pseudo = {
 	_dev: {
 		_runtime_debug_info: {
-			creationTimestamp: number
+			creationTimestamp: number,
 		},
 		_signals: { [string]: any }?,
 		_observer_servants: { [string]: any }?,
 		OBJECT_PROXY: {
-			_attr_set_data: table?,
+			_attr_set_data: { any }?,
 			_ref: any?,
 			_refType: any?,
 			_InternalID: string?,
@@ -113,7 +91,7 @@ type Pseudo = {
 
 			_replicationParams: {
 				serializer: any?,
-				filter: {string}?,
+				filter: { string }?,
 				filterType: Enum.RaycastFilterType?,
 			}?,
 			_replicationObserverReady: boolean?,
@@ -121,14 +99,14 @@ type Pseudo = {
 			_replicationServerFunctions: { (...any) -> any }?,
 			_replicationClientFunctions: { (...any) -> any }?,
 		},
-		_origin: table,
+		_origin: { any },
 		_classNames: { string },
 		get: any,
 		set: any,
 		has: any,
 		insert: any,
 	},
-}
+} & any
 
 type ObserverListener = {
 	_deps: (...any) -> any,
@@ -138,9 +116,7 @@ type ObserverListener = {
 --> Pseudo Next.
 local PseudoNext: Pseudo = {
 	_G = PSEUDO_G,
-}
-
-PseudoNext.__index = PseudoNext
+} :: any
 
 -- Public
 
@@ -149,33 +125,33 @@ PseudoNext.__index = PseudoNext
 function PseudoNext:GetServerReplicationId(): string | nil
 	if IsClient then
 		local ObjectProxy = self._dev.OBJECT_PROXY
-		if(ObjectProxy == nil)then
+		if ObjectProxy == nil then
 			return nil
 		end
-		if(ObjectProxy._replicationParams == nil)then
+		if ObjectProxy._replicationParams == nil then
 			return nil
 		end
 
-		if(ObjectProxy._replicationIdentifierKey ~= nil)then
+		if ObjectProxy._replicationIdentifierKey ~= nil then
 			return ObjectProxy._replicationIdentifierKey
 		end
 
 		local TRIES = 0
-		while (true) do
+		while true do
 			local Target = ObjectProxy._replicationIdentifierKey
 
-			if (Target ~= nil) then
+			if Target ~= nil then
 				return Target
 			end
 
-			if (TRIES == 10) then
+			if TRIES == 10 then
 				self:warn(
 					`Possible Replication Error (Client) GetServerReplicationId() called and _replicationParams, However no _replicationIdentifierKey has been provided. Returning nil.`
-				);
+				)
 				return nil
 			end
-			task.wait(TRIES / 10);
-			TRIES += 1;
+			task.wait(TRIES / 10)
+			TRIES += 1
 		end
 
 		return nil
@@ -186,26 +162,29 @@ end
 
 function PseudoNext:HasReplicator(): boolean
 	local ObjectProxy = self._dev.OBJECT_PROXY
-	if(ObjectProxy == nil)then
+	if ObjectProxy == nil then
 		return false
 	end
 	return ObjectProxy.Replicator ~= nil
 end
 
-function PseudoNext:EnableReplication(FilterList: {string}?, FilterType: Enum.RaycastFilterType?)
+function PseudoNext:EnableReplication(FilterList: { string }?, FilterType: Enum.RaycastFilterType?)
 	local ObjectProxy = self._dev.OBJECT_PROXY
 
 	if ObjectProxy._replicationParams ~= nil then
 		self:error(`Replication was already enabled. Attempted to call :EnableReplication() multiple times.`)
 	end
 
-	if(FilterList ~= nil) then
-		self:assert(typeof(FilterList) == "table", `EnableReplication() FilterList expected to be an array, got {typeof(FilterList)}`)
+	if FilterList ~= nil then
+		self:assert(
+			typeof(FilterList) == "table",
+			`EnableReplication() FilterList expected to be an array, got {typeof(FilterList)}`
+		)
 	end
 
 	ObjectProxy._replicationParams = {
 		filter = FilterList,
-		filterType = FilterType
+		filterType = FilterType,
 	}
 
 	if IsClient == true then
@@ -217,7 +196,7 @@ function PseudoNext:EnableReplication(FilterList: {string}?, FilterType: Enum.Ra
 	local ServerPseudoClientReplicator = CreatePseudoClientReplicator(self)
 	local ServerReplicatorServant = CreateServant()
 	ServerReplicatorServant:Keep(ServerPseudoClientReplicator)
-	self._dev._internal_activeServerReplicatorServant = ServerReplicatorServant
+	self._dev.set("_internal_activeServerReplicatorServant", ServerReplicatorServant)
 
 	if ServerFunctions ~= nil then
 		for _, func in ServerFunctions do
@@ -269,6 +248,7 @@ function PseudoNext:CreateSignal(SignalName: string): nil
 		return --> The signal was already created.
 	end
 	_dev._signals[SignalName] = true --> mark as "true" for now so __index knows to create the signal if it were to be indexed. __index will replace "true" with the actual Signal if required.
+	return nil
 end
 
 function PseudoNext:GetSignal(SignalName: string): typeof(Signal)
@@ -293,11 +273,20 @@ function PseudoNext:GetRef(): Instance
 	end
 	local TargetRefType = ObjectProxy._refType or "Folder"
 	Ref = if typeof(TargetRefType) == "Instance" then TargetRefType else Instance.new(TargetRefType)
-	self:assert(Ref:GetAttribute(_PseudoIdentificationAttrServerName) == nil, `Attempted to create Pseudo on Instance that is already controlled by a Pseudo. ${Ref}`)
-	Ref:SetAttribute(_PseudoIdentificationAttrServerName, self:GetIdAsync())
+	self:assert(
+		Ref:GetAttribute(_PseudoIdentificationAttrServerName) == nil,
+		`Attempted to create Pseudo on Instance that is already controlled by a Pseudo. ${Ref}`
+	)
 	ObjectProxy._ref = Ref
 	ObjectProxy._refType = nil --> No need to track the ref type further, free memory.
 	self._dev._ref = Ref --> So it gets destroyed
+
+	-- Ref:SetAttribute(_PseudoIdentificationAttrServerName, GetAttributeStringValue(self:GetIdAsync()))
+	UpdateAttrValueForPseudoInstance(
+		ObjectProxy,
+		_PseudoIdentificationAttrServerName,
+		GetAttributeStringValue(self:GetIdAsync())
+	)
 
 	--> Set attributes initially when ref is created
 	if RunService:IsStudio() then
@@ -315,7 +304,13 @@ function PseudoNext:GetRef(): Instance
 				return
 			end
 			ObjectProxy._attr_set_data[attribute] = true
-			self[attribute] = Ref:GetAttribute(attribute)
+
+			local targetValue = Ref:GetAttribute(attribute)
+			if typeof(targetValue) == "InstanceHandle" then
+				--> InstanceHandle support 9/11/2026 (fixes bug where self.x might become an InstanceHandle since attributes support it)
+				targetValue = targetValue:Wait() and targetValue:Get()
+			end
+			self[attribute] = targetValue
 			ObjectProxy._attr_set_data[attribute] = nil
 		end)
 	end
@@ -337,8 +332,8 @@ function PseudoNext:Observe(...)
 end
 
 function PseudoNext:ObserveForEach(Callback, Dependencies)
-	local Proxy: {[string]: any} = {}
-	local CleanupEntries: {[string]: any} = {}
+	local Proxy: { [string]: any } = {}
+	local CleanupEntries: { [string]: any } = {}
 
 	local Observer = self:Observe(function(...)
 		for _, Dependecy in Dependencies do
@@ -347,7 +342,7 @@ function PseudoNext:ObserveForEach(Callback, Dependencies)
 
 			local DependencyValue = self[Dependecy]
 
-			if(DependencyValue == nil)then
+			if DependencyValue == nil then
 				--> property went from {} to nil ?
 				for _, cleanup in CleanupEntries[Dependecy] do
 					tryUseEffectCleanup(cleanup, true)
@@ -357,10 +352,15 @@ function PseudoNext:ObserveForEach(Callback, Dependencies)
 				continue
 			end
 
-			assertp(typeof(DependencyValue) == "table", `ObserveForEach() failure on dependency "{Dependecy}". Expected table or nil, got {typeof(DependencyValue)}`)
+			assertp(
+				typeof(DependencyValue) == "table",
+				`ObserveForEach() failure on dependency "{Dependecy}". Expected table or nil, got {typeof(
+					DependencyValue
+				)}`
+			)
 
 			for oldkey in Proxy[Dependecy] do
-				if(DependencyValue[oldkey] == nil)then
+				if DependencyValue[oldkey] == nil then
 					tryUseEffectCleanup(CleanupEntries[Dependecy][oldkey], true)
 					CleanupEntries[Dependecy][oldkey] = nil
 					Proxy[Dependecy][oldkey] = nil
@@ -368,15 +368,13 @@ function PseudoNext:ObserveForEach(Callback, Dependencies)
 			end
 
 			for key, value in DependencyValue do
-				if(Proxy[Dependecy][key] ~= value) then
+				if Proxy[Dependecy][key] ~= value then
 					--> update
 					tryUseEffectCleanup(CleanupEntries[Dependecy][key])
 					CleanupEntries[Dependecy][key] = Callback(key, value, Dependecy)
 				end
 				Proxy[Dependecy][key] = value
 			end
-			
-
 		end
 	end, Dependencies)
 
@@ -401,6 +399,9 @@ function PseudoNext:ObserveOnce(Callback: any, dependencies: any?)
 	local Observer
 	Observer = self:ObserveNext(function(...)
 		Callback(...)
+		if Observer.Destroy == nil then
+			return
+		end
 		Observer:Destroy()
 	end, dependencies)
 	return Observer
@@ -415,6 +416,7 @@ function PseudoNext:ObserveNext(Callback: any, dependencies: any?, CallbackQueue
 			return Callback(...)
 		end
 		TotalExecutions += 1
+		return
 	end, dependencies)
 end
 
@@ -425,7 +427,7 @@ function PseudoNext:useBindingEffect(Properties: { string }, Dependencies: { any
 		if typeof(Property) == "table" then
 			for key, value in Property do
 				table.insert(InvertedProperties, {
-					[value] = key
+					[value] = key,
 				})
 				DynamicallyMappedProps[value] = key
 			end
@@ -514,15 +516,39 @@ function PseudoNext:Destroy(): nil
 		--> Remove from PseudoCollector, only if the ID was generated previously.
 		PseudoCollector[self:_GetInternalID()] = nil
 	end
-	local _ref = self._dev.OBJECT_PROXY._ref
-	if _ref ~= nil then
-		_ref:Destroy()
+
+	if self._dev.OBJECT_PROXY ~= nil then
+		local _ref = self._dev.OBJECT_PROXY._ref
+		if _ref ~= nil then
+			_ref:Destroy()
+		end
+		table.clear(self._dev.OBJECT_PROXY)
 	end
 
 	self._dev.OBJECT_PROXY = nil --> Remove the OBJECT_PROXY from _dev since _dev will be cleaned up.
 	DestroyOnObject(self._dev, 10, "[ADD PSEUDONEXT WARN NAME]") --> TODO: Lower traverse value for optimization purposes/figure a different more optimized method. to cleanup _dev
-	-- setmetatable(self, nil) --> TODO: implement?
+
+	-- setmetatable(self, nil)
+	self._dev.set = nil
+	self._dev.get = nil
+	self._dev.has = nil
+	self._dev.insert = nil
 	self._dev._destroyed = true
+	-- self._classNames = nil
+	-- self._origin = nil
+
+	--[[
+	setmetatable(self, nil)
+	table.clear(self)
+	table.freeze(self)
+	]]
+
+	--[[
+	self._dev._destroyed = true
+	table.freeze(self)
+	]]
+
+	return nil
 end
 
 function PseudoNext:useDestroying(callback: (...any) -> any)
@@ -567,7 +593,7 @@ function PseudoNext:IsA(ClassName: string): boolean
 	end
 
 	if self._classNames == nil then
-		return
+		return false
 	end
 
 	return if table.find(self._classNames, ClassName) then true else false
@@ -599,6 +625,7 @@ function PseudoNext:_GetInternalID(): string
 	if ID ~= nil then
 		return ID
 	end
+	assert(self._dev._destroyed ~= true, "Attempt to _GetInternalID() of a Destroyed Pseudo.")
 	ID = GetAbstractPseudoId(self.ClassName)
 	self._dev._InternalID = ID --> Cache
 	PseudoCollector[ID] = self --> Add from PseudoCollector only when ID is created.
@@ -615,25 +642,15 @@ function PseudoNext:_HasInternalID(): boolean
 	return self._dev._InternalID ~= nil
 end
 
-local function GetDependencyArrayId(List: table?): string
-	if List == nil then
-		return "*"
-	end
-	if #List == 0 then
-		return "."
-	end
-	local t = table.clone(List)
-	table.sort(t, function(a, b)
-		return a < b
-	end)
-	return table.concat(t, "_")
-end
-
 --[[
 	PseudoNext Removed the _runInitialImmediately param and made the ExecutingObserver Servant no longer an argument of callback.
 	All for optimization sake.
 ]]
-function PseudoNext:_internalCreateObserver(Callback: any, dependencies: table?, executeOnSeperateThread: boolean?): any
+function PseudoNext:_internalCreateObserver(
+	Callback: any,
+	dependencies: { any }?,
+	executeOnSeperateThread: boolean?
+): any
 	if typeof(Callback) == "table" then
 		return {
 			_pseudo = self,
@@ -643,15 +660,19 @@ function PseudoNext:_internalCreateObserver(Callback: any, dependencies: table?,
 
 	local ObserverServant = CreateServant()
 
-	local Cleanups: {any} | nil
+	local Cleanups: { any } | nil
 
-	local function RunCleanups(...: {any})
-		if(Cleanups == nil)then
+	local function RunCleanups(...: any)
+		if Cleanups == nil then
 			return
 		end
 		for _, Cleanup in Cleanups do
 			tryUseEffectCleanup(Cleanup, ...)
 		end
+		if Cleanups == nil then
+			return
+		end
+		table.clear(Cleanups)
 		Cleanups = nil
 	end
 
@@ -659,7 +680,7 @@ function PseudoNext:_internalCreateObserver(Callback: any, dependencies: table?,
 	-- same is possible with normal behavior with PropertyChanged. make sure this doesn't happen.
 	local function ExecuteCallback(...)
 		RunCleanups()
-		Cleanups = {Callback(...)}
+		Cleanups = { Callback(...) }
 	end
 
 	if dependencies == nil then
@@ -682,6 +703,9 @@ function PseudoNext:_internalCreateObserver(Callback: any, dependencies: table?,
 		else
 			ExecuteCallback()
 		end
+		ObserverServant:Keep(self.Destroying:Connect(function(...)
+			RunCleanups(...)
+		end))
 		return
 	end
 
@@ -902,11 +926,13 @@ PseudoNext.__index = function(self: Pseudo, key: any)
 	end
 
 	--> indexing Signals
-	local IsSignalValue = if ObjectProxy ~= nil and self._dev._signals ~= nil then self._dev._signals[key] else nil
+	local IsSignalValue = if ObjectProxy ~= nil and self._dev._signals ~= nil
+		then (self._dev._signals :: any)[key]
+		else nil
 	if IsSignalValue == true then
 		--> It's a signal that should exist, create now.
-		local Sig = Signal.new()
-		self._dev._signals[key] = Sig
+		local Sig = Signal.new();
+		(self._dev :: any)._signals[key] = Sig
 		return Sig
 	elseif IsSignalValue ~= nil then
 		--> Already created the signal previously, return.
@@ -919,7 +945,7 @@ PseudoNext.__index = function(self: Pseudo, key: any)
 	elseif self._origin ~= nil and self._origin[key] ~= nil then
 		targetValue = self._origin[key]
 	else
-		targetValue = PseudoNext[key]
+		targetValue = (PseudoNext :: { any })[key]
 	end
 
 	--> override any "Server" or "Client" Replicator functions so we expose the initial arguments to the Replicator
@@ -930,7 +956,6 @@ PseudoNext.__index = function(self: Pseudo, key: any)
 		and (GetIsValidTransmitterFunctionName(key))
 		and ObjectProxy[key] ~= targetValue --> once it is not apart of the ObjectProxy, we can safely assume it was not overriden by the Replicator yet.
 	then
-		print("did override.", key)
 		local initialFunc = targetValue
 		targetValue = function(...)
 			local kid = `Pseudo.ValidReplicatorFuncNameData.{tostring(initialFunc)}`
@@ -941,7 +966,7 @@ PseudoNext.__index = function(self: Pseudo, key: any)
 	end
 
 	if targetValue == nil and key == "Replicator" then
-		if(IsClient == true and ObjectProxy._replicationParams ~= nil) then
+		if IsClient == true and ObjectProxy._replicationParams ~= nil then
 			--> Replication was enable but the script to setup `this` as a replicated class did not run yet
 			--> So we set it up here, View Pseudo-Replicator-Client->init.client.lua for more information.
 			local Replicator = CreateClientReplicator(self)
@@ -996,7 +1021,8 @@ PseudoNext.__newindex = function(self: Pseudo, key: any, value: any, allowSameVa
 		return
 	end
 
-	local ObjectProxy = self._dev.OBJECT_PROXY
+	local _dev = self._dev
+	local ObjectProxy = _dev.OBJECT_PROXY
 
 	if key == "$server" and value ~= nil and IsClient ~= true then
 		if ObjectProxy._replicationObserverReady ~= true then
@@ -1027,7 +1053,7 @@ PseudoNext.__newindex = function(self: Pseudo, key: any, value: any, allowSameVa
 		table.insert(self._classNames, value)
 	end
 
-	local ObjectSignals = self._dev._signals --> So we don't use any api methods, faster indexing?
+	local ObjectSignals = _dev._signals --> So we don't use any api methods, faster indexing?
 
 	--> Fire PrePropertyChanged and PropertyChanged Signals.
 	if key ~= "PrePropertyChanged" and ObjectSignals ~= nil and ObjectSignals.PrePropertyChanged ~= nil then
@@ -1069,52 +1095,69 @@ PseudoNext.__newindex = function(self: Pseudo, key: any, value: any, allowSameVa
 	UpdateAttrValueForPseudoInstance(ObjectProxy, key, value)
 end
 
+PseudoNext.__call = function(self: Pseudo, ...)
+	if self.__metamethod_call == nil then
+		self:error(`__metamethod_call not assigned to {self}, cannot PseudoNext() on object.`)
+		return
+	end
+	return self.__metamethod_call(self, ...)
+end
+
 --> Main class logic
 local function SetupPseudoAsync(self: Pseudo, ClassName: string, ReferenceInstanceType: any?)
 	self._dev = {
 		OBJECT_PROXY = {
 			_refType = ReferenceInstanceType,
 		},
-
 		has = function(key)
 			if self._dev == nil then
 				return
 			end
-			return self._dev[key] ~= nil
+			return (self._dev :: any)[key] ~= nil
 		end,
 		set = function(key: any, value: any)
 			if self._dev == nil then
 				return
 			end
-			self._dev[key] = value
+			--> Pseudo's in _dev are stored as PointerStringRefs, This is an optimization and it recommended to use set() and get() when working with Pseudo's in _dev.
+			local PseudoPointerRef = if typeof(value) == "string"
+				then PseudoPointerStringRef.CreatePseudoPointerStringRef(value)
+				else nil
+			(self._dev :: any)[key] = PseudoPointerRef or value
 		end,
 		get = function(key: any)
 			if self._dev == nil then
 				return
 			end
-			return self._dev[key]
+			local TargetValue = (self._dev :: any)[key]
+			local PseudoFromPointerRef = if typeof(TargetValue) == "string"
+				then PseudoPointerStringRef.GetPseudoFromPointerStringRef(TargetValue)
+				else nil
+			return PseudoFromPointerRef or TargetValue
 		end,
 		insert = function(item: any)
 			if self._dev == nil then
 				return
 			end
-			table.insert(self._dev, item)
+			local PseudoPointerRef = PseudoPointerStringRef.CreatePseudoPointerStringRef(item)
+			table.insert(self._dev, PseudoPointerRef or item)
 		end,
+		--[[ RUNTIME DEBUGGER DISABLED
 		_internal_runtime_debug_info = {
 			creationTimestamp = DateTime.now().UnixTimestamp,
 		}
-	}
+		]]
+	} :: any
 
 	-- local originMetatable = getmetatable(self)
 	self._origin = getmetatable(self)
 	self._classNames = {}
 
-
-	setmetatable(self, PseudoNext)
+	setmetatable(self :: { any }, PseudoNext)
 	self.Name = ClassName
 	self.ClassName = ClassName
 
-	self:GetIdAsync()
+	-- self:GetIdAsync()
 end
 
 function PseudoNext.constructor(...: any)

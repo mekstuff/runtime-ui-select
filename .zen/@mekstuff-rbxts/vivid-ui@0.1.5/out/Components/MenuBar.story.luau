@@ -13,7 +13,7 @@ local MenuBarButton = TS.import(script, script.Parent, "MenuBarButton").MenuBarB
 local Icons = TS.import(script, script.Parent.Parent, "Icons").Icons
 local Controls = {}
 return CreateStory(Controls, function(props)
-	return Vivid.createElement(Vivid.createFragment, nil, Vivid.createElement(MenuBar), Vivid.createElement(MenuBar, nil, Vivid.createElement(MenuBarButton, {
+	return Vivid.createElement(Vivid.Fragment, nil, Vivid.createElement(MenuBar), Vivid.createElement(MenuBar, nil, Vivid.createElement(MenuBarButton, {
 		Text = "File",
 	}), Vivid.createElement(MenuBarButton, {
 		Text = "Edit",

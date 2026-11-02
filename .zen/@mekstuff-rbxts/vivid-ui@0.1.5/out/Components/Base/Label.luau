@@ -45,7 +45,6 @@ local function Label(props)
 		Text = Properties.Text,
 		TextSize = Properties.TextSize,
 		TextColor3 = Properties.TextColor3,
-		TextFits = Properties.TextFits,
 		TextScaled = Properties.TextScaled,
 		TextWrapped = Properties.TextWrapped,
 		TextStrokeColor3 = Properties.TextStrokeColor3,
@@ -119,7 +118,6 @@ local function Label(props)
 		AutoButtonColor = false,
 		Active = false,
 		Interactable = false,
-		TextTruncate = Enum.TextTruncate.SplitWord,
 		AutomaticSize = Enum.AutomaticSize.XY,
 		TextSize = Units().BaseTextSize,
 		TextColor3 = Theme().MainText,
@@ -139,7 +137,7 @@ local function Label(props)
 		end
 		return _condition
 	end)()
-	return Vivid.createElement(Vivid.createFragment, nil, Vivid.createElement("textbutton", _attributes), Vivid.createElement(Switch, {
+	return Vivid.createElement(Vivid.Fragment, nil, Vivid.createElement("textbutton", _attributes), Vivid.createElement(Switch, {
 		conditional = IsEditingText(),
 	}, Vivid.createElement(Case, {
 		condition = true,
@@ -151,7 +149,7 @@ local function Label(props)
 	end), Vivid.createElement(Case, {
 		condition = false,
 	}, function()
-		return Vivid.createElement(Vivid.createFragment)
+		return Vivid.createElement(Vivid.Fragment)
 	end)))
 end
 return {

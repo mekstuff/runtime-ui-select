@@ -7,9 +7,9 @@ export declare function Drawer(props: {
     horizontalAlignment?: Enum.HorizontalAlignment;
     children?: unknown;
     props?: Partial<{
-        Backdrop: Vivid.FC.Props<TextButton>;
-        Container: Vivid.FC.Props<TextButton>;
-        UICorner: Vivid.FC.Props<UICorner>;
-        ZIndexLayer: Vivid.FC.Props<Frame>;
+        Backdrop: Vivid.FC.InstanceProperties<TextButton>;
+        Container: Vivid.FC.InstanceProperties<TextButton>;
+        UICorner: Vivid.FC.InstanceProperties<UICorner>;
+        ZIndexLayer: Vivid.FC.InstanceProperties<Frame>;
     }>;
 }): Instance;

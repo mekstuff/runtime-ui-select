@@ -1,4 +1,4 @@
-import { ButtonProps } from "./Base";
+import { ButtonProps } from "./Base/index";
 export type MenuBarButtonProps = ButtonProps;
 /**
  * Used as a child of a `MenuBar` component

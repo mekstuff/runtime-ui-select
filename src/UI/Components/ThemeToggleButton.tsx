@@ -7,6 +7,7 @@ import Vivid, { createCleanup, createEffect, createState, use } from "@mekstuff-
 import { Button } from "@mekstuff-rbxts/vivid-ui";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 import { UnavailableFeature } from "./UnavailableFeature";
+import { Constants } from "Core/Constants/Constants";
 
 export function ThemeToggleButton() {
 	if (GetIsNonPluginEnv() === true) {
@@ -14,11 +15,11 @@ export function ThemeToggleButton() {
 	}
 	const SettingsStudio = settings().Studio as Studio & { Theme: Instance };
 	const [CurrentTheme, setCurrentTheme] = createState(SettingsStudio.Theme);
-	const [AvailableThemes, setAvailableThemes] = createState(SettingsStudio.GetAvailableThemes() as Instance[]);
+	const [AvailableThemes, setAvailableThemes] = createState(SettingsStudio.GetAvailableThemes() as StudioTheme[]);
 
 	const ThemeChangedListener = SettingsStudio.ThemeChanged.Connect(() => {
 		setCurrentTheme(SettingsStudio.Theme);
-		setAvailableThemes(SettingsStudio.GetAvailableThemes() as Instance[]);
+		setAvailableThemes(SettingsStudio.GetAvailableThemes() as StudioTheme[]);
 	});
 
 	createCleanup(() => {

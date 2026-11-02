@@ -1,4 +1,4 @@
-import Vivid from "..";
+import Vivid from "../index";
 export type forEachProps<T, I extends Instance, UID> = {
     each: T;
     children?: (props: T extends unknown[] ? T[number] : T[keyof T], index: Vivid.StatefulCallback<T extends unknown[] ? number : keyof T>, uid: UID) => I;
