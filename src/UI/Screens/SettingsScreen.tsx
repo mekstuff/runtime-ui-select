@@ -254,14 +254,14 @@ export function SettingsScreen() {
 				/>
 
 				{/* 3D */}
-				<SettingContentSeparator separatorText={"3D"} Visible={SettingContentSeparatorsVisible()} />
+				{/* <SettingContentSeparator separatorText={"3D"} Visible={SettingContentSeparatorsVisible()} />
 				<BindedSettingContextToggleSwitch
 					Text="Detect GuiObjects in World"
 					TargetSettingContext="DetectGuiObjectsIn3DWorld"
 					ToolTip="Detects GuiObjects within 3D world, For example, SurfaceGui's that aren't using Adornee and Decals."
 					Dependencies={["HoverDetectionEnabled"]}
 					UnavailableFeature={GetIsNonPluginEnv()}
-				/>
+				/> */}
 
 				<SettingContentSeparator separatorText={"Behavior"} Visible={SettingContentSeparatorsVisible()} />
 				{/* Behavior */}
