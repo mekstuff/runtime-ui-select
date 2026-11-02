@@ -15,11 +15,11 @@ export function ThemeToggleButton() {
 	}
 	const SettingsStudio = settings().Studio as Studio & { Theme: Instance };
 	const [CurrentTheme, setCurrentTheme] = createState(SettingsStudio.Theme);
-	const [AvailableThemes, setAvailableThemes] = createState(SettingsStudio.GetAvailableThemes() as Instance[]);
+	const [AvailableThemes, setAvailableThemes] = createState(SettingsStudio.GetAvailableThemes() as StudioTheme[]);
 
 	const ThemeChangedListener = SettingsStudio.ThemeChanged.Connect(() => {
 		setCurrentTheme(SettingsStudio.Theme);
-		setAvailableThemes(SettingsStudio.GetAvailableThemes() as Instance[]);
+		setAvailableThemes(SettingsStudio.GetAvailableThemes() as StudioTheme[]);
 	});
 
 	createCleanup(() => {
