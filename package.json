@@ -65,10 +65,14 @@
 			}
 		}
 	},
+	"resolutions": {
+		"**/**/glob": "^14.0.2",
+		"**/**/minimatch": "^11.0.1"
+	},
 	"dependencies": {
-		"@mekstuff-rbxts/collector": "file:.zen\\@mekstuff-rbxts\\collector@0.1.6",
-		"@mekstuff-rbxts/core": "file:.zen\\@mekstuff-rbxts\\core@0.1.5",
-		"@mekstuff-rbxts/vivid": "file:.zen\\@mekstuff-rbxts\\vivid@0.1.0",
-		"@mekstuff-rbxts/vivid-ui": "file:.zen\\@mekstuff-rbxts\\vivid-ui@0.1.5"
+		"@mekstuff-rbxts/collector": "file:.zen/@mekstuff-rbxts/collector@0.1.6",
+		"@mekstuff-rbxts/core": "file:.zen/@mekstuff-rbxts/core@0.1.5",
+		"@mekstuff-rbxts/vivid": "file:.zen/@mekstuff-rbxts/vivid@0.1.0",
+		"@mekstuff-rbxts/vivid-ui": "file:.zen/@mekstuff-rbxts/vivid-ui@0.1.5"
 	}
 }
