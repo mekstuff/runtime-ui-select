@@ -8,6 +8,7 @@ local TS = _G[script]
 		Servant is now ServantNext. View ServantNext.luau
 	
 ]]
+-- import { threader } from "@mekstuff-rbxts/threader";
 local ServantNext = TS.import(script, script.Parent, "ServantNext").ServantNext
 local Servant
 local function ServantPromise(callback)
@@ -28,9 +29,9 @@ local function ServantPromise(callback)
 			end
 		end
 		if executionServant ~= nil then
-			executionServant:Keep(function(threader)
+			executionServant:Keep(function()
 				local s, r = pcall(function()
-					callback(customResolve, customReject, onCancel, executionServant, threader)
+					callback(customResolve, customReject, onCancel, executionServant)
 				end)
 				if s == false then
 					customReject(r)

@@ -1,25 +1,27 @@
-import { Servant, State } from "@mekstuff-rbxts/core";
-type NodeType = "ElementNode" | "EffectNode" | "StateNode" | "lifecycleNode";
+import { Servant, Spring, State } from "@mekstuff-rbxts/core";
+type NodeType = "ElementNode" | "EffectNode" | "StateNode" | "DismountPresenceNode" | "lifecycleNode";
 export declare function AddActiveNode(NodeType: NodeType, NodeData: unknown): unknown;
 export declare function RemoveActiveNode(NodeType: NodeType, NodeData: unknown): void;
 export declare function GetLatestActiveNode<T>(NodeType: NodeType): T | undefined;
 type ElementNodeLifecycleEvent = "onMount" | "onWillMount" | "onDismount" | "onWillDismount";
-type ElementNode = {
+export type ElementNode = {
     _is_placeholder?: boolean;
     _connected_cleanups?: boolean;
     servant: Servant;
-    addLifeCycleEvent: (ev: ElementNodeLifecycleEvent, cb: Callback) => void;
+    addLifeCycleEvent: (ev: ElementNodeLifecycleEvent, cb: (...args: unknown[]) => void) => void;
+    removeLifeCycleEvent: (ev: ElementNodeLifecycleEvent, cb: (...args: unknown[]) => void) => void;
     lifecycles?: Record<string, Callback[]>;
     _dead?: boolean;
     _element_mount?: unknown;
     _element_node_ref?: ElementNode;
+    _spring_controlled_motions?: Record<string, Spring<any>>;
 };
 export declare function GetElementNode(): ElementNode | undefined;
 export declare function RemoveElementNode(Node: ElementNode): void;
 export declare function CompareElementNode(Node: ElementNode): boolean;
 export declare function CreateElementNode(NodeServant: Servant): ElementNode;
 export type EffectNode = {
-    add_dependency: (dependency: State<unknown>) => void;
+    add_dependency: (dependency: State<unknown>, excludeFromServantCleanup: boolean) => void;
     add_cleanup: (Callback: Callback) => void;
     effect_dependencies_size: number;
     effect_cleanups?: Callback[];

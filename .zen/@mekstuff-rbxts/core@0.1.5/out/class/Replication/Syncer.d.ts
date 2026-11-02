@@ -31,6 +31,3 @@ export declare class SyncerUsageClass extends Pseudo {
      */
     useCatch(CatchId: string, Callback: (SyncedContent: SyncedContent, Id: string) => void): Servant;
 }
-declare const Syncer: SyncerUsageClass;
-export { Syncer };
-export default Syncer;

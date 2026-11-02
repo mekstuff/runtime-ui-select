@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -16,9 +16,10 @@ local function onDismount(Callback)
 	if ElementNode == nil or CompareElementNode(ElementNode) == false then
 		error(`Attempted to use onDismount invalidly. Make sure you're calling onDismount wthin a createElement function`)
 	end
-	ElementNode.addLifeCycleEvent("onDismount", function()
+	ElementNode.addLifeCycleEvent("onDismount", function(...)
+		local args = { ... }
 		local LCN = CreatelifecycleNode("onDismount")
-		Callback()
+		Callback(unpack(args))
 		RemoveLifecycleNode(LCN)
 	end)
 end

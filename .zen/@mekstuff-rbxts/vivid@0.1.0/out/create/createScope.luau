@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -52,21 +52,26 @@ local function createScope(ElementNodeRef)
 		error("Attempted to createScope within createEffect")
 	end
 	local ScopeServant = Servant.new()
-	local ScopeNode = CreateElementNode(ScopeServant)
+	local ActiveScopeNode = CreateElementNode(ScopeServant)
 	if ElementNodeRef ~= nil then
-		ElementNodeRef._element_node_ref = ScopeNode
+		ElementNodeRef._element_node_ref = ActiveScopeNode
 	end
 	local ScopeObject
 	ScopeObject = {
 		Opened = true,
+		Open = function()
+			if ScopeObject.Opened == true then
+				return nil
+			end
+			ScopeObject.Opened = true
+			ActiveScopeNode = CreateElementNode(ScopeServant)
+		end,
 		Close = function()
-			if ScopeNode == nil then
+			if ActiveScopeNode == nil then
 				error("Scope cannot be closed due to Element Node is not defined.")
 			end
 			ScopeObject.Opened = false
-			if ScopeNode ~= nil then
-				RemoveElementNode(ScopeNode)
-			end
+			RemoveElementNode(ActiveScopeNode)
 		end,
 		Destroy = function()
 			local _arg0 = (table.find(SCOPE_ENTRIES, ScopeServant) or 0) - 1

@@ -1,13 +1,13 @@
 import Vivid from "@mekstuff-rbxts/vivid";
-export type CheckboxProps = Vivid.FC.Props<TextButton> & {
+export type CheckboxProps = Vivid.FC.InstanceProperties<TextButton> & {
     icon?: string;
     toggled: boolean;
     disabled?: boolean;
     props?: Partial<{
-        UICorner: Vivid.FC.Props<UICorner>;
-        UIStroke: Vivid.FC.Props<UIStroke>;
-        ImageLabel: Vivid.FC.Props<ImageLabel>;
-        UIAspectRatioConstraint: Vivid.FC.Props<UIAspectRatioConstraint>;
+        UICorner: Vivid.FC.InstanceProperties<UICorner>;
+        UIStroke: Vivid.FC.InstanceProperties<UIStroke>;
+        ImageLabel: Vivid.FC.InstanceProperties<ImageLabel>;
+        UIAspectRatioConstraint: Vivid.FC.InstanceProperties<UIAspectRatioConstraint>;
     }>;
 };
 export declare function Checkbox(props: CheckboxProps): Instance;

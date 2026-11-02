@@ -1,12 +1,13 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local createElement = TS.import(script, script.Parent.Parent, "create", "createElement").createElement
 local createScope = TS.import(script, script.Parent.Parent, "create", "createScope").createScope
 local _createState = TS.import(script, script.Parent.Parent, "create", "createState")
 local createState = _createState.createState
 local IsStatePropertyValue = _createState.IsStatePropertyValue
-local IsInternalFragment = TS.import(script, script.Parent.Parent, "internal", "Fragment").IsInternalFragment
 local GetElementNode = TS.import(script, script.Parent.Parent, "nodes", "Nodes").GetElementNode
+local IsInternalFragment = TS.import(script, script.Parent.Parent, "internal", "Fragment").IsInternalFragment
+local IsInternalProxyInstance = TS.import(script, script.Parent.Parent, "internal", "ProxyInstance").IsInternalProxyInstance
 --[[
 	*
 	 *
@@ -44,7 +45,8 @@ local function createSwitch(Condition, Truthy, Falsy)
 		assert(_exp, _arg1)
 		local ItemCreationScope = createScope(SwitchElementNode)
 		SwitchElementNode.servant:Keep(ItemCreationScope)
-		setActiveSwitch(createElement(value))
+		local renderedItem = createElement(value)
+		setActiveSwitch(renderedItem)
 		ItemCreationScope.Close()
 	end
 	local UpdateSwitch = function(_val)
@@ -125,6 +127,10 @@ local function createSwitch(Condition, Truthy, Falsy)
 			end
 			_internalState._dev.insert(Condition._state:Observe(function()
 				task.defer(function()
+					if Condition._state == nil then
+						-- State removed before deferred function ran.
+						return nil
+					end
 					-- Defer to attempt to fix bugs where the createSwitch UpdateSwitch() will attempt to run before effect nodes closed. (Patch: 5/30/2025)
 					-- Similar fix applied to forEach update function.
 					UpdateSwitch(Condition._state.State)
@@ -134,20 +140,43 @@ local function createSwitch(Condition, Truthy, Falsy)
 			return ActiveSwitch()
 		end,
 	})
-	_internalState:Observe(function()
-		local _state = _internalState.State
-		local _condition = not (typeof(_state) == "Instance")
-		if _condition then
-			_condition = IsInternalFragment(_internalState.State) ~= true
-		end
-		if _condition then
-			return nil
-		end
-		local Comp = _internalState.State
-		return function()
-			Comp:Destroy()
-		end
-	end, { "State" })
+	local onInternalStateObserve
+	onInternalStateObserve = function(targetState, nested)
+		return targetState:Observe(function()
+			local _StateObjectValue = targetState.State
+			local __StateObjectValue = _StateObjectValue
+			local _condition = not (typeof(__StateObjectValue) == "Instance")
+			if _condition then
+				_condition = not IsStatePropertyValue(_StateObjectValue) and not IsInternalFragment(_StateObjectValue) and not IsInternalProxyInstance(_StateObjectValue)
+			end
+			if _condition then
+				return nil
+			end
+			local _TargetStateObjectInstance = if IsStatePropertyValue(_StateObjectValue) then (_StateObjectValue._state.State) else _StateObjectValue
+			local NestedStateObserver
+			if IsStatePropertyValue(_StateObjectValue) then
+				-- Switch is using a state as the child/what should be rendered.
+				-- e.g. -> a conditional having a child conditional / a state that value is another state.
+				-- print("nested");
+				NestedStateObserver = onInternalStateObserve(_StateObjectValue._state, true)
+			end
+			return function()
+				-- print(_TargetStateObjectInstance);
+				if NestedStateObserver then
+					NestedStateObserver:Destroy()
+					local _StateObjectValueTyped = _StateObjectValue
+					if _StateObjectValueTyped._state ~= nil then
+						_StateObjectValueTyped._state:Destroy()
+					end
+					return nil
+				end
+				if _TargetStateObjectInstance ~= nil then
+					_TargetStateObjectInstance:Destroy()
+				end
+			end
+		end, { "State" })
+	end
+	onInternalStateObserve(_internalState, false)
 	return SwitchMetaTable
 end
 return {

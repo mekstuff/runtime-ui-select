@@ -1,7 +1,7 @@
 import Vivid from "@mekstuff-rbxts/vivid";
-export type ImageProps = Vivid.FC.Props<ImageLabel> & {
+export type ImageProps = Vivid.FC.InstancePropertiesWithChildren<ImageLabel> & {
     props?: Partial<{
-        Container: Vivid.FC.Props<Frame>;
+        Container: Vivid.FC.InstancePropertiesWithChildren<Frame>;
     }>;
     loading?: Vivid.FC.Render;
     fallback?: Vivid.FC.Render;

@@ -67,7 +67,7 @@ if IsInServerReplicationEnvironment then
 					return nil
 				end
 				local success, results = pcall(function()
-					local activePseudoClientReplicator = targetPseudo._dev.activePseudoClientReplicator
+					local activePseudoClientReplicator = targetPseudo._dev.get("activePseudoClientReplicator")
 					if not activePseudoClientReplicator then
 						error("Not an active replicated item.")
 					end

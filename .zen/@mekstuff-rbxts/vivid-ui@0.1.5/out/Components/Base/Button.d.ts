@@ -1,15 +1,15 @@
 import Vivid from "@mekstuff-rbxts/vivid";
 import { SpinnerProps } from "./Spinner";
 import { LabelProps } from "./Label";
-export type ButtonProps = Vivid.FC.Props<TextButton> & {
+export type ButtonProps = Vivid.FC.InstancePropertiesWithChildren<TextButton> & {
     props?: Partial<{
-        UICorner: Vivid.FC.Props<UICorner>;
-        UIStroke: Vivid.FC.Props<UIStroke>;
-        UIPadding: Vivid.FC.Props<UIPadding>;
-        UIListLayout: Vivid.FC.Props<UIListLayout>;
-        IconImage: Vivid.FC.Props<ImageLabel>;
+        UICorner: Vivid.FC.InstanceProperties<UICorner>;
+        UIStroke: Vivid.FC.InstanceProperties<UIStroke>;
+        UIPadding: Vivid.FC.InstanceProperties<UIPadding>;
+        UIListLayout: Vivid.FC.InstanceProperties<UIListLayout>;
+        IconImage: Vivid.FC.InstanceProperties<ImageLabel>;
         TextLabel: LabelProps;
-        SpinnerContainer: Vivid.FC.Props<Frame>;
+        SpinnerContainer: Vivid.FC.InstanceProperties<Frame>;
         Spinner: SpinnerProps;
     }>;
     strokeColor?: Color3;

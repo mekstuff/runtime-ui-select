@@ -1,6 +1,6 @@
 -- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
-local threader = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "threader").out).threader
+-- import { threader } from "@mekstuff-rbxts/threader";
 local Pseudo = TS.import(script, script.Parent.Parent, "class", "Pseudo", "Pseudo").Pseudo
 local Servant = TS.import(script, script.Parent.Parent, "class", "Servant", "Servant").Servant
 local Signal = TS.import(script, script.Parent.Parent, "class", "Signal", "Signal").Signal
@@ -18,8 +18,9 @@ local Compatibility = TS.import(script, script.Parent.Parent, "class", "Compatib
 local Observables = TS.import(script, script.Parent.Parent, "class", "Observables", "Observables").default
 local RuntimeDebugger = TS.import(script, script.Parent.Parent, "class", "RuntimeDebugger", "RuntimeDebugger").default
 local InstanceMapper = TS.import(script, script.Parent.Parent, "class", "InstanceMapper", "InstanceMapper").default
-local Syncer = TS.import(script, script.Parent.Parent, "class", "Replication", "Syncer").default
+-- import Syncer from "../class/Replication/Syncer";
 local Debouncer = TS.import(script, script.Parent.Parent, "class", "Debounce", "Debounce").default
+local Cache = TS.import(script, script.Parent.Parent, "class", "Cache", "Cache").Cache
 local function isService(query)
 	local s, r = pcall(function()
 		return game:GetService(query.Name) == query
@@ -90,7 +91,7 @@ PowerHorse = {
 			local args = { ... }
 			local s = State.new(unpack(args))
 			return s, function(f)
-				s:setState(f)
+				s:SetState(f)
 				return nil
 			end
 		end,
@@ -110,7 +111,6 @@ PowerHorse = {
 	}),
 	Servant = Servant,
 	Signal = Signal,
-	threader = threader,
 	SpreadOperator = SpreadOperator,
 	typeIs = _typeIs,
 	GetPseudoById = GetPseudoById,
@@ -123,8 +123,59 @@ PowerHorse = {
 	Observables = Observables,
 	RuntimeDebugger = RuntimeDebugger,
 	InstanceMapper = InstanceMapper,
-	Syncer = Syncer,
 	Debouncer = Debouncer,
+	Cache = Cache,
+	Promise = TS.Promise,
+	ObserveInstance = function(self, Instance, Callback, Dependencies)
+		local _class
+		do
+			local super = Pseudo
+			_class = setmetatable({}, {
+				__tostring = function()
+					return "Anonymous"
+				end,
+				__index = super,
+			})
+			_class.__index = _class
+			function _class.new(...)
+				local self = setmetatable({}, _class)
+				return self:constructor(...) or self
+			end
+			function _class:constructor()
+				super.constructor(self, `PseudoInstanceObserver={Instance}`)
+			end
+		end
+		local ObserverClass = _class.new()
+		local InstanceAny = Instance
+		local ObserverClassAny = ObserverClass
+		ObserverClass._dev.insert(Instance.Destroying:Connect(function()
+			ObserverClass:Destroy()
+		end))
+		-- ▼ ReadonlyArray.forEach ▼
+		local _callback = function(Dependency)
+			local IsAttribute = (string.match(Dependency, "^#"))
+			if IsAttribute ~= 0 and IsAttribute == IsAttribute and IsAttribute ~= "" and IsAttribute then
+				local _dependency = Dependency
+				local _arg1 = #Dependency
+				local Attribute = string.sub(_dependency, 2, _arg1)
+				ObserverClassAny[Attribute] = Instance:GetAttribute(Attribute)
+				ObserverClass._dev.insert(Instance:GetAttributeChangedSignal(Attribute):Connect(function()
+					ObserverClassAny[Dependency] = Instance:GetAttribute(Attribute)
+				end))
+			else
+				ObserverClassAny[Dependency] = InstanceAny[Dependency]
+				ObserverClass._dev.insert(Instance:GetPropertyChangedSignal(Dependency):Connect(function()
+					ObserverClassAny[Dependency] = InstanceAny[Dependency]
+				end))
+			end
+		end
+		for _k, _v in Dependencies do
+			_callback(_v, _k - 1, Dependencies)
+		end
+		-- ▲ ReadonlyArray.forEach ▲
+		ObserverClass:Observe(Callback, Dependencies)
+		return ObserverClass
+	end,
 	setNodeModules = function(self, node_modules)
 		local _ = getPowerHorseCorePseudo()
 		local _node_modules = node_modules
@@ -343,7 +394,6 @@ PowerHorse = {
 		local args = { ... }
 		return getPowerHorseCorePseudo():log(unpack(args))
 	end,
-	Promise = TS.Promise,
 }
 return {
 	PowerHorse = PowerHorse,

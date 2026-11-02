@@ -5,7 +5,7 @@
 		"downlevelIteration": true,
 		"jsx": "react",
 		"jsxFactory": "Vivid.createElement",
-		"jsxFragmentFactory": "Vivid.createFragment",
+		"jsxFragmentFactory": "Vivid.Fragment",
 		"module": "commonjs",
 		"moduleResolution": "Node",
 		"noLib": true,

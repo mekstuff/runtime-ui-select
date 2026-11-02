@@ -20,7 +20,7 @@ local function MenuBar(props)
 	local _attributes = {
 		Size = createEffect(function()
 			return UDim2.new(1, 0, 0, Units().BaseOffsetHeight * 0.8)
-		end),
+		end)(),
 		FillDirection = Enum.FillDirection.Horizontal,
 		HorizontalAlignment = Enum.HorizontalAlignment.Left,
 		VerticalAlignment = Enum.VerticalAlignment.Center,

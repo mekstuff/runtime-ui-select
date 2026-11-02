@@ -106,7 +106,6 @@ local function Input(props)
 		_result_1 = _result_1.UIStroke
 	end
 	local _attributes_2 = {
-		Name = "DSODS",
 		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 		Color = function()
 			if props.color == "primary" then

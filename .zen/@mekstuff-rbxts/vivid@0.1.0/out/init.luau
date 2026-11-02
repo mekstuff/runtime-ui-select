@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 local exports = {}
 --[[
@@ -57,25 +57,61 @@ local ContainerInternal = TS.import(script, script, "components", "Container").C
 local InfiniteScrollingFrameInternal = TS.import(script, script, "components", "InfiniteScrollingFrame").InfiniteScrollingFrame
 local ResponsiveInternal = TS.import(script, script, "internal", "Responsive").Responsive
 local WithTransitionInternal = TS.import(script, script, "internal", "WithTransition").WithTransition
+local WithSuspenseInternal = TS.import(script, script, "internal", "WithSuspense").WithSuspense
 local useResponsiveInternal = TS.import(script, script, "hooks", "useResponsive").useResponsive
+local EMPTY_ONWILLDISMOUNTFUNC = function()
+	return nil
+end
+local animationPresenceInternal = function()
+	return onWillDismountInternal(EMPTY_ONWILLDISMOUNTFUNC)
+end
+--[[
+	* Given an object `T`, returns a unioned type of all non-readonly property names.
+	 *
+	 * Sourced from React
+	 
+]]
+--[[
+	*
+	 * Sourced from React
+	 
+]]
+--[[
+	*
+	 * Sourced from React
+	 
+]]
+--[[
+	*
+	 * Sourced from React
+	 
+]]
+--[[
+	*
+	 * Sourced from React
+	 
+]]
+-- type CoreProperties<T> = T extends Instance
+-- 	? CoreInstancePropertiesWithChildren<T>
+-- 	: { [P in WritablePropertyNames<T>]?: T[P] | (() => T[P]) } & { children?: any };
 --[[
 	*
 	 * Returns an object with the current Enum.StudioStyleGuideColor (Only available in plugins)
 	 
 ]]
-local function GetStudioStyleGuideColorsInternal()
-	local StyleGuideColors = {}
-	local _exp = Enum.StudioStyleGuideColor:GetEnumItems()
-	-- ▼ ReadonlyArray.forEach ▼
-	local _callback = function(GuideColor)
-		StyleGuideColors[GuideColor.Name] = settings().Studio.Theme:GetColor(GuideColor)
-	end
-	for _k, _v in _exp do
-		_callback(_v, _k - 1, _exp)
-	end
-	-- ▲ ReadonlyArray.forEach ▲
-	return StyleGuideColors
-end
+--[[
+	
+	function GetStudioStyleGuideColorsInternal(): StudioStyleGuideColors {
+		const StyleGuideColors: StudioStyleGuideColors = {} as StudioStyleGuideColors;
+		Enum.StudioStyleGuideColor.GetEnumItems().forEach((GuideColor) => {
+			StyleGuideColors[GuideColor.Name] = (settings().Studio as unknown as { Theme: StudioTheme }).Theme.GetColor(
+				GuideColor,
+			);
+		});
+		return StyleGuideColors;
+	}
+	
+]]
 local Vivid = {}
 do
 	local _container = Vivid
@@ -135,12 +171,15 @@ do
 	_container.Responsive = Responsive
 	local WithTransition = WithTransitionInternal
 	_container.WithTransition = WithTransition
+	local WithSuspense = WithSuspenseInternal
+	_container.WithSuspense = WithSuspense
 	local useResponsive = useResponsiveInternal
 	_container.useResponsive = useResponsive
+	local AnimationPresence = animationPresenceInternal
+	_container.AnimationPresence = AnimationPresence
 	local Fragment = _FragmentIdentifier_
 	_container.Fragment = Fragment
-	local createFragment = _FragmentIdentifier_
-	_container.createFragment = createFragment
+	-- export const createFragment = _FragmentIdentifier_ as unknown as FC.Render<Record<string, any>>; //eslint-disable-line
 	-- used for Fragments that have control of direct child to control props being applied.
 	local createElementPropertyProcessor = "__internal_createElement_property__processor__"
 	_container.createElementPropertyProcessor = createElementPropertyProcessor
@@ -156,8 +195,7 @@ do
 			
 	]]
 	-- Minimal Studio Theme
-	local GetStudioStyleGuideColors = GetStudioStyleGuideColorsInternal
-	_container.GetStudioStyleGuideColors = GetStudioStyleGuideColors
+	-- export const GetStudioStyleGuideColors = GetStudioStyleGuideColorsInternal;
 	-- JSX Export
 	local Show = JSX_Show
 	_container.Show = Show
@@ -187,6 +225,65 @@ do
 	}
 	_container.Utils = Utils
 	-- FC
+	-- export namespace FC {
+	-- 	type childrenObj<Q extends ChildNodeType> = {
+	-- 		//eslint-disable-next-line
+	-- 		children?: ChildNode<any, Q>;
+	-- 	};
+	-- 	export type ComponentMountProps = {
+	-- 		onMount?: () => void;
+	-- 		onWillMount?: () => void;
+	-- 		onDismount?: () => void;
+	-- 		onWillDismount?: () => void;
+	-- 	};
+	-- 	export type createElementPropRef<T extends Instance> = {
+	-- 		ref?: _external_ref<T>;
+	-- 		forwardRef?: _external_ref<T>;
+	-- 	};
+	-- 	export type createElementAttributes = {
+	-- 		/**
+	-- 		 * Attribute Values can be one depth level states.
+	-- 		 */
+	-- 		attributes?: Record<string, AttributeValue>;
+	-- 	};
+	-- 	export type createElementTags = {
+	-- 		tags?: string[];
+	-- 	};
+	-- 	export type ChildNode<T extends Instance = Instance, Q extends ChildNodeType = "list"> = Q extends "list"
+	-- 		? FC.Node<T>[]
+	-- 		: Q extends "dictionary"
+	-- 			? Record<string, FC.Node<T>>
+	-- 			: T[] | Record<string, FC.Node<T>>;
+	-- 	export type Node<I extends Instance = Instance> = I;
+	-- 	export type InstanceProps<T extends Instance | keyof Instances> = T extends keyof Instances
+	-- 		? {
+	-- 				[k in keyof Instances[T]]: Instances[T][k];
+	-- 			}
+	-- 		: {
+	-- 				[k in keyof T]: T[k];
+	-- 			};
+	-- 	export type Props<
+	-- 		T extends keyof Instances | Instance | Callback | object = object,
+	-- 		Q extends ChildNodeType = "dictionary",
+	-- 	> = (T extends Callback
+	-- 		? createElementPropDefs<Parameters<T>[0]> | object
+	-- 		: T extends keyof Instances
+	-- 			? Partial<createElementPropDefs<InstanceProps<T>>>
+	-- 			: T extends Instance
+	-- 				? Partial<createElementPropDefs<InstanceProps<T>>>
+	-- 				: createElementPropDefs<T>) &
+	-- 		createElementPropRef<
+	-- 			T extends Instance ? T : T extends keyof CreatableInstances ? CreatableInstances[T] : Instance
+	-- 		> &
+	-- 		// createElementPropRef<T extends keyof Instances ? Instances[T] : T extends Instance ? T : Instance> &
+	-- 		childrenObj<Q> &
+	-- 		createElementAttributes &
+	-- 		createElementTags &
+	-- 		ComponentMountProps;
+	-- 	export type Render<props = unknown, I extends Instance = Instance, propsdef = false> = propsdef extends false
+	-- 		? (props?: props, children?: unknown) => I
+	-- 		: (props: props, children: unknown) => I;
+	-- }
 	-- JSX
 	-- export function Show<T>(props: {
 	-- 	when: () => unknown;
@@ -269,18 +366,25 @@ end
 for _k, _v in TS.import(script, script, "internal", "WithTransition") or {} do
 	exports[_k] = _v
 end
+for _k, _v in TS.import(script, script, "internal", "WithSuspense") or {} do
+	exports[_k] = _v
+end
 for _k, _v in TS.import(script, script, "hooks", "useResponsive") or {} do
 	exports[_k] = _v
 end
+-- export { GetStudioStyleGuideColorsInternal as GetStudioStyleGuideColors };
 local StoryAdapters = {
 	UILabs = UILabsStoryAdapter,
 }
 for _k, _v in TS.import(script, script, "functions", "forEach") or {} do
 	exports[_k] = _v
 end
+for _k, _v in TS.import(script, script, "vivid-next") or {} do
+	exports[_k] = _v
+end
 local default = Vivid
+exports.AnimationPresence = animationPresenceInternal
 exports.Vivid = Vivid
-exports.GetStudioStyleGuideColors = GetStudioStyleGuideColorsInternal
 exports.Show = JSX_Show
 exports.For = JSX_ForEach
 exports.Switch = JSX_Switch
@@ -288,8 +392,8 @@ exports.Case = JSX_SwitchCase
 exports.Suspense = JSX_Suspense
 exports.Portal = JSX_Portal
 exports.Slot = JSX_Slot
-exports.Animate = createAnimationInternal
 exports.createRef = createRefInternal
+exports.Animate = createAnimationInternal
 exports.StoryAdapters = StoryAdapters
 exports.default = default
 return exports

@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -16,9 +16,10 @@ local function onMount(Callback)
 	if ElementNode == nil or CompareElementNode(ElementNode) == false then
 		error(`Attempted to use onMount invalidly. Make sure you're calling onMount wthin a createElement function`)
 	end
-	ElementNode.addLifeCycleEvent("onMount", function()
+	ElementNode.addLifeCycleEvent("onMount", function(...)
+		local args = { ... }
 		local LCN = CreatelifecycleNode("onMount")
-		Callback()
+		Callback(unpack(args))
 		RemoveLifecycleNode(LCN)
 	end)
 end

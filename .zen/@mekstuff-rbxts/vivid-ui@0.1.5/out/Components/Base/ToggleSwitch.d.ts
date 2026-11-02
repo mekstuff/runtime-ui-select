@@ -1,14 +1,14 @@
 import Vivid from "@mekstuff-rbxts/vivid";
-export declare function ToggleSwitch(props: Vivid.FC.Props<Vivid.FC.InstanceProps<TextButton>> & {
+export declare function ToggleSwitch(props: Vivid.FC.InstanceProperties<TextButton> & {
     setToggled?: Vivid.StateSetter<boolean>;
     onToggle?: Callback;
     toggled: boolean;
     disabled?: boolean;
     props?: Partial<{
-        UICorner: Vivid.FC.Props<UICorner>;
-        UIPadding: Vivid.FC.Props<UIPadding>;
-        ToggleFrame: Vivid.FC.Props<Frame>;
-        ToggleFrameUICorner: Vivid.FC.Props<UICorner>;
-        ToggleFrameUIAspectRatioConstraint: Vivid.FC.Props<UIAspectRatioConstraint>;
+        UICorner: Vivid.FC.InstanceProperties<UICorner>;
+        UIPadding: Vivid.FC.InstanceProperties<UIPadding>;
+        ToggleFrame: Vivid.FC.InstanceProperties<Frame>;
+        ToggleFrameUICorner: Vivid.FC.InstanceProperties<UICorner>;
+        ToggleFrameUIAspectRatioConstraint: Vivid.FC.InstanceProperties<UIAspectRatioConstraint>;
     }>;
 }): Instance;

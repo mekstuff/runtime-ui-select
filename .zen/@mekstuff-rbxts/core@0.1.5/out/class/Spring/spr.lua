@@ -798,10 +798,15 @@ end
 -->
 local PreSimulationSignal: RBXScriptSignal = RunService:IsRunning() and RunService.PreSimulation or RunService.Heartbeat
 local PostSimulationSignal: RBXScriptSignal = RunService:IsRunning() and RunService.PreSimulation or RunService.Heartbeat
-local PreSimulationConnection: RBXScriptConnection
-local PostSimulationConnection: RBXScriptConnection
+local PreSimulationConnection: RBXScriptConnection | nil = nil
+local PostSimulationConnection: RBXScriptConnection | nil = nil
 local _totalActivePseudoSprings = 0
-function spr.updateTotalSprings(increment: boolean)
+function spr.updateTotalSprings(increment: boolean, removeInstanceTraces: any?)
+	if(removeInstanceTraces)then
+		springStates_other[removeInstanceTraces] = nil
+		springStates_render[removeInstanceTraces] = nil
+		completedCallbacks[removeInstanceTraces] = nil
+	end
 	if increment then
 		_totalActivePseudoSprings += 1
 	else
@@ -831,7 +836,7 @@ function spr.updateTotalSprings(increment: boolean)
 	end
 	if not PostSimulationConnection then
 		--[[]]
-		PreSimulationConnection = PostSimulationSignal:Connect(function(dt)
+		PostSimulationConnection = PostSimulationSignal:Connect(function(dt)
 			processSprings(springStates_render, dt)
 		end)
 		--[[

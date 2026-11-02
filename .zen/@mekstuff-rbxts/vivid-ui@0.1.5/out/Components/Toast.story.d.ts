@@ -1,6 +1,7 @@
 declare const _default: {
     controls: {
         id: string;
+        lifetime: number;
         color: never;
         Text: string;
         buttonHidden: boolean;
@@ -9,6 +10,7 @@ declare const _default: {
     };
     render: (uilabsprops: import("@rbxts/ui-labs").InferGenericProps<{
         id: string;
+        lifetime: number;
         color: never;
         Text: string;
         buttonHidden: boolean;

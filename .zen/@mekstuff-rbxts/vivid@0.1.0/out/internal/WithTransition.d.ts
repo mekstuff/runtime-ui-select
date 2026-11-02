@@ -3,11 +3,12 @@ export type WithTransitionDef<T = unknown> = {
     _targetValue: T;
     _defaultValue?: T;
     _initialValue?: T;
+    _dismountValue?: T;
     _damping?: number;
     _frequency?: number;
 };
 export declare function IsWithTransitionDef(Input: unknown): Input is WithTransitionDef;
-type WithTransitionProps<V> = {
+export type WithTransitionProps<V> = {
     Damping?: number;
     Frequency?: number;
     /**
@@ -15,10 +16,13 @@ type WithTransitionProps<V> = {
      */
     DefaultValue?: V;
     /**
-     * THe initial value/begin value.
+     * The initial value/begin value.
      */
     InitialValue?: V;
+    /**
+     * When dismounted, it gives the component "presence", Allowing it to tranisition to the value provided before being completed destroyed.
+     */
+    DismountValue?: V;
 };
-export declare function WithTransition<V>(Value: V, Damping?: number, Frequency?: number, DefaultValue?: V): V;
+export declare function WithTransition<V>(Value: V, Damping?: number, Frequency?: number, InitialValue?: V, DefaultValue?: V, DismountValue?: V): V;
 export declare function WithTransition<V>(Value: V, Props: WithTransitionProps<V>): V;
-export {};

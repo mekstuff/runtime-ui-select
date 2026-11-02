@@ -7,6 +7,7 @@ import Vivid, { createCleanup, createEffect, createState, use } from "@mekstuff-
 import { Button } from "@mekstuff-rbxts/vivid-ui";
 import { GetIsNonPluginEnv } from "Core/Functions/GetUsageContext";
 import { UnavailableFeature } from "./UnavailableFeature";
+import { Constants } from "Core/Constants/Constants";
 
 export function ThemeToggleButton() {
 	if (GetIsNonPluginEnv() === true) {

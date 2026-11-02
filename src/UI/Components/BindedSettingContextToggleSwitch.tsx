@@ -28,6 +28,46 @@ export function BindedSettingContextToggleSwitch(props: {
 		"SettingContextObject not a boolean.",
 	);
 
+	const isDisabled = createEffect(() => {
+		if (props.Dependencies !== undefined) {
+			for (const [_, Dependency] of pairs(props.Dependencies)) {
+				if (SettingsContext[Dependency].get() === false) {
+					let oldState = false;
+					SettingContextObject.set((old) => {
+						oldState = old;
+						return false;
+					});
+					createCleanup((isDestroying) => {
+						if (isDestroying) {
+							return;
+						}
+						SettingContextObject.set(oldState);
+					});
+					return true;
+				}
+			}
+		}
+		if (props.InverseDependencies !== undefined) {
+			for (const [_, InverseDependency] of pairs(props.InverseDependencies)) {
+				if (SettingsContext[InverseDependency].get() === true) {
+					let oldState = false;
+					SettingContextObject.set((old) => {
+						oldState = old;
+						return false;
+					});
+					createCleanup((isDestroying) => {
+						if (isDestroying) {
+							return;
+						}
+						SettingContextObject.set(oldState);
+					});
+					return true;
+				}
+			}
+		}
+		return false;
+	});
+
 	return (
 		<frame
 			tags={[Constants.MainWidgetToolTipCollectionId]}
@@ -57,47 +97,19 @@ export function BindedSettingContextToggleSwitch(props: {
 					<Case condition={true}>{() => <UnavailableFeature />}</Case>
 					<Case condition={false}>
 						{() => (
+							// <Checkbox
+							// 	toggled={SettingContextObject.get()}
+							// 	disabled={isDisabled()}
+							// 	Activated={() => {
+							// 		if (isDisabled()) {
+							// 			return;
+							// 		}
+							// 		SettingContextObject.set((old) => !old);
+							// 	}}
+							// />
 							<ToggleSwitch
 								toggled={SettingContextObject.get()}
-								disabled={createEffect(() => {
-									if (props.Dependencies !== undefined) {
-										for (const [_, Dependency] of pairs(props.Dependencies)) {
-											if (SettingsContext[Dependency].get() === false) {
-												let oldState = false;
-												SettingContextObject.set((old) => {
-													oldState = old;
-													return false;
-												});
-												createCleanup((isDestroying) => {
-													if (isDestroying) {
-														return;
-													}
-													SettingContextObject.set(oldState);
-												});
-												return true;
-											}
-										}
-									}
-									if (props.InverseDependencies !== undefined) {
-										for (const [_, InverseDependency] of pairs(props.InverseDependencies)) {
-											if (SettingsContext[InverseDependency].get() === true) {
-												let oldState = false;
-												SettingContextObject.set((old) => {
-													oldState = old;
-													return false;
-												});
-												createCleanup((isDestroying) => {
-													if (isDestroying) {
-														return;
-													}
-													SettingContextObject.set(oldState);
-												});
-												return true;
-											}
-										}
-									}
-									return false;
-								})()}
+								disabled={isDisabled()}
 								Activated={() => {
 									SettingContextObject.set((old) => !old);
 								}}

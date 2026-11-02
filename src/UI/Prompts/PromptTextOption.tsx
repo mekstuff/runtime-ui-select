@@ -5,6 +5,7 @@
 
 import Vivid, { createScope, Portal } from "@mekstuff-rbxts/vivid";
 import { Button, ModalPrompt } from "@mekstuff-rbxts/vivid-ui";
+import { Constants } from "Core/Constants/Constants";
 
 export function PromptTextOption(props: { title: string; body: string; onOption: (option: boolean) => void }) {
 	const PromptScope = createScope();

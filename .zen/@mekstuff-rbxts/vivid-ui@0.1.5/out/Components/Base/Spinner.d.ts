@@ -3,8 +3,8 @@ export type SpinnerProps = {
     enabled: boolean;
     speed?: number;
     props?: Partial<{
-        Container: Vivid.FC.Props<Frame>;
-        UIAspectRatioConstraint: Vivid.FC.Props<UIAspectRatioConstraint>;
+        Container: Vivid.FC.InstanceProperties<Frame>;
+        UIAspectRatioConstraint: Vivid.FC.InstanceProperties<UIAspectRatioConstraint>;
     }>;
-} & Vivid.FC.Props<ImageLabel>;
+} & Vivid.FC.InstanceProperties<ImageLabel>;
 export declare function Spinner(props: SpinnerProps): Instance;

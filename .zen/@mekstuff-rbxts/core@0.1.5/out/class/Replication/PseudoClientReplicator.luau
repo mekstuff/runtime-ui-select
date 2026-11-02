@@ -9,6 +9,8 @@ local Engine = TS.import(script, script.Parent.Parent, "Engine", "Engine").Engin
 local Pseudo = TS.import(script, script.Parent.Parent, "Pseudo", "Pseudo").Pseudo
 local ReplicatorScriptRemote = TS.import(script, script.Parent.Parent.Parent, "internal", "Replicator").ReplicatorScriptRemote
 local _getCanPropertyReplicateBasedOnReplicationInfo = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "GetCanPropertyReplicateBasedOnReplicationInfo")._getCanPropertyReplicateBasedOnReplicationInfo
+local GetAttributeStringValue = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "GetAttributeStringValue").GetAttributeStringValue
+local UpdateAttrValueForPseudoInstance = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "UpdateAttrValueForPseudoInstance").UpdateAttrValueForPseudoInstance
 local Players = game:GetService("Players")
 local ServerClientInitializersID = `@PowerHorseEngine.PCR.ID`
 local function GetClientInitializersContainer(Player)
@@ -49,7 +51,7 @@ do
 		self._initialized = nil
 		self._internal__totalPCRUsageEntries = {}
 		self.Disconnected = self.Destroying
-		pseudoOriginator._dev.activePseudoClientReplicator = self
+		pseudoOriginator._dev.set("activePseudoClientReplicator", self)
 		local f = Engine.FetchReplicatedStorage():FindFirstChild("PseudoClientReplicators")
 		if not f then
 			f = Instance.new("Folder")
@@ -64,7 +66,7 @@ do
 		end
 		self._ref = ref
 		self.Destroying:Connect(function()
-			pseudoOriginator._dev.activePseudoClientReplicator = nil
+			pseudoOriginator._dev.set("activePseudoClientReplicator", nil)
 			ReplicatorScriptRemote:FireAllClients("remove", self.pseudoOriginator:GetIdAsync())
 		end)
 		self._dev.insert(pseudoOriginator.Destroying:Connect(function()
@@ -164,7 +166,7 @@ do
 					self:warn(`{self} [{self.pseudoOriginator}] cannot transmit key "{key}" with the value: "{value}" for Replication as it cannot be Replicated, You should use a Serializer to pass this data using the Serializer argument of EnableReplication. ==>> {r}`)
 					return nil
 				end
-				return r
+				return GetAttributeStringValue(r, `Key provded "{key}"`)
 			end
 			return value
 		end
@@ -172,13 +174,13 @@ do
 			if not _getCanPropertyReplicateBasedOnReplicationInfo(self.pseudoOriginator, key) then
 				continue
 			end
-			self._ref:SetAttribute(key, getValueForReplication(value, key))
+			UpdateAttrValueForPseudoInstance(self, key, getValueForReplication(value, key))
 		end
 		self._dev.set("_propertyChanged", self.pseudoOriginator.PropertyChanged:Connect(function(key, value)
 			if not _getCanPropertyReplicateBasedOnReplicationInfo(self.pseudoOriginator, key) then
 				return nil
 			end
-			self._ref:SetAttribute(key, getValueForReplication(value, key))
+			UpdateAttrValueForPseudoInstance(self, key, getValueForReplication(value, key))
 		end))
 		local _exp = Players:GetPlayers()
 		-- ▼ ReadonlyArray.forEach ▼
@@ -223,8 +225,8 @@ do
 			self:warn(`{PlayerWhoRequested} attempted to access a Communication Bindable that they don't have access to. Attempt on function "{self.pseudoOriginator}.{funcName}"`)
 			return nil
 		end
-		local bind = Instance.new("RemoteFunction")
-		bind.OnServerInvoke = function(Player, ...)
+		local RemoteFunc = Instance.new("RemoteFunction")
+		RemoteFunc.OnServerInvoke = function(Player, ...)
 			local args = { ... }
 			local HasStorageIdentifier = GetClientInitializersContainerStorageIdentifier(Player, self, self.pseudoOriginator)
 			if HasStorageIdentifier == nil then
@@ -238,8 +240,9 @@ do
 			end
 			return unpack(r)
 		end
-		bind.Name = funcName
-		bind.Parent = Engine.FetchReplicatedStorage():WaitForChild("PseudoClientReplicators"):WaitForChild(self.pseudoOriginator:GetIdAsync())
+		self._dev.insert(RemoteFunc)
+		RemoteFunc.Name = funcName
+		RemoteFunc.Parent = Engine.FetchReplicatedStorage():WaitForChild("PseudoClientReplicators"):WaitForChild(self.pseudoOriginator:GetIdAsync())
 	end
 end
 return {

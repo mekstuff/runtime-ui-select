@@ -2,6 +2,7 @@ import { Servant } from "@mekstuff-rbxts/core";
 import { CreateElementNode } from "../nodes/Nodes";
 type Scope = {
     readonly Opened: boolean;
+    Open: () => void;
     Close: () => void;
     Destroy: () => void;
     Servant: Servant;

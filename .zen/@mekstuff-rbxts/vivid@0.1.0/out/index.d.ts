@@ -28,15 +28,63 @@ import { Container as ContainerInternal } from "./components/Container";
 import { InfiniteScrollingFrame as InfiniteScrollingFrameInternal } from "./components/InfiniteScrollingFrame";
 import { Responsive as ResponsiveInternal } from "./internal/Responsive";
 import { WithTransition as WithTransitionInternal } from "./internal/WithTransition";
+import { WithSuspense as WithSuspenseInternal } from "./internal/WithSuspense";
 import { useResponsive as useResponsiveInternal } from "./hooks/useResponsive";
-type ChildNodeType = "list" | "dictionary" | "listdict";
+declare const animationPresenceInternal: () => void;
+export { animationPresenceInternal as AnimationPresence };
+/** Given an object `T`, returns a unioned type of all non-readonly property names.
+ *
+ * Sourced from React
+ */
+export type WritablePropertyNames<T> = {
+    [K in keyof T]-?: T[K] extends Callback ? never : (<F>() => F extends {
+        [Q in K]: T[K];
+    } ? 1 : 2) extends <F>() => F extends {
+        -readonly [Q in K]: T[K];
+    } ? 1 : 2 ? K : never;
+}[keyof T];
+export type InstanceRef<T extends Instance> = {
+    ref?: _external_ref<T>;
+    forwardRef?: _external_ref<T>;
+};
+/**
+ * Sourced from React
+ */
+export type InstanceAttributes<T extends Instance> = {
+    [P in WritablePropertyNames<T>]?: T[P] | (() => T[P]);
+} & InstanceEvent<T> & InstanceRef<T> & {
+    tags?: string[];
+    attributes?: Record<string, AttributeValue>;
+};
+/**
+ * Sourced from React
+ */
+export type InstanceEvent<T extends Instance> = {
+    [K in ExtractKeys<T, RBXScriptSignal>]?: T[K] extends RBXScriptSignal<infer F> ? (rbx: T, ...args: Parameters<F>) => void : never;
+};
+/**
+ * Sourced from React
+ */
+export type InstanceChangeEvent<T extends Instance> = {
+    [key in InstancePropertyNames<T>]?: (rbx: T) => void;
+};
+/**
+ * Sourced from React
+ */
+type CoreInstanceProperties<T extends Instance> = InstanceAttributes<T> & {
+    Tag?: string;
+};
+type CoreInstancePropertiesWithChildren<T extends Instance> = CoreInstanceProperties<T> & {
+    children?: any;
+};
+export type StatefulCallback<T> = VividState<T>;
+export type StateSetter<T> = VividSetState<T>;
 type StudioStyleGuideColors = {
     [k in Enum.StudioStyleGuideColor as k["Name"]]: Color3;
 };
 /**
  * Returns an object with the current Enum.StudioStyleGuideColor (Only available in plugins)
  */
-declare function GetStudioStyleGuideColorsInternal(): StudioStyleGuideColors;
 export declare namespace Vivid {
     const createSlot: typeof createSlotInternal;
     const createState: typeof createStateInternal;
@@ -66,11 +114,12 @@ export declare namespace Vivid {
     const InfiniteScrollingFrame: typeof InfiniteScrollingFrameInternal;
     const Responsive: typeof ResponsiveInternal;
     const WithTransition: typeof WithTransitionInternal;
+    const WithSuspense: typeof WithSuspenseInternal;
     const useResponsive: typeof useResponsiveInternal;
+    const AnimationPresence: () => void;
     type StatefulCallback<T> = VividState<T>;
     type StateSetter<T> = VividSetState<T>;
     const Fragment: FC.Render<Record<string, any>>;
-    const createFragment: FC.Render<Record<string, any>>;
     const createElementPropertyProcessor: any;
     type createElementPropertyProcessorProps = {
         Key: string;
@@ -79,7 +128,6 @@ export declare namespace Vivid {
         ApplyProperty: (Target: Instance, key: string, value: unknown, ParentCreateElementNode?: ReturnType<typeof CreateElementNode>) => void;
         ParentCreateElementNode?: ReturnType<typeof CreateElementNode>;
     };
-    const GetStudioStyleGuideColors: typeof GetStudioStyleGuideColorsInternal;
     const Show: typeof JSX_Show;
     const For: typeof JSX_ForEach;
     const Switch: typeof JSX_Switch;
@@ -107,48 +155,19 @@ export declare namespace Vivid {
         CompareElementNode: typeof CompareElementNode;
     };
     namespace FC {
-        type childrenObj<Q extends ChildNodeType> = {
-            children?: ChildNode<any, Q>;
-        };
-        export type ComponentMountProps = {
-            onMount?: () => void;
-            onWillMount?: () => void;
-            onDismount?: () => void;
-            onWillDismount?: () => void;
-        };
-        export type createElementPropDefs<T> = {
-            [k in keyof T]: SupportedComponentProperty<T[k]>;
-        };
-        export type createElementPropRef<T extends Instance> = {
-            ref?: _external_ref<T>;
-            forwardRef?: _external_ref<T>;
-        };
-        export type createElementAttributes = {
-            /**
-             * Attribute Values can be one depth level states.
-             */
-            attributes?: Record<string, AttributeValue>;
-        };
-        export type createElementTags = {
-            tags?: string[];
-        };
-        export type FunctionalPropertyValue<T> = () => T extends true ? boolean : T extends false ? boolean : T;
-        export type SupportedComponentProperty<T> = T extends RBXScriptSignal ? (Ref: any, ...args: T extends RBXScriptSignal<infer X> ? Parameters<X> : never) => void : T | FC.FunctionalPropertyValue<T>;
-        export type ChildNode<T extends Instance = Instance, Q extends ChildNodeType = "list"> = Q extends "list" ? FC.Node<T>[] : Q extends "dictionary" ? Record<string, FC.Node<T>> : T[] | Record<string, FC.Node<T>>;
-        export type Node<I extends Instance = Instance> = I;
-        export type InstanceProps<T extends Instance | keyof Instances> = T extends keyof Instances ? {
-            [k in keyof Instances[T]]: Instances[T][k];
-        } : {
-            [k in keyof T]: T[k];
-        };
-        export type Props<T extends keyof Instances | Instance | Callback | object = object, Q extends ChildNodeType = "dictionary"> = (T extends Callback ? createElementPropDefs<Parameters<T>[0]> | object : T extends keyof Instances ? Partial<createElementPropDefs<InstanceProps<T>>> : T extends Instance ? Partial<createElementPropDefs<InstanceProps<T>>> : createElementPropDefs<T>) & createElementPropRef<T extends keyof Instances ? Instances[T] : T extends Instance ? T : Instance> & childrenObj<Q> & createElementAttributes & createElementTags & ComponentMountProps;
-        export type Render<props = unknown, I extends Instance = Instance, propsdef = false> = propsdef extends false ? (props?: props, children?: unknown) => I : (props: props, children: unknown) => I;
-        export {};
+        type InstanceProperties<T extends Instance> = CoreInstanceProperties<T>;
+        type InstancePropertiesWithChildren<T extends Instance> = CoreInstancePropertiesWithChildren<T>;
+        type Render<props = unknown, I extends Instance = Instance, propsdef = false> = propsdef extends false ? (props?: props, children?: unknown) => I : (props: props, children: unknown) => I;
     }
+    type createElementPropDefs<T> = {
+        [k in keyof T]: SupportedComponentProperty<T[k]>;
+    };
+    type FunctionalPropertyValue<T> = () => T extends true ? boolean : T extends false ? boolean : T;
+    type SupportedComponentProperty<T> = T extends RBXScriptSignal ? (Ref: any, ...args: T extends RBXScriptSignal<infer X> ? Parameters<X> : never) => void : T | FunctionalPropertyValue<T>;
     namespace JSX {
         type Element = Instance;
         type IntrinsicElements = {
-            [k in keyof CreatableInstances as Lowercase<k>]: Vivid.FC.createElementPropDefs<Partial<Vivid.FC.InstanceProps<CreatableInstances[k]>>> & Vivid.FC.ComponentMountProps & Vivid.FC.createElementPropRef<CreatableInstances[k]> & Vivid.FC.createElementAttributes & Vivid.FC.createElementTags;
+            [k in keyof CreatableInstances as Lowercase<k>]: createElementPropDefs<Partial<Vivid.FC.InstanceProperties<CreatableInstances[k]>>>;
         };
     }
 }
@@ -177,9 +196,9 @@ export * from "./components/ZIndexLayer";
 export * from "./components/InfiniteScrollingFrame";
 export * from "./internal/Responsive";
 export * from "./internal/WithTransition";
+export * from "./internal/WithSuspense";
 export * from "./hooks/useResponsive";
 export { StudioStyleGuideColors };
-export { GetStudioStyleGuideColorsInternal as GetStudioStyleGuideColors };
 export { JSX_Show as Show };
 export { JSX_ForEach as For };
 export { JSX_Switch as Switch };
@@ -187,11 +206,12 @@ export { JSX_SwitchCase as Case };
 export { JSX_Suspense as Suspense };
 export { JSX_Portal as Portal };
 export { JSX_Slot as Slot };
-export { createAnimationInternal as Animate };
 export { createRefInternal as createRef };
+export { createAnimationInternal as Animate };
 declare const StoryAdapters: {
     UILabs: typeof UILabsStoryAdapter;
 };
 export { StoryAdapters };
 export * from "./functions/forEach";
+export * from "./vivid-next/index";
 export default Vivid;

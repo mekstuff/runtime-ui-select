@@ -5,8 +5,6 @@ declare const _default: {
         padding: number;
         icon: string;
         loading: boolean;
-        color: never;
-        variant: never;
         disabled: boolean;
     };
     render: (uilabsprops: import("@rbxts/ui-labs").InferGenericProps<{
@@ -15,8 +13,6 @@ declare const _default: {
         padding: number;
         icon: string;
         loading: boolean;
-        color: never;
-        variant: never;
         disabled: boolean;
     }>) => () => void;
 };

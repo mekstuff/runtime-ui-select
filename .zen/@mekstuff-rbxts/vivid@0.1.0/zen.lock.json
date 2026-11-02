@@ -1,1 +1,1 @@
-{"pkgs":{"@mekstuff-rbxts/core":{"_depscope":"dependencies","signature":"6pgzWhyq0rc3_/Cmex6Sb9iEJq0=18657030f8696b07b1e0","version":"^0.1.5","version_resolve":"0.1.5"}},"tree":{"@mekstuff-rbxts/core@0.1.5>>@mekstuff-rbxts/threader@0.1.0":"Oo7z47rRQbqdjuoLKsYC8K6c8VE=46a0b4bca7a4ddf4c23c"},"version":"0"}
+{"pkgs":{"@mekstuff-rbxts/core":{"_depscope":"dependencies","import":true,"signature":"YiJlbJVjEoE7X3dUsvH3uWQ3BEs=23d0ef6c0b1b230bea43","version":"^0.1.5","version_resolve":"0.1.5"}},"tree":{},"version":"0"}

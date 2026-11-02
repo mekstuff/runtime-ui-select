@@ -2,6 +2,7 @@
 local TS = _G[script]
 local Pseudo = TS.import(script, script.Parent.Parent, "Pseudo", "Pseudo").Pseudo
 local _typeIs = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "typeIs")._typeIs
+local getCurrentRunningEffectObject = TS.import(script, script.Parent.Parent.Parent, "internal", "functions", "Effect", "Effect").getCurrentRunningEffectObject
 local State
 do
 	local super = Pseudo
@@ -25,7 +26,7 @@ do
 		self.internalSetStateCallback = nil
 		self.Name = tostring(State)
 	end
-	function State:setState(state)
+	function State:SetState(state)
 		local stateValue
 		local _state = state
 		if type(_state) == "function" then
@@ -41,12 +42,12 @@ do
 		self.Name = tostring(self.State)
 		return stateValue
 	end
-	function State:use()
-		return self:useState(function(stateValue)
+	function State:Use()
+		return self:UseState(function(stateValue)
 			return stateValue
 		end)
 	end
-	function State:useStateEffect(Callback)
+	function State:UseStateEffect(Callback)
 		-- This used to use "usePropertyEffect"
 		return self:Observe(function()
 			if Callback then
@@ -54,7 +55,7 @@ do
 			end
 		end, { "State" })
 	end
-	function State:useState(Callback)
+	function State:UseState(Callback)
 		local newState = State.new(self.State)
 		local _upd = function()
 			local cleanup
@@ -79,13 +80,21 @@ do
 			return cleanup
 		end
 		-- This used to use "useNextEffect"
-		local _useStateServant = self:ObserveNext(function()
+		local _UseStateServant = self:ObserveNext(function()
 			return _upd()
 		end, { "State" })
 		_upd()
-		newState._dev.insert(_useStateServant)
+		newState._dev.insert(_UseStateServant)
 		self._dev.insert(newState)
 		return newState
+	end
+	function State:__metamethod_call()
+		local currentRunningEffectObject = getCurrentRunningEffectObject()
+		if currentRunningEffectObject == nil then
+			self:error(`Attempted to call() State outside of an Effect! To use State value outside an effect, use State.State property.`)
+		end
+		currentRunningEffectObject._inject_state(self)
+		return self.State
 	end
 end
 return {

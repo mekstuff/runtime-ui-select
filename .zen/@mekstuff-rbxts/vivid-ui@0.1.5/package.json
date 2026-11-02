@@ -6,9 +6,9 @@
 	"scripts": {
 		"build": "rbxtsc",
 		"watch": "rbxtsc -w --type=game -p test -i ../../include",
-		"serve": "rojo serve test",
-		"dev": "concurrently \"yarn watch\" \"yarn serve\"",
-		"prepack": "yarn run build"
+		"build-test": "rbxtsc --type=game -p test -i ../../include",
+		"dev": "concurrently \"pnpm watch\" \"rojo serve test\"",
+		"prepack": "pnpm run build"
 	},
 	"keywords": [],
 	"author": "Mekstuff <contact@mekstuff.com> (https://github.com/mekstuff)",
@@ -19,25 +19,27 @@
 	],
 	"devDependencies": {
 		"@rbxts/compiler-types": "^3.0.0-types.0",
-		"@rbxts/types": "^1.0.813",
+		"@rbxts/types": "^1.0.879",
 		"@rbxts/ui-labs": "^2.3.8",
-		"@typescript-eslint/eslint-plugin": "^8.11.0",
-		"@typescript-eslint/parser": "^8.11.0",
+		"@typescript-eslint/eslint-plugin": "^8.26.1",
+		"@typescript-eslint/parser": "^8.26.1",
 		"concurrently": "^9.1.2",
-		"eslint": "^9.13.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-prettier": "^5.2.1",
+		"eslint": "^9.22.0",
+		"eslint-config-prettier": "^10.1.1",
+		"eslint-plugin-prettier": "^5.2.3",
 		"eslint-plugin-roblox-ts": "^0.0.36",
-		"prettier": "^3.3.3",
+		"prettier": "^3.5.3",
 		"roblox-ts": "^3.0.0",
-		"typescript": "5.6.3"
+		"typescript": "^5.8.2"
 	},
 	".zen": {
 		"dependencies": {
 			"@mekstuff-rbxts/core": {
+				"import": true,
 				"version": "^0.1.5"
 			},
 			"@mekstuff-rbxts/vivid": {
+				"import": true,
 				"version": "^0.1.0"
 			}
 		},
@@ -46,6 +48,5 @@
 	"dependencies": {
 		"@mekstuff-rbxts/core": "file:..\\..\\@mekstuff-rbxts\\core@0.1.5",
 		"@mekstuff-rbxts/vivid": "file:..\\..\\@mekstuff-rbxts\\vivid@0.1.0"
-	},
-	"peerDependencies": {}
+	}
 }

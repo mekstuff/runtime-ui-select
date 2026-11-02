@@ -6,5 +6,6 @@
 export declare function CreateClientReplicator(object: unknown): {
     Define: (_: unknown, __: unknown, ...args: unknown[]) => any;
     Transmit: (_: unknown, __: unknown, func: Callback, ...args: unknown[]) => any;
+    TransmitMessage: (_: unknown, __: unknown, func: Callback, ...args: unknown[]) => any;
     WithDebounce: (_: unknown, cb: unknown) => unknown;
 };

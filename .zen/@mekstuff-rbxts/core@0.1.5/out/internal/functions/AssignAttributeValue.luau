@@ -1,5 +1,7 @@
 -- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
+--* TODO: THIS MODULE IS NO LONGER BEING USED, REMOVE 
+local GetAttributeStringValue = TS.import(script, script.Parent, "GetAttributeStringValue").GetAttributeStringValue
 local _typeIs = TS.import(script, script.Parent, "typeIs")._typeIs
 local IgnoreAssignAttributesToKeys = { "Parent" }
 --*
@@ -29,9 +31,9 @@ local function AssignAttributeValue(ReferenceInstance, key, value)
 				if value:IsA("Signal") then
 					return nil
 				end
-				ReferenceInstance:SetAttribute(key, `***{tostring(value)}***`)
+				ReferenceInstance:SetAttribute(key, GetAttributeStringValue(`***{tostring(value)}***`))
 			else
-				ReferenceInstance:SetAttribute(key, value)
+				ReferenceInstance:SetAttribute(key, GetAttributeStringValue(value))
 			end
 		end)
 		-- make a somewhat important check using string match when the error message could be changed by ROBLOX anytime soon? why not.
@@ -40,7 +42,7 @@ local function AssignAttributeValue(ReferenceInstance, key, value)
 			return nil
 		end
 		if not success then
-			ReferenceInstance:SetAttribute(key, `***{reason}***`)
+			ReferenceInstance:SetAttribute(key, GetAttributeStringValue(`***{reason}***`))
 		end
 	end
 end

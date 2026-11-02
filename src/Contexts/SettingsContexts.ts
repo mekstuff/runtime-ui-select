@@ -10,6 +10,7 @@ const SettingsContextScope = createScope();
 export type Settings = {
 	PluginEnabled: boolean;
 
+	// Hovering
 	HoverDetectionEnabled: boolean;
 	HoverDetectionAccuracy: number;
 	ShowDimensionsOnHover: boolean;
@@ -25,16 +26,22 @@ export type Settings = {
 	MultiHoverDetectionEnabled: boolean;
 	UseHoverDetectionActivationKeybind: boolean;
 
+	// BorderBoxes / Distance Indicators
 	SelectedDetectionEnabled: boolean;
 	ShowDimensionsOnSelected: boolean;
 	ShowAbsoluteSizeOnSelected: boolean;
 	ShowInstanceNameOnSelected: boolean;
 	ShowAbsolutePositionOnSelected: boolean;
 
+	// 3D
+	DetectGuiObjectsIn3DWorld: boolean;
+
+	// Behavior
 	AllowUserRuntimeUISelection: boolean;
 	IgnoreTransparentGUIObjects: boolean;
 	BlockButtonActivations: boolean;
 
+	// Plugin
 	DetectRuntimeSettingsChanges: boolean;
 	RightClickForContextMenu: boolean;
 	DisableToolTips: boolean;
@@ -77,6 +84,8 @@ export const DefaultSettingsContext: { [k in keyof Settings]: Settings[k] } = {
 	ShowAbsoluteSizeOnSelected: false,
 	ShowInstanceNameOnSelected: false,
 	ShowAbsolutePositionOnSelected: false,
+
+	DetectGuiObjectsIn3DWorld: false,
 
 	AllowUserRuntimeUISelection: true,
 	IgnoreTransparentGUIObjects: true,

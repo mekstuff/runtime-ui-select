@@ -10,8 +10,20 @@ local Plugin = plugin or script:FindFirstAncestorOfClass("Plugin")
 local _vivid = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "vivid").out)
 local createScope = _vivid.createScope
 local createSpring = _vivid.createSpring
-local GetStudioStyleGuideColors = _vivid.GetStudioStyleGuideColors
 local ThemeContextScope = createScope()
+local function GetStudioStyleGuideColors()
+	local StyleGuideColors = {}
+	local _exp = Enum.StudioStyleGuideColor:GetEnumItems()
+	-- ▼ ReadonlyArray.forEach ▼
+	local _callback = function(GuideColor)
+		StyleGuideColors[GuideColor.Name] = (settings().Studio).Theme:GetColor(GuideColor)
+	end
+	for _k, _v in _exp do
+		_callback(_v, _k - 1, _exp)
+	end
+	-- ▲ ReadonlyArray.forEach ▲
+	return StyleGuideColors
+end
 local DefaultThemeColors = {
 	AICOOverlayButtonBackground = Color3.new(0.235294, 0.235294, 0.235294),
 	AICOOverlayButtonBackgroundHover = Color3.new(0.258824, 0.258824, 0.258824),

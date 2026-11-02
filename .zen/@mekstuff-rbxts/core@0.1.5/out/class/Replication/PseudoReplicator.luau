@@ -60,9 +60,8 @@ do
 		self:assert(GetIsValidTransmitterFunctionName(RootTransmissionFunctionName), `Invalid Function binded to TransmitMessage function. Expected lowercase as first letter and "Client" as last word. got "{RootTransmissionFunctionName}".\ne.g. "runFunctionClient"`)
 		local _client = Client
 		local TargetClient = if typeof(_client) == "Instance" then Client else Client.Player
-		if TargetClient == nil then
-			local _client_1 = Client
-			ReplicatorTransmitterRemote:FireClient(if typeof(_client_1) == "Instance" then Client else Client.Player, RootTransmissionFunctionName, self:GetIdAsync(), self._PseudoOrigin:GetIdAsync(), nil, unpack(args))
+		if TargetClient ~= nil then
+			ReplicatorTransmitterRemote:FireClient(TargetClient, RootTransmissionFunctionName, self:GetIdAsync(), self._PseudoOrigin:GetIdAsync(), nil, unpack(args))
 		else
 			ReplicatorTransmitterRemote:FireAllClients(RootTransmissionFunctionName, self:GetIdAsync(), self._PseudoOrigin:GetIdAsync(), nil, unpack(args))
 		end

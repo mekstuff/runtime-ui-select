@@ -1,5 +1,5 @@
 import Vivid from "@mekstuff-rbxts/vivid";
-import { ButtonProps, LabelProps } from "./Base";
+import { ButtonProps, LabelProps } from "./Base/index";
 import { DismissToastProvider } from "./ToastsList";
 export type ToastProps = {
     Text?: string;
@@ -15,7 +15,7 @@ export type ToastProps = {
     viewDisplay?: "dynamic" | "viewport" | "widget" | "mirror";
     roundness?: UDim;
     props?: Partial<{
-        Icon: Vivid.FC.Props<ImageLabel>;
+        Icon: Vivid.FC.InstanceProperties<ImageLabel>;
         Label: LabelProps;
         Button: ButtonProps;
     }>;

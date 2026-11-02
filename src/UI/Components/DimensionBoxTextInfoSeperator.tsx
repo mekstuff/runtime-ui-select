@@ -6,7 +6,7 @@
 import Vivid, { withProps } from "@mekstuff-rbxts/vivid";
 import { Theme } from "@mekstuff-rbxts/vivid-ui";
 
-export function DimensionBoxTextInfoSeperator(props: Vivid.FC.Props<Frame>) {
+export function DimensionBoxTextInfoSeperator(props: Vivid.FC.InstanceProperties<Frame>) {
 	return (
 		<frame
 			Size={new UDim2(0, 1, 1, 0)}

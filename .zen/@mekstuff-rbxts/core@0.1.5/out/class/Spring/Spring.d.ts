@@ -6,10 +6,14 @@ export declare class Spring<T> extends State<T> {
     private _activeStateGoal;
     Completed: Signal;
     /**
-     * Always use `setGoal` over `setState` when using Springs.
+     * Always use `setGoal` over `SetState` when using Springs.
      */
-    SetGoal(...args: Parameters<State<T>["setState"]>): ReturnType<State<T>["setState"]>;
-    Disrupt(Goal: T, Damping?: number, Frequency?: number): void;
+    SetGoal(...args: Parameters<State<T>["SetState"]>): ReturnType<State<T>["SetState"]>;
+    Disrupt(Goal: T, props?: {
+        Damping?: number;
+        Frequency?: number;
+        Lifetime?: number;
+    }): void;
     ResetGoal(Goal: T): void;
     constructor(DefaultValue?: T, Damping?: number, Frequency?: number);
 }

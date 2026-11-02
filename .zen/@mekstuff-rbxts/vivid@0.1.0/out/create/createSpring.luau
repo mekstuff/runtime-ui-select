@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -58,7 +58,7 @@ local function createSpring(defaultValue, damping, frequency)
 				OldKeyValuesForArr[key] = value
 				if LiveEntriesListForArr[key] then
 					local Existing = LiveEntriesListForArr[key]
-					Existing:setState(value)
+					Existing:SetState(value)
 					continue
 				end
 				error(`"{key}" was not updated by Spring as it was not found in the LiveEntries List!`)

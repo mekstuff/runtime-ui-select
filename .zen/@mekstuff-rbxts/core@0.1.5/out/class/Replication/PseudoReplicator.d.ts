@@ -1,4 +1,4 @@
-import { Pseudo } from "../..";
+import { Pseudo } from "../../index";
 type TransmitterData = {
     Player: Player;
     /**
@@ -29,6 +29,17 @@ export declare class PseudoReplicator extends Pseudo {
      * For Client->Server Communication
      *
      * Note that there's a possibility that this method will yield if the Replicator isn't available at the time it is called.
+     *
+     * ```ts
+     * class ... extends Pseudo {
+     * 	...
+     * 	public aFunctionThatClientCanCallServer(...args: unknown[]){
+     * 		return this.Replicator.Define((Player, ...args) => {
+     * 			...
+     * 		}, ...args)
+     * 	}
+     * }
+     * ```
      */
     Define<T>(Callback?: (Player: Player, ...args: unknown[]) => T, ...args: unknown[]): Promise<T>;
     /**
@@ -43,6 +54,24 @@ export declare class PseudoReplicator extends Pseudo {
      * Note that the Promise returned will never internally reject unless it was
      * triggered by an error. If the Transmitter is timed out and/or failed, it will always
      * resolve but with no value.
+     *
+     * ```ts
+     * class ... extends Pseudo {
+     * 	...
+     * 	public aFunctionTheServerCanCallClient(Player: Player, ...args: unknown[]){
+     * 		return this.Replicator.Transmit((Player) => {
+     * 			// This will execute on the client that is passed at the first param
+     * 			...
+     * 			return 1
+     * 		}, ...args)
+     * 	}
+     * }
+     *
+     * public aFunctionTheServerCanCallClient(...).expect() --> 1
+     * ```
+     *
+     * Use this method with caution as data received from client cannot be trusted, the thread doesn't pause since TransmitMessage uses IDs and RemoteEvents instead of RemoteFunction invokation.
+     * Use TransmitMessage() if you only wish to send out data but don't require a response.
      */
     Transmit<T>(Client: TransmitterData | Player, Callback?: (...callbackArgs: any[]) => T, // we do not call the "callback" on the server, it is executed on the client.
     ...args: unknown[]): Promise<T | undefined>;

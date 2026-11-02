@@ -1,4 +1,4 @@
--- Compiled with roblox-ts v3.0.0-dev-d48bd20
+-- Compiled with roblox-ts v3.0.0
 local TS = _G[script]
 --[[
 	
@@ -28,9 +28,12 @@ local ResponsiveBreakpoints = { {
 	responsive = "xl2",
 	breakpoint = 1536,
 } }
-local function GetResponsiveGroup(Size)
-	for index = #ResponsiveBreakpoints - 1, 1, -1 do
-		local Target = ResponsiveBreakpoints[index + 1]
+local function GetResponsiveGroup(Size, Breakpoints)
+	if Breakpoints == nil then
+		Breakpoints = ResponsiveBreakpoints
+	end
+	for index = #Breakpoints - 1, 1, -1 do
+		local Target = Breakpoints[index + 1]
 		if Target.breakpoint < Size.X then
 			return Target.responsive
 		end
@@ -57,7 +60,40 @@ local function IsResponsiveObject(Input)
 	end
 	return false
 end
-local function Responsive(props)
+-- -> string
+--[[
+	*
+	 * Create your own responsive object with custom breakpoints and default container.
+	 
+]]
+local Responsive
+local function CreateResponsive(config)
+	local _array = {}
+	local _length = #_array
+	local _array_1 = config.breakpoints
+	local _Length = #_array_1
+	table.move(_array_1, 1, _Length, _length + 1, _array)
+	_length += _Length
+	table.move(ResponsiveBreakpoints, 1, #ResponsiveBreakpoints, _length + 1, _array)
+	local targetBreakpoints = _array
+	local cb = function(props)
+		local _object = {
+			breakpoints = targetBreakpoints,
+			container = config.container,
+		}
+		for _k, _v in props do
+			_object[_k] = _v
+		end
+		return Responsive(_object)
+	end
+	return cb
+end
+--[[
+	*
+	 * Use within a createEffect that is used for a `createElement` property for a responsive values.
+	 
+]]
+function Responsive(props)
 	local container = props.container or game:GetService("Workspace").CurrentCamera
 	local _arg1 = `Could not resolve Responsive container, input: {container}`
 	assert(container, _arg1)
@@ -68,7 +104,7 @@ local function Responsive(props)
 		local SizeUpdated = function(Size)
 			local _result = TargetGroupListenerState
 			if _result ~= nil then
-				_result:setState(GetResponsiveGroup(Size))
+				_result:SetState(GetResponsiveGroup(Size, props.breakpoints))
 			end
 		end
 		if container:IsA("Camera") then
@@ -142,5 +178,6 @@ local function Responsive(props)
 end
 return {
 	IsResponsiveObject = IsResponsiveObject,
+	CreateResponsive = CreateResponsive,
 	Responsive = Responsive,
 }

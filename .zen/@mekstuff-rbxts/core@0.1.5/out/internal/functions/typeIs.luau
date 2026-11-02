@@ -1,6 +1,5 @@
 -- Compiled with roblox-ts v3.0.0
-local TS = _G[script]
-local isThreader = TS.import(script, TS.getModule(script, "@mekstuff-rbxts", "threader").out).isThreader
+-- import { isThreader } from "@mekstuff-rbxts/threader";
 --custom typeIs
 local function _typeIs(Object, Type)
 	local _object = Object
@@ -16,9 +15,9 @@ local function _typeIs(Object, Type)
 			if _value ~= 0 and _value == _value and _value ~= "" and _value then
 				return true
 			end
-			if Type == "threader" and isThreader(Object) then
-				return true
-			end
+			-- if (Type === "threader" && isThreader(Object)) {
+			-- 	return true;
+			-- }
 			local sv = Object
 			if sv == nil then
 				return false

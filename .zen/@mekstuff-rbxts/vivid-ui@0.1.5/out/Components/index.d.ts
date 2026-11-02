@@ -1,4 +1,4 @@
-export * from "./Base";
+export * from "./Base/index";
 export * from "./Accordion";
 export * from "./Badge";
 export * from "./FAB";
@@ -8,6 +8,7 @@ export * from "./MenuBarButton";
 export * from "./ModalPrompt";
 export * from "./Popover";
 export * from "./SettingContent";
+export * from "./Tabs";
 export * from "./TabsMenu";
 export * from "./Toast";
 export * from "./ToastsList";

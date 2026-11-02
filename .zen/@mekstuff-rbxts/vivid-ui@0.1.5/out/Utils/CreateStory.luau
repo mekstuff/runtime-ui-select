@@ -13,13 +13,13 @@ local StoryAdapters = _vivid.StoryAdapters
 local withProps = _vivid.withProps
 local function CreateStory(controls, render)
 	return StoryAdapters.UILabs(controls, function(props, children)
-		local nProps = withProps(props, true)
-		nProps.converted = nil
-		nProps.inputListener = nil
-		nProps.setCleanupFunction = nil
-		nProps.subscribe = nil
-		nProps.target = nil
-		nProps.controls = nil
+		-- const nProps = withProps(props, true) as Partial<typeof props>;
+		-- delete nProps.converted;
+		-- delete nProps.inputListener;
+		-- delete nProps.setCleanupFunction;
+		-- delete nProps.subscribe;
+		-- delete nProps.target;
+		-- delete nProps.controls;
 		props.setCleanupFunction(function()
 			clearScopes()
 		end)
@@ -32,7 +32,7 @@ local function CreateStory(controls, render)
 			VerticalAlignment = Enum.VerticalAlignment.Center,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			Padding = UDim.new(0, 30),
-		}), render(nProps, children))
+		}), render(withProps(props), children))
 	end)
 end
 return {

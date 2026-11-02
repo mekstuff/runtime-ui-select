@@ -6,6 +6,7 @@
 import Vivid, { createCleanup, createEffect, createRef } from "@mekstuff-rbxts/vivid";
 import { Input } from "@mekstuff-rbxts/vivid-ui";
 import { HoverDetectionAccuracyNumberRange, SettingsContext } from "Contexts/SettingsContexts";
+import { Constants } from "Core/Constants/Constants";
 import { RoundTo2DecimalPlaces } from "Core/Functions/Format";
 
 export function HoverAccuracyInput() {

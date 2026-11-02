@@ -4,6 +4,7 @@
 */
 
 import Vivid, { createEffect, createState } from "@mekstuff-rbxts/vivid";
+import { Constants } from "Core/Constants/Constants";
 import { Tags } from "Core/Constants/Tags";
 import { RoundTo2DecimalPlaces } from "Core/Functions/Format";
 

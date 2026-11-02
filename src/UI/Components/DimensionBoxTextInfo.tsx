@@ -15,6 +15,7 @@ import Vivid, {
 	WithTransition,
 } from "@mekstuff-rbxts/vivid";
 import { Button, ButtonProps, Theme, Units } from "@mekstuff-rbxts/vivid-ui";
+import { Constants } from "Core/Constants/Constants";
 import { Tags } from "Core/Constants/Tags";
 
 export function DimensionBoxTextInfo(props: ButtonProps & { truthy: boolean }) {

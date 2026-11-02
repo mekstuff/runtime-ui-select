@@ -1,7 +1,8 @@
+import Vivid from "@mekstuff-rbxts/vivid";
 export type TabsMenuTab = {
-    Title: string;
-    Content: Instance;
-    Icon?: string;
+    title: string;
+    content: Vivid.FC.Render;
+    icon?: string;
 };
 export declare function TabsMenu(props: {
     tabs: (TabsMenuTab | undefined)[];

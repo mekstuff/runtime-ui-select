@@ -1,4 +1,4 @@
-import Vivid from "..";
+import Vivid from "../index";
 import { ReturnControls } from "@rbxts/ui-labs/src/ControlTypings/Typing";
 import { InferGenericProps } from "@rbxts/ui-labs";
 export type StoryState<T = unknown> = {

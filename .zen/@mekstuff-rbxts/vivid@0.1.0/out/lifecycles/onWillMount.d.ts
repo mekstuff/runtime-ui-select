@@ -1,1 +1,1 @@
-export declare function onWillMount(Callback: () => void): void;
+export declare function onWillMount(Callback: (...args: unknown[]) => void): void;
