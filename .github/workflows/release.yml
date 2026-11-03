@@ -100,11 +100,11 @@ jobs:
                   VERSION: ${{ needs.get-next-version.outputs.next-version }}
 
             # Deploy Experience/Game .rbxl file to Roblox
-            - name: Deploy Roblox Demo Place
-              shell: bash
-              env:
-                  UID: ${{ env.ROBLOX_UNIVERSE_ID }} # Universe ID
-                  PID: ${{ env.ROBLOX_PLACE_ID }} # Place ID
-                  API_KEY: ${{ secrets.ROBLOX_GAME }}
-                  FILE: game/out/rutus_game.rbxl # Roblox place file (e.g. might have a step before this to build the file with Rojo)
-              run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -i "$PID" -t published -f "$FILE"
+            # - name: Deploy Roblox Demo Place
+            #   shell: bash
+            #   env:
+            #       UID: ${{ env.ROBLOX_UNIVERSE_ID }} # Universe ID
+            #       PID: ${{ env.ROBLOX_PLACE_ID }} # Place ID
+            #       API_KEY: ${{ secrets.ROBLOX_GAME }}
+            #       FILE: game/out/rutus_game.rbxl # Roblox place file (e.g. might have a step before this to build the file with Rojo)
+            #   run: rbxcloud experience publish -a "$API_KEY" -u "$UID" -i "$PID" -t published -f "$FILE"
