@@ -1,3 +1,25 @@
+# [1.4.0](https://github.com/mekstuff/runtime-ui-select/compare/v1.3.2...v1.4.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* add resolutions to glob and minimatch for auditting ([9055af5](https://github.com/mekstuff/runtime-ui-select/commit/9055af50cbefbe989bea42a3acd5afae11a947b6))
+* audited and updated package versions ([b8ca5e7](https://github.com/mekstuff/runtime-ui-select/commit/b8ca5e7d1da7e8bc81628bfa98132c93f83ec3e0))
+* fixed studio theme type for AvailableThemes state ([139e871](https://github.com/mekstuff/runtime-ui-select/commit/139e87172a018e46a5a6ff0bb1c4211660a2fa14))
+* updated package versions, audited ([4be3a7f](https://github.com/mekstuff/runtime-ui-select/commit/4be3a7f6b84af1c7f89c6078074a2cfffbd6ac70))
+
+
+### Features
+
+* updated to latest version of core, vivid & vivid-ui; updated release file, free version ([5aa924c](https://github.com/mekstuff/runtime-ui-select/commit/5aa924c0584c992b843f65d8508a2a9d70e94e6f))
+
+## [1.3.2](https://github.com/mekstuff/runtime-ui-select/compare/v1.3.1...v1.3.2) (2025-07-23)
+
+
+### Bug Fixes
+
+* fixed error when adornee is nil and borderdistanceboxes attempt to update the state ([9210524](https://github.com/mekstuff/runtime-ui-select/commit/9210524f3e5c1585dd461b16f60c8cfdf9c09bda))
+
 ## [1.3.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.3.0...v1.3.1) (2025-07-23)
 
 
