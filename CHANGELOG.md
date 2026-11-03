@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.4.0...v1.4.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* added if condition to release workflow for setting package version in json file ([5fd2d82](https://github.com/mekstuff/runtime-ui-select/commit/5fd2d82eceb85d45d0804585690318aee1853109))
+
 # [1.4.0](https://github.com/mekstuff/runtime-ui-select/compare/v1.3.2...v1.4.0) (2026-11-02)
 
 
