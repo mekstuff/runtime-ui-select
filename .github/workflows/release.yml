@@ -63,8 +63,12 @@ jobs:
             - name: Install aftman packages
               run: aftman install
 
+            - name: Echoing version detected
+              run: echo New version to update package.json to = "${{ needs.get-next-version.outputs.next-version }}"
+
             # Pre set package version... As of 7/23/2025 - release.config.js (@semantic-release/npm -> @semantic-release/git should also bump this version, but we manually set it here using the installed `npm` package since we need it to be updated for the build files)
             - name: Pre-setting package.json version from get-next-version
+              if: needs.get-next-version.outputs.next-version != null
               run: yarn npm pkg set version=${{ needs.get-next-version.outputs.next-version }} && echo Manually updated package.json version to ${{ needs.get-next-version.outputs.next-version }}
 
             - name: Building
