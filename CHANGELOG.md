@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/mekstuff/runtime-ui-select/compare/v1.4.1...v1.4.2) (2026-11-03)
+
+
+### Bug Fixes
+
+* updated CONSTANTS file to actually show package version value ([b2f3e26](https://github.com/mekstuff/runtime-ui-select/commit/b2f3e268f0b5c55d9a9541d54546ad8e58837480))
+
 ## [1.4.1](https://github.com/mekstuff/runtime-ui-select/compare/v1.4.0...v1.4.1) (2026-11-03)
 
 
